@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter_action_bank/ui/components/bootstrapper.dart';
 import 'package:flutter_action_bank/ui/router.dart';
 
 import 'package:flutter_action_bank/firebase_options.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_action_bank/ui/theme.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,10 +21,7 @@ class MyApp extends StatelessWidget {
     return CupertinoApp(
       title: 'Action Bank',
       home: ProvidersContainer(),
-      theme: CupertinoThemeData(
-        brightness: Brightness.light,
-        primaryColor: CupertinoColors.systemRed,
-      ),
+      theme: theme,
     );
   }
 }
@@ -36,47 +34,8 @@ class ProvidersContainer extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthenticationProvider()),
       ],
-      child: AuthInitContainer(),
+      child: _BootStrap(),
     );
-  }
-}
-
-class AuthInitContainer extends StatefulWidget {
-  @override
-  State<AuthInitContainer> createState() => _AuthInitContainerState();
-}
-
-class _AuthInitContainerState extends State<AuthInitContainer> {
-  @override
-  initState() {
-    super.initState();
-    appInit();
-  }
-
-  appInit() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    print('Firebase initialized');
-
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      final authProvider = context.read<AuthenticationProvider>();
-      authProvider.setAuthentication(user);
-
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-        print(user.displayName);
-        print(user.email);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _BootStrap();
   }
 }
 
@@ -87,7 +46,17 @@ class _BootStrap extends StatelessWidget {
       app: CupertinoApp.router(
         routerConfig: router,
       ),
-      initFunction: () async {},
+      initFunction: initializeApp,
     );
+  }
+
+  Future<void> initializeApp(BuildContext context) async {
+    final authProvider = context.read<AuthenticationProvider>();
+
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    authProvider.setAuthentication(FirebaseAuth.instance.currentUser);
   }
 }

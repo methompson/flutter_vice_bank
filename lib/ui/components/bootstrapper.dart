@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class BootStrapper extends StatefulWidget {
   final Widget app;
-  final Future<void> Function() initFunction;
+  final Future<void> Function(BuildContext context) initFunction;
   final Widget? loadingPage;
 
   BootStrapper({
@@ -23,8 +23,12 @@ class BootStrapperState extends State<BootStrapper> {
   initState() {
     super.initState();
 
+    init();
+  }
+
+  Future<void> init() async {
     try {
-      widget.initFunction();
+      await widget.initFunction(context);
     } catch (e) {
       if (e is Exception) {
         setState(() {

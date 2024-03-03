@@ -1,4 +1,5 @@
-// import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 
-// final themeLight = CupertinoThemeData
-// final themeDark = ThemeData.dark().copyWith();
+final theme = CupertinoThemeData(
+  primaryColor: CupertinoColors.systemRed,
+);
