@@ -91,10 +91,7 @@ class _ShowSnackBarMessage extends StatelessWidget {
     return DebugButton(
       buttonText: 'Show Snack Bar Message',
       onPressed: () {
-        final messenger = snackbarMessengerKey.currentState;
-        messenger?.showSnackBar(SnackBar(
-          content: Text('Debug Snackbar'),
-        ));
+        context.read<MessagingProvider>().showErrorSnackbar('Error Message');
       },
     );
   }

@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
+import 'package:flutter_action_bank/ui/components/snackbars.dart';
 
 final snackbarMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class MessagingProvider extends ChangeNotifier {
-  // TODO implement messaging provider
-  // loading screen
-  // Toast message
-
   LoadingScreenData? _loadingScreenData;
-  List<SnackbarData> _snackbarData = [];
 
   LoadingScreenData? get loadingScreenData => _loadingScreenData;
-  List<SnackbarData> get snackbarData => _snackbarData;
 
   void setLoadingScreenData(LoadingScreenData data) {
     _loadingScreenData = data;
@@ -24,13 +19,20 @@ class MessagingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addSnackbar(SnackbarData data) {
-    _snackbarData.add(data);
-    notifyListeners();
+  void _showSnackbar(SnackBar snackbar) {
+    final messenger = snackbarMessengerKey.currentState;
+    messenger?.showSnackBar(snackbar);
   }
 
-  void closeSnackBar(id) {
-    _snackbarData.removeWhere((element) => element.id == id);
-    notifyListeners();
+  void showInfoSnackbar(String info) {
+    _showSnackbar(makeInfoSnackBar(info));
+  }
+
+  void showErrorSnackbar(String error) {
+    _showSnackbar(makeErrorSnackBar(error));
+  }
+
+  void showSuccessSnackbar(String success) {
+    _showSnackbar(makeSuccessSnackBar(success));
   }
 }

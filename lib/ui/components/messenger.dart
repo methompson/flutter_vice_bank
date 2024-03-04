@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_action_bank/global_state/messaging_provider.dart';
 import 'package:flutter_action_bank/ui/components/loading_screen.dart';
 
 class Messenger extends StatelessWidget {

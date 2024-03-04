@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
 import 'package:flutter_action_bank/ui/components/buttons.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +31,6 @@ class LoadingScreen extends StatelessWidget {
 class LoadingScreenWidgets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO get loading screen data from messaging provider
     final msgProvider = context.read<MessagingProvider>();
 
     final msg = msgProvider.loadingScreenData?.message ?? 'Loading...';

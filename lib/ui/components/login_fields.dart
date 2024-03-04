@@ -57,7 +57,7 @@ class LoginFieldsState extends State<LoginFields> {
     final authProvider = context.read<AuthenticationProvider>();
 
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -65,7 +65,9 @@ class LoginFieldsState extends State<LoginFields> {
       final user = FirebaseAuth.instance.currentUser;
       authProvider.setAuthentication(user);
 
-      context.go('/home');
+      if (mounted) {
+        context.go('/home');
+      }
     } catch (e) {
       // print('Error logging in: $e');
     }
