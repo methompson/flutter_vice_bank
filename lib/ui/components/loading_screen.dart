@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
+import 'package:flutter_action_bank/ui/components/buttons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_action_bank/global_state/messaging_provider.dart';
@@ -60,28 +62,12 @@ class LoadingScreenWidgets extends StatelessWidget {
             ),
           ),
           if (onCancel != null)
-            CupertinoButton.filled(
+            BasicTextButton(
               onPressed: onCancel,
-              child: Text('Cancel'),
+              text: 'Cancel',
             )
         ],
       ),
-    );
-  }
-}
-
-class Loadable extends StatelessWidget {
-  final Widget child;
-
-  Loadable(this.child);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        child,
-        LoadingScreen(),
-      ],
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
 
 class PageContainer extends StatelessWidget {
   final Widget child;
@@ -10,8 +11,8 @@ class PageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      child: child,
+    return Scaffold(
+      body: child,
     );
   }
 }

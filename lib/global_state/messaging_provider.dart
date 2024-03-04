@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
+
+final snackbarMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class MessagingProvider extends ChangeNotifier {
   // TODO implement messaging provider

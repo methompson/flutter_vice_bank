@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
 import 'package:flutter_action_bank/global_state/messaging_provider.dart';
 import 'package:provider/provider.dart';
@@ -12,19 +12,7 @@ import 'package:flutter_action_bank/firebase_options.dart';
 import 'package:flutter_action_bank/ui/theme.dart';
 
 void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoApp(
-      title: 'Action Bank',
-      home: ProvidersContainer(),
-      theme: theme,
-    );
-  }
+  runApp(ProvidersContainer());
 }
 
 class ProvidersContainer extends StatelessWidget {
@@ -64,8 +52,11 @@ class _BootStrap extends StatelessWidget {
 class TheApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp.router(
+    return MaterialApp.router(
+      scaffoldMessengerKey: snackbarMessengerKey,
       routerConfig: router,
+      theme: lightTheme,
+      darkTheme: darkTheme,
     );
   }
 }

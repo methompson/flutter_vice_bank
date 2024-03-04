@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
 import 'package:flutter_action_bank/global_state/messaging_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_action_bank/ui/components/buttons.dart';
 
 class DebugPage extends StatelessWidget {
   @override
@@ -13,7 +16,8 @@ class DebugPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _ShowLoadingScreenWithCancelButton(),
-        _ShowLoadingScreenWithAutoClose()
+        _ShowLoadingScreenWithAutoClose(),
+        _ShowSnackBarMessage(),
       ],
     );
   }
@@ -32,9 +36,9 @@ class DebugButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10),
-      child: CupertinoButton.filled(
+      child: BasicTextButton(
         onPressed: onPressed,
-        child: Text(buttonText),
+        text: buttonText,
       ),
     );
   }
@@ -76,6 +80,21 @@ class _ShowLoadingScreenWithAutoClose extends StatelessWidget {
         Timer(Duration(seconds: 3), () {
           msgProvider.clearLoadingScreen();
         });
+      },
+    );
+  }
+}
+
+class _ShowSnackBarMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'Show Snack Bar Message',
+      onPressed: () {
+        final messenger = snackbarMessengerKey.currentState;
+        messenger?.showSnackBar(SnackBar(
+          content: Text('Debug Snackbar'),
+        ));
       },
     );
   }

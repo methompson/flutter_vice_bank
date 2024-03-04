@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_action_bank/ui/components/buttons.dart';
+
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
 
 class LoginFields extends StatefulWidget {
@@ -39,9 +41,9 @@ class LoginFieldsState extends State<LoginFields> {
         ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: CupertinoButton.filled(
+          child: BasicBigTextButton(
             onPressed: loginUser,
-            child: const Text('Login'),
+            text: 'Login',
           ),
         ),
       ],

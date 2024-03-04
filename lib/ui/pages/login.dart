@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_action_bank/ui/components/loadable.dart';
+import 'package:flutter_action_bank/ui/components/loading_screen.dart';
 
 import 'package:flutter_action_bank/ui/components/login_fields.dart';
+import 'package:flutter_action_bank/ui/components/messenger.dart';
 import 'package:flutter_action_bank/ui/components/page_container.dart';
 
 class Login extends StatelessWidget {
@@ -33,6 +34,6 @@ class Login extends StatelessWidget {
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Loadable(Login());
+    return Messenger(Login());
   }
 }

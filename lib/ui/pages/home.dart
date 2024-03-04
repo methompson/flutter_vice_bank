@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:flutter_action_bank/ui/components/page_container.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_action_bank/ui/components/buttons.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,9 +12,9 @@ class HomePage extends StatelessWidget {
         Text('Home Page'),
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: CupertinoButton.filled(
+          child: BasicBigTextButton(
             onPressed: logUserOut,
-            child: const Text('Logout'),
+            text: 'Logout',
           ),
         ),
       ],

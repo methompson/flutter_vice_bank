@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_action_bank/ui/components/loading_screen.dart';
+import 'package:flutter_action_bank/ui/components/messenger.dart';
 import 'package:flutter_action_bank/ui/components/page_container.dart';
 import 'package:flutter_action_bank/ui/pages/debug.dart';
 import 'package:go_router/go_router.dart';
@@ -12,14 +13,13 @@ import 'package:flutter_action_bank/ui/pages/login.dart';
 
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorHomeKey =
-    GlobalKey<NavigatorState>(debugLabel: 'homePage');
-final _shellNavigatorDebugKey =
-    GlobalKey<NavigatorState>(debugLabel: 'debugPage');
+// final _rootNavigatorKey = GlobalKey<NavigatorState>();
+// final _shellNavigatorHomeKey =
+//     GlobalKey<NavigatorState>(debugLabel: 'homePage');
+// final _shellNavigatorDebugKey =
+//     GlobalKey<NavigatorState>(debugLabel: 'debugPage');
 
 final router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
   redirect: (context, goRouterState) {
     final authProvider = context.read<AuthenticationProvider>();
 
@@ -33,7 +33,7 @@ final router = GoRouter(
   routes: [
     // All Routes that need loading screens and snackbars
     ShellRoute(
-      builder: (_, __, child) => Loadable(child),
+      builder: (_, __, child) => Messenger(child),
       routes: [
         GoRoute(
           name: 'start',
@@ -52,7 +52,6 @@ final router = GoRouter(
           },
           branches: [
             StatefulShellBranch(
-              navigatorKey: _shellNavigatorHomeKey,
               routes: [
                 GoRoute(
                   name: 'home',
@@ -62,7 +61,6 @@ final router = GoRouter(
               ],
             ),
             StatefulShellBranch(
-              navigatorKey: _shellNavigatorDebugKey,
               routes: [
                 GoRoute(
                   name: 'debug',
