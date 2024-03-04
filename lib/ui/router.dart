@@ -1,7 +1,4 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_action_bank/ui/pages/debug.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -37,57 +34,7 @@ final router = GoRouter(
     GoRoute(
       name: 'home',
       path: '/home',
-      builder: (_, __) => AuthenticationWatcher(HomePage()),
+      builder: (_, __) => DebugPage(),
     ),
   ],
 );
-
-class AuthenticationWatcher extends StatefulWidget {
-  final Widget child;
-
-  AuthenticationWatcher(this.child);
-
-  @override
-  State<AuthenticationWatcher> createState() => AuthenticationWatcherState();
-}
-
-class AuthenticationWatcherState extends State<AuthenticationWatcher> {
-  StreamSubscription? authStreamListener;
-
-  @override
-  initState() {
-    super.initState();
-    authInit();
-  }
-
-  @override
-  dispose() {
-    print('disposing');
-    super.dispose();
-    authStreamListener?.cancel();
-  }
-
-  authInit() {
-    print('authInit');
-    authStreamListener =
-        FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      final authProvider = context.read<AuthenticationProvider>();
-      authProvider.setAuthentication(user);
-
-      if (user == null) {
-        print('User is currently signed out!');
-
-        context.go('/login');
-      } else {
-        print('User is signed in!');
-        print(user.displayName);
-        print(user.email);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
-}

@@ -62,12 +62,10 @@ class LoginFieldsState extends State<LoginFields> {
 
       final user = FirebaseAuth.instance.currentUser;
       authProvider.setAuthentication(user);
-      print('Logged in');
-      print('${credential.user?.email}');
 
       context.go('/home');
     } catch (e) {
-      print('Error logging in: $e');
+      // print('Error logging in: $e');
     }
   }
 }

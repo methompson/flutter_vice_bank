@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
+import 'package:flutter_action_bank/ui/components/loadable.dart';
 
 import 'package:flutter_action_bank/ui/components/page_container.dart';
 
-class HomePage extends StatelessWidget {
+class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('home page');
@@ -28,5 +30,12 @@ class HomePage extends StatelessWidget {
   logUserOut() async {
     await FirebaseAuth.instance.signOut();
     print('Logged out');
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AuthenticationWatcher(Loadable(Home()));
   }
 }

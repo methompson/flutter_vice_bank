@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
+import 'package:flutter_action_bank/global_state/messaging_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_action_bank/ui/components/bootstrapper.dart';
@@ -32,7 +33,8 @@ class ProvidersContainer extends StatelessWidget {
     // return _BootStrap();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (_) => MessagingProvider())
       ],
       child: _BootStrap(),
     );
@@ -43,9 +45,7 @@ class _BootStrap extends StatelessWidget {
   @override
   build(BuildContext context) {
     return BootStrapper(
-      app: CupertinoApp.router(
-        routerConfig: router,
-      ),
+      app: TheApp(),
       initFunction: initializeApp,
     );
   }
@@ -58,5 +58,14 @@ class _BootStrap extends StatelessWidget {
     );
 
     authProvider.setAuthentication(FirebaseAuth.instance.currentUser);
+  }
+}
+
+class TheApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoApp.router(
+      routerConfig: router,
+    );
   }
 }
