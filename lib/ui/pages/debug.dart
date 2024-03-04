@@ -3,30 +3,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_action_bank/data_models/messaging_data.dart';
 import 'package:flutter_action_bank/global_state/messaging_provider.dart';
-import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
-import 'package:flutter_action_bank/ui/components/loadable.dart';
-import 'package:flutter_action_bank/ui/components/page_container.dart';
 import 'package:provider/provider.dart';
 
 class DebugPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AuthenticationWatcher(Loadable(Debug()));
-  }
-}
-
-class Debug extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return PageContainer(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ShowLoadingScreenWithCancelButton(),
-          _ShowLoadingScreenWithAutoClose()
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _ShowLoadingScreenWithCancelButton(),
+        _ShowLoadingScreenWithAutoClose()
+      ],
     );
   }
 }

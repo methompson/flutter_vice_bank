@@ -69,3 +69,19 @@ class LoadingScreenWidgets extends StatelessWidget {
     );
   }
 }
+
+class Loadable extends StatelessWidget {
+  final Widget child;
+
+  Loadable(this.child);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        LoadingScreen(),
+      ],
+    );
+  }
+}

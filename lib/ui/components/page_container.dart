@@ -1,4 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
+import 'package:go_router/go_router.dart';
 
 class PageContainer extends StatelessWidget {
   final Widget child;
@@ -9,6 +12,40 @@ class PageContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       child: child,
+    );
+  }
+}
+
+class NavContainer extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
+
+  NavContainer({required this.navigationShell});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: AuthenticationWatcher(navigationShell),
+      bottomNavigationBar: CupertinoTabBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.settings),
+            label: 'Debug',
+          ),
+        ],
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) => _onTap(index),
+      ),
+    );
+  }
+
+  void _onTap(int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
     );
   }
 }

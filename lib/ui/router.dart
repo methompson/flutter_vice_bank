@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_action_bank/ui/components/loading_screen.dart';
+import 'package:flutter_action_bank/ui/components/page_container.dart';
 import 'package:flutter_action_bank/ui/pages/debug.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +12,14 @@ import 'package:flutter_action_bank/ui/pages/login.dart';
 
 import 'package:flutter_action_bank/global_state/authentication_provider.dart';
 
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorHomeKey =
+    GlobalKey<NavigatorState>(debugLabel: 'homePage');
+final _shellNavigatorDebugKey =
+    GlobalKey<NavigatorState>(debugLabel: 'debugPage');
+
 final router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
   redirect: (context, goRouterState) {
     final authProvider = context.read<AuthenticationProvider>();
 
@@ -21,20 +31,49 @@ final router = GoRouter(
   },
   initialLocation: '/',
   routes: [
-    GoRoute(
-      name: 'start',
-      path: '/',
-      builder: (_, __) => StartPage(),
-    ),
-    GoRoute(
-      name: 'login',
-      path: '/login',
-      builder: (_, __) => LoginPage(),
-    ),
-    GoRoute(
-      name: 'home',
-      path: '/home',
-      builder: (_, __) => DebugPage(),
+    // All Routes that need loading screens and snackbars
+    ShellRoute(
+      builder: (_, __, child) => Loadable(child),
+      routes: [
+        GoRoute(
+          name: 'start',
+          path: '/',
+          builder: (_, __) => StartPage(),
+        ),
+        GoRoute(
+          name: 'login',
+          path: '/login',
+          builder: (_, __) => LoginPage(),
+        ),
+        // Authentication Aware Routes & Menu Routes
+        StatefulShellRoute.indexedStack(
+          builder: (_, __, navigationShell) {
+            return NavContainer(navigationShell: navigationShell);
+          },
+          branches: [
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorHomeKey,
+              routes: [
+                GoRoute(
+                  name: 'home',
+                  path: '/home',
+                  builder: (_, __) => HomePage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorDebugKey,
+              routes: [
+                GoRoute(
+                  name: 'debug',
+                  path: '/debug',
+                  builder: (_, __) => DebugPage(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );
