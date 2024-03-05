@@ -25,7 +25,7 @@ final lightTheme = ThemeData.light().copyWith(
 final darkTheme = ThemeData.dark().copyWith(
   filledButtonTheme: FilledButtonThemeData(
     style: commonFilledButtonTheme.copyWith(
-      foregroundColor: MaterialStateProperty.all(Colors.black),
+      foregroundColor: MaterialStateProperty.all(Colors.grey[300]),
     ),
   ),
 );

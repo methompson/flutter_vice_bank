@@ -68,7 +68,7 @@ class _ShowLoadingScreenWithAutoClose extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DebugButton(
-      buttonText: 'Show Loading Screen with Auto Close',
+      buttonText: 'Show Loading Screen with Fast Auto Close',
       onPressed: () {
         final msgProvider = context.read<MessagingProvider>();
         msgProvider.setLoadingScreenData(
@@ -77,7 +77,7 @@ class _ShowLoadingScreenWithAutoClose extends StatelessWidget {
           ),
         );
 
-        Timer(Duration(seconds: 3), () {
+        Timer(Duration(milliseconds: 100), () {
           msgProvider.clearLoadingScreen();
         });
       },
