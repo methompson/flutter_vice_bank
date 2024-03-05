@@ -21,6 +21,9 @@ class LoadingScreen extends StatelessWidget {
           child: AnimatedSwitcher(
             duration: Duration(milliseconds: 250),
             child: child,
+            // transitionBuilder is used to fix a bug related to switching
+            // between widgets too fast.
+            // See: https://github.com/flutter/flutter/issues/121336
             transitionBuilder: (Widget child, Animation<double> animation) {
               return FadeTransition(
                 opacity: animation,
