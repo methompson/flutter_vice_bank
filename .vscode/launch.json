@@ -5,18 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "flutter_action_bank",
+      "name": "flutter_vice_bank",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "flutter_action_bank (profile mode)",
+      "name": "flutter_vice_bank (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "flutter_action_bank (release mode)",
+      "name": "flutter_vice_bank (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

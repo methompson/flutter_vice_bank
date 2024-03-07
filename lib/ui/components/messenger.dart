@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_action_bank/ui/components/loading_screen.dart';
+import 'package:flutter_vice_bank/ui/components/loading_screen.dart';
 
 class Messenger extends StatelessWidget {
   final Widget child;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_action_bank/data_models/messaging_data.dart';
-import 'package:flutter_action_bank/ui/components/snackbars.dart';
+import 'package:flutter_vice_bank/data_models/messaging_data.dart';
+import 'package:flutter_vice_bank/ui/components/snackbars.dart';
 
 final snackbarMessengerKey = GlobalKey<ScaffoldMessengerState>();
 

@@ -1,6 +1,6 @@
 {
-    "name": "flutter_action_bank",
-    "short_name": "flutter_action_bank",
+    "name": "flutter_vice_bank",
+    "short_name": "flutter_vice_bank",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
