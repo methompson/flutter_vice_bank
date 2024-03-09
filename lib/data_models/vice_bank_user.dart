@@ -3,19 +3,19 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 class ViceBankUser {
   final String _id;
   final String _name;
-  final String _currentTokens;
+  final num _currentTokens;
 
   ViceBankUser({
     required String id,
     required String name,
-    required String currentTokens,
+    required num currentTokens,
   })  : _id = id,
         _name = name,
         _currentTokens = currentTokens;
 
   String get id => _id;
   String get name => _name;
-  String get currentTokens => _currentTokens;
+  num get currentTokens => _currentTokens;
 
   Map<String, dynamic> toJson() {
     return {
@@ -26,11 +26,16 @@ class ViceBankUser {
   }
 
   factory ViceBankUser.fromJson(dynamic json) {
-    final jsonMap = isTypeError<Map>(json);
+    const errMsg = 'ViceBankUser.fromJson Failed:';
 
-    final id = isTypeError<String>(jsonMap['id']);
-    final name = isTypeError<String>(jsonMap['name']);
-    final currentTokens = isTypeError<String>(jsonMap['currentTokens']);
+    final jsonMap = isTypeError<Map>(json, message: '$errMsg root');
+
+    final id = isTypeError<String>(jsonMap['id'], message: '$errMsg id');
+    final name = isTypeError<String>(jsonMap['name'], message: '$errMsg name');
+    final currentTokens = isTypeError<num>(
+      jsonMap['currentTokens'],
+      message: '$errMsg currentTokens',
+    );
 
     return ViceBankUser(
       id: id,

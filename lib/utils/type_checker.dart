@@ -1,3 +1,5 @@
+import 'package:flutter_vice_bank/utils/exceptions.dart';
+
 T? isType<T>(dynamic input, T? defaultValue) {
   if (input is T) {
     return input;
@@ -6,10 +8,14 @@ T? isType<T>(dynamic input, T? defaultValue) {
   return defaultValue;
 }
 
-T isTypeError<T>(dynamic input, {Exception? exception}) {
+T isTypeError<T>(dynamic input, {Exception? exception, String? message}) {
   if (input is T) {
     return input;
   }
 
-  throw TypeError();
+  if (exception != null) {
+    throw exception;
+  }
+
+  throw TypeCheckException(message ?? 'Type check failed.');
 }
