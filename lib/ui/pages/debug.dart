@@ -12,6 +12,7 @@ import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
+import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
@@ -120,6 +121,8 @@ class _ViceBankUsersTest extends StatelessWidget {
       buttonText: 'Vice Bank Users Tests',
       onPressed: () async {
         try {
+          final vbp = context.read<ViceBankProvider>();
+
           final userToAdd = ViceBankUser(
             id: Uuid().v4(),
             name: 'Mat Thompson',
@@ -132,8 +135,9 @@ class _ViceBankUsersTest extends StatelessWidget {
 
           assert(addedUser.id != userToAdd.id);
 
-          final users = await apis.getViceBankUsers();
+          await vbp.getViceBankUsers();
 
+          final users = vbp.users;
           users.retainWhere((el) => el.id == addedUser.id);
 
           assert(users.length == 1);
