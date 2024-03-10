@@ -56,7 +56,7 @@ class Purchase {
       jsonMap['date'],
       message: '$errMsg date',
     );
-    final purchasedQuantity = isTypeError<double>(
+    final purchasedQuantity = isTypeError<num>(
       jsonMap['purchasedQuantity'],
       message: '$errMsg purchasedQuantity',
     );

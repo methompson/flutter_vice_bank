@@ -5,18 +5,18 @@ class DepositConversion {
   final String _userId;
   final String _name;
   final String _rateName;
-  final double _depositsPer;
-  final double _tokensPer;
-  final double _minDeposit;
+  final num _depositsPer;
+  final num _tokensPer;
+  final num _minDeposit;
 
   DepositConversion({
     required String id,
     required String userId,
     required String name,
     required String rateName,
-    required double depositsPer,
-    required double tokensPer,
-    required double minDeposit,
+    required num depositsPer,
+    required num tokensPer,
+    required num minDeposit,
   })  : _id = id,
         _userId = userId,
         _name = name,
@@ -29,9 +29,9 @@ class DepositConversion {
   String get userId => _userId;
   String get name => _name;
   String get rateName => _rateName;
-  double get depositsPer => _depositsPer;
-  double get tokensPer => _tokensPer;
-  double get minDeposit => _minDeposit;
+  num get depositsPer => _depositsPer;
+  num get tokensPer => _tokensPer;
+  num get minDeposit => _minDeposit;
 
   Map<String, dynamic> toJson() {
     return {
@@ -66,15 +66,15 @@ class DepositConversion {
       jsonMap['rateName'],
       message: '$errMsg rateName',
     );
-    final depositsPer = isTypeError<double>(
+    final depositsPer = isTypeError<num>(
       jsonMap['depositsPer'],
       message: '$errMsg depositsPer',
     );
-    final tokensPer = isTypeError<double>(
+    final tokensPer = isTypeError<num>(
       jsonMap['tokensPer'],
       message: '$errMsg tokensPer',
     );
-    final minDeposit = isTypeError<double>(
+    final minDeposit = isTypeError<num>(
       jsonMap['minDeposit'],
       message: '$errMsg minDeposit',
     );

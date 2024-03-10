@@ -22,7 +22,7 @@ class ProvidersContainer extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
-        ChangeNotifierProvider(create: (_) => MessagingProvider())
+        ChangeNotifierProvider(create: (_) => MessagingProvider.instance)
       ],
       child: _BootStrap(),
     );

@@ -7,7 +7,13 @@ final snackbarMessengerKey = GlobalKey<ScaffoldMessengerState>();
 class MessagingProvider extends ChangeNotifier {
   LoadingScreenData? _loadingScreenData;
 
+  static final MessagingProvider _instance = MessagingProvider._();
+
+  static MessagingProvider get instance => _instance;
+
   LoadingScreenData? get loadingScreenData => _loadingScreenData;
+
+  MessagingProvider._();
 
   void setLoadingScreenData(LoadingScreenData data) {
     _loadingScreenData = data;
