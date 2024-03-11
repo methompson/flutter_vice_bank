@@ -43,8 +43,6 @@ class PurchasePriceAPI extends APICommon {
 
     // TODO Log the errors
 
-    print(response);
-
     return purchasePrices;
   }
 
@@ -70,9 +68,6 @@ class PurchasePriceAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final addedPrice = PurchasePrice.fromJson(bodyJson['purchasePrice']);
-
-    print(response);
-    print(response.body);
 
     return addedPrice;
   }
@@ -100,9 +95,6 @@ class PurchasePriceAPI extends APICommon {
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final oldPrice = PurchasePrice.fromJson(bodyJson['purchasePrice']);
 
-    print(response);
-    print(response.body);
-
     return oldPrice;
   }
 
@@ -128,9 +120,6 @@ class PurchasePriceAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final deletedPrice = PurchasePrice.fromJson(bodyJson['purchasePrice']);
-
-    print(response);
-    print(response.body);
 
     return deletedPrice;
   }

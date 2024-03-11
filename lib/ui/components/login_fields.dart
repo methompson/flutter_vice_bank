@@ -59,35 +59,28 @@ class LoginFieldsState extends State<LoginFields> {
     final authProvider = context.read<AuthenticationProvider>();
     final msgProvider = context.read<MessagingProvider>();
 
-    print('loading started');
     msgProvider.setLoadingScreenData(
       LoadingScreenData(message: 'Logging in...'),
     );
 
     try {
-      print('signing in');
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      print('setting authentication');
       final user = FirebaseAuth.instance.currentUser;
       authProvider.setAuthentication(user);
 
       if (mounted) {
-        print('going to home');
         context.go('/home');
       }
     } catch (e) {
-      print('Error logging in: $e');
       msgProvider.showErrorSnackbar(
         'Error logging in: $e',
       );
     }
 
-    print('about to clear loading');
     msgProvider.clearLoadingScreen();
-    print('loading cleared');
   }
 }

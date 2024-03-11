@@ -4,11 +4,13 @@ import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 void main() {
   const id = 'id';
+  const userId = 'userId';
   const name = 'name';
   const currentTokens = 22.3;
 
   final validInput = {
     'id': id,
+    'userId': userId,
     'name': name,
     'currentTokens': currentTokens,
   };
@@ -18,6 +20,7 @@ void main() {
       test('should return a map with expected data', () {
         final viceBankUser = ViceBankUser(
           id: id,
+          userId: userId,
           name: name,
           currentTokens: currentTokens,
         );
@@ -30,6 +33,7 @@ void main() {
         () {
           final viceBankUser1 = ViceBankUser(
             id: id,
+            userId: userId,
             name: name,
             currentTokens: currentTokens,
           );
@@ -115,6 +119,18 @@ void main() {
             (e) => e is TypeCheckException && e.message.contains('root'),
           )),
         );
+      });
+    });
+
+    group('newUser', () {
+      test('should return a valid object', () {
+        final viceBankUser = ViceBankUser.newUser(
+          name: name,
+          currentTokens: currentTokens,
+        );
+
+        expect(viceBankUser.name, name);
+        expect(viceBankUser.currentTokens, currentTokens);
       });
     });
   });

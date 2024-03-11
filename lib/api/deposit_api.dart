@@ -44,8 +44,6 @@ class DepositAPI extends APICommon {
 
     // TODO Log the errors
 
-    print(response);
-
     return deposits;
   }
 
@@ -71,9 +69,6 @@ class DepositAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final addedDeposit = Deposit.fromJson(bodyJson['deposit']);
-
-    print(response);
-    print(response.body);
 
     return addedDeposit;
   }
@@ -101,9 +96,6 @@ class DepositAPI extends APICommon {
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final oldDeposit = Deposit.fromJson(bodyJson['deposit']);
 
-    print(response);
-    print(response.body);
-
     return oldDeposit;
   }
 
@@ -129,9 +121,6 @@ class DepositAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final deletedDeposit = Deposit.fromJson(bodyJson['deposit']);
-
-    print(response);
-    print(response.body);
 
     return deletedDeposit;
   }

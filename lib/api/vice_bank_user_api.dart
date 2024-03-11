@@ -39,8 +39,6 @@ class ViceBankUserAPI extends APICommon {
 
     // TODO Log the errors
 
-    print(response);
-
     return viceBankUsers;
   }
 
@@ -66,9 +64,6 @@ class ViceBankUserAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final addedUser = ViceBankUser.fromJson(bodyJson['user']);
-
-    print(response);
-    print(response.body);
 
     return addedUser;
   }
@@ -96,9 +91,6 @@ class ViceBankUserAPI extends APICommon {
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final oldUser = ViceBankUser.fromJson(bodyJson['user']);
 
-    print(response);
-    print(response.body);
-
     return oldUser;
   }
 
@@ -111,7 +103,7 @@ class ViceBankUserAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'userId': userId,
+      'viceBankUserId': userId,
     };
 
     final response = await httpService.postJson(
@@ -124,9 +116,6 @@ class ViceBankUserAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final deletedUser = ViceBankUser.fromJson(bodyJson['user']);
-
-    print(response);
-    print(response.body);
 
     return deletedUser;
   }

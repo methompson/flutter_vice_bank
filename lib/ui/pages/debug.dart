@@ -120,11 +120,11 @@ class _ViceBankUsersTest extends StatelessWidget {
     return DebugButton(
       buttonText: 'Vice Bank Users Tests',
       onPressed: () async {
+        final msgProvider = context.read<MessagingProvider>();
         try {
           final vbp = context.read<ViceBankProvider>();
 
-          final userToAdd = ViceBankUser(
-            id: Uuid().v4(),
+          final userToAdd = ViceBankUser.newUser(
             name: 'Mat Thompson',
             currentTokens: 0,
           );
@@ -157,9 +157,9 @@ class _ViceBankUsersTest extends StatelessWidget {
           assert(deletedUser.id == addedUser.id);
           assert(deletedUser.name == userToUpdate.name);
 
-          print('done');
+          msgProvider.showSuccessSnackbar('Vice Bank User Tests Passed');
         } catch (e) {
-          print(e);
+          msgProvider.showErrorSnackbar(e.toString());
         }
       },
     );
@@ -172,6 +172,8 @@ class _DepositApiTest extends StatelessWidget {
     return DebugButton(
       buttonText: 'Deposit Tests',
       onPressed: () async {
+        final msgProvider = context.read<MessagingProvider>();
+
         try {
           final depositToAdd = Deposit(
             id: Uuid().v4(),
@@ -189,8 +191,6 @@ class _DepositApiTest extends StatelessWidget {
           assert(addedDeposit.id != depositToAdd.id);
 
           final deposits = await apis.getDeposits('userId');
-
-          print('Total Deposits: ${deposits.length}');
 
           deposits.retainWhere((el) => el.id == addedDeposit.id);
 
@@ -214,8 +214,10 @@ class _DepositApiTest extends StatelessWidget {
           assert(
             deletedDeposit.depositQuantity == depositToUpdate.depositQuantity,
           );
+
+          msgProvider.showSuccessSnackbar('Deposit Tests Passed');
         } catch (e) {
-          print(e);
+          msgProvider.showErrorSnackbar(e.toString());
         }
       },
     );
@@ -228,6 +230,8 @@ class _DepositConversionApiTest extends StatelessWidget {
     return DebugButton(
       buttonText: 'Deposit Conversion Tests',
       onPressed: () async {
+        final msgProvider = context.read<MessagingProvider>();
+
         try {
           final depositConversionToAdd = DepositConversion(
             id: Uuid().v4(),
@@ -264,9 +268,9 @@ class _DepositConversionApiTest extends StatelessWidget {
 
           assert(deletedDc.depositsPer == dcToUpdate.depositsPer);
 
-          print('done');
+          msgProvider.showSuccessSnackbar('Deposit Conversion Tests Passed');
         } catch (e) {
-          print(e);
+          msgProvider.showErrorSnackbar(e.toString());
         }
       },
     );
@@ -279,6 +283,8 @@ class _PurchaseApiTest extends StatelessWidget {
     return DebugButton(
       buttonText: 'Purchase Tests',
       onPressed: () async {
+        final msgProvider = context.read<MessagingProvider>();
+
         try {
           final purchase = Purchase(
             id: Uuid().v4(),
@@ -316,9 +322,9 @@ class _PurchaseApiTest extends StatelessWidget {
           assert(deletedPurchase.purchasedQuantity ==
               purchaseToUpdate.purchasedQuantity);
 
-          print('done');
+          msgProvider.showSuccessSnackbar('Purchase Tests Passed');
         } catch (e) {
-          print(e);
+          msgProvider.showErrorSnackbar(e.toString());
         }
       },
     );
@@ -331,6 +337,8 @@ class _PurchasePriceApiTest extends StatelessWidget {
     return DebugButton(
       buttonText: 'Purchase Price Tests',
       onPressed: () async {
+        final msgProvider = context.read<MessagingProvider>();
+
         try {
           final price = PurchasePrice(
             id: Uuid().v4(),
@@ -365,9 +373,9 @@ class _PurchasePriceApiTest extends StatelessWidget {
           assert(deleted.id == addedPrice.id);
           assert(deleted.price == updatedPrice.price);
 
-          print('done');
+          msgProvider.showSuccessSnackbar('Purchase Price Tests Passed');
         } catch (e) {
-          print(e);
+          msgProvider.showErrorSnackbar(e.toString());
         }
       },
     );
