@@ -67,7 +67,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '731033508145',
     projectId: 'methompson-site',
     storageBucket: 'methompson-site.appspot.com',
-    iosBundleId: 'com.example.flutterActionBank',
+    iosBundleId: 'com.example.flutterViceBank',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '731033508145',
     projectId: 'methompson-site',
     storageBucket: 'methompson-site.appspot.com',
-    iosBundleId: 'com.example.flutterActionBank.RunnerTests',
+    iosBundleId: 'com.example.flutterViceBank.RunnerTests',
   );
 }

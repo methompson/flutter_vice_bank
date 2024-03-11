@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_action_bank/data_models/messaging_data.dart';
-import 'package:flutter_action_bank/ui/components/buttons.dart';
+import 'package:flutter_vice_bank/data_models/messaging_data.dart';
+import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter_action_bank/global_state/messaging_provider.dart';
+import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override
@@ -21,6 +21,9 @@ class LoadingScreen extends StatelessWidget {
           child: AnimatedSwitcher(
             duration: Duration(milliseconds: 250),
             child: child,
+            // transitionBuilder is used to fix a bug related to switching
+            // between widgets too fast.
+            // See: https://github.com/flutter/flutter/issues/121336
             transitionBuilder: (Widget child, Animation<double> animation) {
               return FadeTransition(
                 opacity: animation,

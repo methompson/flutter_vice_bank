@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_action_bank/ui/components/buttons.dart';
+import 'package:flutter_vice_bank/ui/components/buttons.dart';
 
 class HomePage extends StatelessWidget {
   @override

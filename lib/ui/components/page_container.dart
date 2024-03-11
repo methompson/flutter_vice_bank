@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_action_bank/ui/components/authentication_watcher.dart';
+import 'package:flutter_vice_bank/ui/components/authentication_watcher.dart';
 
 class PageContainer extends StatelessWidget {
   final Widget child;

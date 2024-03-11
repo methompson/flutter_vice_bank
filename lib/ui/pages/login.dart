@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:flutter_action_bank/ui/components/login_fields.dart';
-import 'package:flutter_action_bank/ui/components/messenger.dart';
-import 'package:flutter_action_bank/ui/components/page_container.dart';
+import 'package:flutter_vice_bank/ui/components/login_fields.dart';
+import 'package:flutter_vice_bank/ui/components/messenger.dart';
+import 'package:flutter_vice_bank/ui/components/page_container.dart';
 
 class Login extends StatelessWidget {
   @override

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_action_bank/global_state/authentication_provider.dart';
+import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 
 class AuthenticationWatcher extends StatefulWidget {
   final Widget child;

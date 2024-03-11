@@ -1,15 +1,15 @@
-import 'package:flutter_action_bank/ui/components/messenger.dart';
-import 'package:flutter_action_bank/ui/components/page_container.dart';
-import 'package:flutter_action_bank/ui/pages/debug.dart';
+import 'package:flutter_vice_bank/ui/components/messenger.dart';
+import 'package:flutter_vice_bank/ui/components/page_container.dart';
+import 'package:flutter_vice_bank/ui/pages/debug.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 // Pages
-import 'package:flutter_action_bank/ui/pages/start.dart';
-import 'package:flutter_action_bank/ui/pages/home.dart';
-import 'package:flutter_action_bank/ui/pages/login.dart';
+import 'package:flutter_vice_bank/ui/pages/start.dart';
+import 'package:flutter_vice_bank/ui/pages/home.dart';
+import 'package:flutter_vice_bank/ui/pages/login.dart';
 
-import 'package:flutter_action_bank/global_state/authentication_provider.dart';
+import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 
 // final _rootNavigatorKey = GlobalKey<NavigatorState>();
 // final _shellNavigatorHomeKey =
