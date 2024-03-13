@@ -1,6 +1,4 @@
-import 'package:flutter_vice_bank/ui/components/messenger.dart';
-import 'package:flutter_vice_bank/ui/components/page_container.dart';
-import 'package:flutter_vice_bank/ui/pages/debug.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_vice_bank/ui/pages/start.dart';
 import 'package:flutter_vice_bank/ui/pages/home.dart';
 import 'package:flutter_vice_bank/ui/pages/login.dart';
+import 'package:flutter_vice_bank/ui/pages/deposits.dart';
+import 'package:flutter_vice_bank/ui/pages/settings.dart';
+import 'package:flutter_vice_bank/ui/pages/withdrawals.dart';
+
+import 'package:flutter_vice_bank/ui/components/messenger.dart';
+import 'package:flutter_vice_bank/ui/components/page_container.dart';
 
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 
@@ -45,8 +49,19 @@ final router = GoRouter(
         ),
         // Authentication Aware Routes & Menu Routes
         StatefulShellRoute.indexedStack(
-          builder: (_, __, navigationShell) {
-            return NavContainer(navigationShell: navigationShell);
+          builder: (_, routerState, navigationShell) {
+            final fullPath = routerState.fullPath;
+            CupertinoNavigationBar? appBar;
+            if (fullPath != null && fullPath.contains('settings')) {
+              appBar = CupertinoNavigationBar(
+                middle: Text('Settings'),
+              );
+            }
+
+            return NavContainer(
+              navigationShell: navigationShell,
+              appBar: appBar,
+            );
           },
           branches: [
             StatefulShellBranch(
@@ -61,9 +76,27 @@ final router = GoRouter(
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  name: 'debug',
-                  path: '/debug',
-                  builder: (_, __) => DebugPage(),
+                  name: 'deposits',
+                  path: '/deposits',
+                  builder: (_, __) => DepositsPage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  name: 'withdrawals',
+                  path: '/withdrawals',
+                  builder: (_, __) => WithdrawalsPage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  name: 'settings',
+                  path: '/settings',
+                  builder: (_, __) => SettingsPage(),
                 ),
               ],
             ),

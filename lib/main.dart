@@ -42,12 +42,19 @@ class _BootStrap extends StatelessWidget {
 
   Future<void> initializeApp(BuildContext context) async {
     final authProvider = context.read<AuthenticationProvider>();
+    final vbProvider = context.read<ViceBankProvider>();
 
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    authProvider.setAuthentication(FirebaseAuth.instance.currentUser);
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    authProvider.setAuthentication(currentUser);
+
+    if (currentUser != null) {
+      await vbProvider.init();
+    }
   }
 }
 

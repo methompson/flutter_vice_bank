@@ -20,7 +20,7 @@ import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:uuid/uuid.dart';
 
-class DebugPage extends StatelessWidget {
+class DebugButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -51,12 +51,11 @@ class DebugButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(10),
-      child: BasicTextButton(
-        onPressed: onPressed,
-        text: buttonText,
-      ),
+    return BasicTextButton(
+      onPressed: onPressed,
+      text: buttonText,
+      topMargin: 10,
+      bottomMargin: 10,
     );
   }
 }

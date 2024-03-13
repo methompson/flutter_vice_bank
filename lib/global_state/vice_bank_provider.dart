@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
@@ -12,10 +17,14 @@ import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 import 'package:flutter_vice_bank/utils/list_to_map.dart';
 
+const viceBankUsersKey = 'vice_bank_users_key';
+const viceBankCurrentUserKey = 'vice_bank_current_user_key';
+
 class ViceBankProvider extends ChangeNotifier {
   Map<String, ViceBankUser> _users = {};
 
   ViceBankUser? _currentUser;
+  ViceBankUser? get currentUser => _currentUser;
 
   List<PurchasePrice> _purchasePrices = [];
   List<Purchase> _purchases = [];
@@ -70,22 +79,118 @@ class ViceBankProvider extends ChangeNotifier {
     _depositAPI = api;
   }
 
-  void selectUser(String? userId) {
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    _users = {};
+    _currentUser = null;
+
+    await prefs.remove(viceBankUsersKey);
+    await prefs.remove(viceBankCurrentUserKey);
+  }
+
+  Future<void> init() async {
+    try {
+      final users = await getUsersFromSharedPrefs();
+
+      _users = listToMap(users, (u) => u.id);
+
+      _currentUser = await getCurrentUserFromSharedPrefs();
+    } catch (e) {
+      // print('Error getting users from prefs: $e');
+    }
+  }
+
+  Future<ViceBankUser?> getCurrentUserFromSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final currentUserString = prefs.getString(viceBankCurrentUserKey);
+
+    if (currentUserString == null) {
+      return null;
+    }
+
+    final userRaw = jsonDecode(currentUserString);
+
+    final user = ViceBankUser.fromJson(userRaw);
+
+    return user;
+  }
+
+  Future<List<ViceBankUser>> getUsersFromSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final usersString = prefs.getString(viceBankUsersKey);
+
+    if (usersString == null) {
+      return [];
+    }
+
+    final List<ViceBankUser> users = [];
+
+    final usersRaw = jsonDecode(usersString);
+
+    final usersList = isTypeError<List>(usersRaw);
+
+    for (final u in usersList) {
+      final user = ViceBankUser.fromJson(u);
+      users.add(user);
+    }
+
+    return users;
+  }
+
+  void selectUser(String? userId) async {
     if (userId == null) {
       _currentUser = null;
     } else {
       _currentUser = _users[userId];
     }
 
+    final prefs = await SharedPreferences.getInstance();
+    final cu = _currentUser;
+    if (cu == null) {
+      await prefs.setString(viceBankCurrentUserKey, '');
+    } else {
+      await prefs.setString(
+        viceBankCurrentUserKey,
+        jsonEncode(cu.toJson()),
+      );
+    }
+
     notifyListeners();
+  }
+
+  // Vice Bank User Functions
+  Future<void> saveUsersToSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(viceBankUsersKey, jsonEncode(users));
   }
 
   Future<void> getViceBankUsers() async {
     final users = await viceBankUserApi.getViceBankUsers();
 
     _users = listToMap(users, (ViceBankUser u) => u.id);
+
+    await saveUsersToSharedPrefs();
+
+    notifyListeners();
   }
 
+  Future<ViceBankUser> createUser(String name) async {
+    final newUser = ViceBankUser.newUser(name: name, currentTokens: 0);
+
+    final result = await viceBankUserApi.addViceBankUser(newUser);
+    _users[result.id] = result;
+
+    await saveUsersToSharedPrefs();
+
+    notifyListeners();
+
+    return result;
+  }
+
+  // Purchase Price Functions
   Future<void> getPurchasePrices() async {
     final cu = _currentUser;
     if (cu == null) {
@@ -95,6 +200,7 @@ class ViceBankProvider extends ChangeNotifier {
     _purchasePrices = await purchasePriceApi.getPurchasePrices(cu.id);
   }
 
+  // Purchase Functions
   Future<void> getPurchases() async {
     final cu = _currentUser;
     if (cu == null) {
@@ -104,6 +210,7 @@ class ViceBankProvider extends ChangeNotifier {
     _purchases = await purchaseApi.getPurchases(cu.id);
   }
 
+  // Deposit Conversion Functions
   Future<void> getDepositConversions() async {
     final cu = _currentUser;
     if (cu == null) {
@@ -114,6 +221,7 @@ class ViceBankProvider extends ChangeNotifier {
         await depositConversionApi.getDepositConversions(cu.id);
   }
 
+  // Deposit Functions
   Future<void> getDeposits() async {
     final cu = _currentUser;
     if (cu == null) {

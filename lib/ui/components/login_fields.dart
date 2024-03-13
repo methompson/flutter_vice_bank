@@ -1,9 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_vice_bank/data_models/messaging_data.dart';
-import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+
+import 'package:flutter_vice_bank/data_models/messaging_data.dart';
+import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
+import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 
@@ -26,18 +28,25 @@ class LoginFieldsState extends State<LoginFields> {
       children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: CupertinoTextField(
+          child: TextField(
             controller: _emailController,
-            placeholder: 'Email',
+            // placeholder: 'Email',
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Email',
+            ),
             keyboardType: TextInputType.emailAddress,
             autocorrect: false,
           ),
         ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: CupertinoTextField(
+          child: TextField(
             controller: _passwordController,
-            placeholder: 'Password',
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Password',
+            ),
             obscureText: true,
           ),
         ),
@@ -58,19 +67,21 @@ class LoginFieldsState extends State<LoginFields> {
 
     final authProvider = context.read<AuthenticationProvider>();
     final msgProvider = context.read<MessagingProvider>();
+    final vbProvider = context.read<ViceBankProvider>();
 
     msgProvider.setLoadingScreenData(
       LoadingScreenData(message: 'Logging in...'),
     );
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      // Authenticate the user
+      await authProvider.logUserIn(email, password);
+
+      msgProvider.setLoadingScreenData(
+        LoadingScreenData(message: 'Getting user data...'),
       );
 
-      final user = FirebaseAuth.instance.currentUser;
-      authProvider.setAuthentication(user);
+      await vbProvider.getViceBankUsers();
 
       if (mounted) {
         context.go('/home');
