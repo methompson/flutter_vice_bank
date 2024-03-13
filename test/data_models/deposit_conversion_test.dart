@@ -7,7 +7,7 @@ void main() {
   const id = 'id';
   const userId = 'userId';
   const name = 'name';
-  const rateName = 'rateName';
+  const conversionUnit = 'conversionUnit';
   const depositsPer = 1.0;
   const tokensPer = 2.0;
   const minDeposit = 3.0;
@@ -16,7 +16,7 @@ void main() {
     'id': id,
     'userId': userId,
     'name': name,
-    'rateName': rateName,
+    'conversionUnit': conversionUnit,
     'depositsPer': depositsPer,
     'tokensPer': tokensPer,
     'minDeposit': minDeposit,
@@ -28,7 +28,7 @@ void main() {
         id: id,
         userId: userId,
         name: name,
-        rateName: rateName,
+        conversionUnit: conversionUnit,
         depositsPer: depositsPer,
         tokensPer: tokensPer,
         minDeposit: minDeposit,
@@ -44,7 +44,7 @@ void main() {
           id: id,
           userId: userId,
           name: name,
-          rateName: rateName,
+          conversionUnit: conversionUnit,
           depositsPer: depositsPer,
           tokensPer: tokensPer,
           minDeposit: minDeposit,
@@ -95,11 +95,12 @@ void main() {
         )),
       );
       input = {...validInput};
-      input.remove('rateName');
+      input.remove('conversionUnit');
       expect(
         () => DepositConversion.fromJson(input),
         throwsA(predicate(
-          (e) => e is TypeCheckException && e.message.contains('rateName'),
+          (e) =>
+              e is TypeCheckException && e.message.contains('conversionUnit'),
         )),
       );
       input = {...validInput};

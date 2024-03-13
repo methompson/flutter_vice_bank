@@ -37,6 +37,12 @@ class SettingsContent extends StatelessWidget {
           //   style: Theme.of(context).copyWith().textTheme.bodyLarge,
           // ),
           BasicBigTextButton(
+            onPressed: () => clearCache(context),
+            text: 'Clear Cache',
+            topMargin: 10,
+            bottomMargin: 10,
+          ),
+          BasicBigTextButton(
             onPressed: () => logUserOut(context),
             text: 'Logout',
             topMargin: 10,
@@ -57,6 +63,18 @@ class SettingsContent extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> clearCache(BuildContext context) async {
+    final vbProvider = context.read<ViceBankProvider>();
+    final msgProvider = context.read<MessagingProvider>();
+
+    try {
+      await vbProvider.clearCache();
+      await vbProvider.getViceBankUsers();
+    } catch (e) {
+      msgProvider.showErrorSnackbar(e.toString());
+    }
   }
 
   logUserOut(BuildContext context) async {

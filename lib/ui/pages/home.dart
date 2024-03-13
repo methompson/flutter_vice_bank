@@ -10,14 +10,16 @@ import 'package:flutter_vice_bank/ui/components/users/no_user_selected.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Selector<ViceBankProvider, ViceBankUser?>(
-      selector: (_, provider) => provider.currentUser,
-      builder: (context, currentUser, __) {
-        final widget = currentUser == null ? NoUserSelected() : UserPage();
-        return CenteredFullSizeContainer(
-          child: widget,
-        );
-      },
+    return SafeArea(
+      child: Selector<ViceBankProvider, ViceBankUser?>(
+        selector: (_, provider) => provider.currentUser,
+        builder: (context, currentUser, __) {
+          final widget = currentUser == null ? NoUserSelected() : UserPage();
+          return CenteredFullSizeContainer(
+            child: widget,
+          );
+        },
+      ),
     );
   }
 }
@@ -45,7 +47,7 @@ class NameSection extends StatelessWidget {
 
     return Container(
       color: Colors.redAccent,
-      margin: EdgeInsets.only(top: 30, bottom: 10),
+      // margin: EdgeInsets.only(top: 30, bottom: 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

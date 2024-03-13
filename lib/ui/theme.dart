@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-final seedColor = Colors.redAccent;
+const seedColor = Colors.redAccent;
 
 final lightColorScheme = ColorScheme.fromSeed(
   seedColor: seedColor,
@@ -68,13 +68,7 @@ final lightTheme = ThemeData.light().copyWith(
   ),
   colorScheme: lightColorScheme,
   filledButtonTheme: FilledButtonThemeData(
-    style: commonFilledButtonStyle.copyWith(
-      textStyle: MaterialStateProperty.all(
-        TextStyle(
-          color: lightColorScheme.onPrimary,
-        ),
-      ),
-    ),
+    style: commonFilledButtonStyle,
   ),
   textTheme: lightTextTheme,
 );
@@ -86,6 +80,8 @@ final darkTheme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: lightColorScheme.background,
   ),
   colorScheme: darkColorScheme,
-  filledButtonTheme: FilledButtonThemeData(style: commonFilledButtonStyle),
+  filledButtonTheme: FilledButtonThemeData(
+    style: commonFilledButtonStyle,
+  ),
   textTheme: darkTextTheme,
 );

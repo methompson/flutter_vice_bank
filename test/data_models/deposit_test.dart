@@ -9,6 +9,7 @@ void main() {
   const depositQuantity = 1;
   const conversionRate = 2.1;
   const depositConversionName = 'depositConversionName';
+  const conversionUnit = 'minutes';
 
   const dateStr = '2021-01-01T00:00:00.000Z';
   final date = DateTime.parse(dateStr);
@@ -20,6 +21,7 @@ void main() {
     'depositQuantity': depositQuantity,
     'conversionRate': conversionRate,
     'depositConversionName': depositConversionName,
+    'conversionUnit': conversionUnit,
   };
 
   group('Deposit', () {
@@ -32,6 +34,7 @@ void main() {
           depositQuantity: depositQuantity,
           conversionRate: conversionRate,
           depositConversionName: depositConversionName,
+          conversionUnit: conversionUnit,
         );
 
         expect(deposit.toJson(), validInput);
@@ -47,6 +50,7 @@ void main() {
             depositQuantity: depositQuantity,
             conversionRate: conversionRate,
             depositConversionName: depositConversionName,
+            conversionUnit: conversionUnit,
           );
 
           final deposit2 = Deposit.fromJson(deposit1.toJson());

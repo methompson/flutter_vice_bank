@@ -1,4 +1,5 @@
 import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:uuid/uuid.dart';
 
 class PurchasePrice {
   final String _id;
@@ -29,6 +30,18 @@ class PurchasePrice {
       'price': _price,
     };
   }
+
+  factory PurchasePrice.newPrice({
+    required String userId,
+    required String name,
+    required num price,
+  }) =>
+      PurchasePrice(
+        id: Uuid().v4(),
+        userId: userId,
+        name: name,
+        price: price,
+      );
 
   factory PurchasePrice.fromJson(dynamic json) {
     const errMsg = 'PurchasePrice.fromJson Failed:';

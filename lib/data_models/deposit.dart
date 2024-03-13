@@ -1,4 +1,5 @@
 import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:uuid/uuid.dart';
 
 class Deposit {
   final String _id;
@@ -7,6 +8,7 @@ class Deposit {
   final num _depositQuantity;
   final num _conversionRate;
   final String _depositConversionName;
+  final String _conversionUnit;
 
   Deposit({
     required String id,
@@ -15,12 +17,14 @@ class Deposit {
     required num depositQuantity,
     required num conversionRate,
     required String depositConversionName,
+    required String conversionUnit,
   })  : _id = id,
         _userId = userId,
         _date = date,
         _depositQuantity = depositQuantity,
         _conversionRate = conversionRate,
-        _depositConversionName = depositConversionName;
+        _depositConversionName = depositConversionName,
+        _conversionUnit = conversionUnit;
 
   String get id => _id;
   String get userId => _userId;
@@ -28,6 +32,11 @@ class Deposit {
   num get depositQuantity => _depositQuantity;
   num get conversionRate => _conversionRate;
   String get depositConversionName => _depositConversionName;
+  String get conversionUnit => _conversionUnit;
+
+  num get tokensEarned {
+    return _depositQuantity * _conversionRate;
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -37,6 +46,7 @@ class Deposit {
       'depositQuantity': _depositQuantity,
       'conversionRate': _conversionRate,
       'depositConversionName': _depositConversionName,
+      'conversionUnit': _conversionUnit,
     };
   }
 
@@ -68,6 +78,10 @@ class Deposit {
       jsonMap['depositConversionName'],
       message: '$errMsg depositConversionName',
     );
+    final conversionUnit = isTypeError<String>(
+      jsonMap['conversionUnit'],
+      message: '$errMsg conversionUnit',
+    );
 
     final date = DateTime.parse(dateString);
 
@@ -78,6 +92,25 @@ class Deposit {
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
       depositConversionName: depositConversionName,
+      conversionUnit: conversionUnit,
+    );
+  }
+
+  factory Deposit.newDeposit({
+    required String userId,
+    required num depositQuantity,
+    required num conversionRate,
+    required String depositConversionName,
+    required String conversionUnit,
+  }) {
+    return Deposit(
+      id: Uuid().v4(),
+      userId: userId,
+      date: DateTime.now(),
+      depositQuantity: depositQuantity,
+      conversionRate: conversionRate,
+      depositConversionName: depositConversionName,
+      conversionUnit: conversionUnit,
     );
   }
 }

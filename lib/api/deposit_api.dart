@@ -5,6 +5,16 @@ import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
+class DepositResponse {
+  final Deposit deposit;
+  final num currentTokens;
+
+  DepositResponse({
+    required this.deposit,
+    required this.currentTokens,
+  });
+}
+
 class DepositAPI extends APICommon {
   // TODO use page and pagination
   Future<List<Deposit>> getDeposits(String userId) async {
@@ -47,7 +57,7 @@ class DepositAPI extends APICommon {
     return deposits;
   }
 
-  Future<Deposit> addDeposit(Deposit deposit) async {
+  Future<DepositResponse> addDeposit(Deposit deposit) async {
     final uri = Uri.http(baseDomain, '$baseApiUrl/addDeposit');
     final token = await getAuthorizationToken();
 
@@ -69,8 +79,12 @@ class DepositAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final addedDeposit = Deposit.fromJson(bodyJson['deposit']);
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return addedDeposit;
+    return DepositResponse(
+      deposit: addedDeposit,
+      currentTokens: currentTokens,
+    );
   }
 
   Future<Deposit> updateDeposit(Deposit deposit) async {

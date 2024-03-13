@@ -174,22 +174,30 @@ class _DepositApiTest extends StatelessWidget {
         final msgProvider = context.read<MessagingProvider>();
 
         try {
-          final depositToAdd = Deposit(
-            id: Uuid().v4(),
-            userId: 'userId',
-            date: DateTime.now(),
+          final userToAdd = ViceBankUser.newUser(
+            name: 'Mat Thompson',
+            currentTokens: 0,
+          );
+
+          final vbApi = ViceBankUserAPI();
+
+          final addedUser = await vbApi.addViceBankUser(userToAdd);
+
+          final depositToAdd = Deposit.newDeposit(
+            userId: addedUser.id,
             depositQuantity: 1.0,
             conversionRate: 1.0,
             depositConversionName: 'depositConversionName',
+            conversionUnit: 'minutes',
           );
 
           final apis = DepositAPI();
 
-          final addedDeposit = await apis.addDeposit(depositToAdd);
+          final addedDeposit = (await apis.addDeposit(depositToAdd)).deposit;
 
           assert(addedDeposit.id != depositToAdd.id);
 
-          final deposits = await apis.getDeposits('userId');
+          final deposits = await apis.getDeposits(addedUser.id);
 
           deposits.retainWhere((el) => el.id == addedDeposit.id);
 
@@ -215,6 +223,8 @@ class _DepositApiTest extends StatelessWidget {
           );
 
           msgProvider.showSuccessSnackbar('Deposit Tests Passed');
+
+          await vbApi.deleteViceBankUser(addedUser.id);
         } catch (e) {
           msgProvider.showErrorSnackbar(e.toString());
         }
@@ -232,11 +242,10 @@ class _DepositConversionApiTest extends StatelessWidget {
         final msgProvider = context.read<MessagingProvider>();
 
         try {
-          final depositConversionToAdd = DepositConversion(
-            id: Uuid().v4(),
+          final depositConversionToAdd = DepositConversion.newConversion(
             userId: 'userId',
             name: 'name',
-            rateName: 'rateName',
+            conversionUnit: 'conversionUnit',
             depositsPer: 1.0,
             tokensPer: 2.0,
             minDeposit: 3.0,
@@ -285,28 +294,45 @@ class _PurchaseApiTest extends StatelessWidget {
         final msgProvider = context.read<MessagingProvider>();
 
         try {
-          final purchase = Purchase(
-            id: Uuid().v4(),
-            userId: 'userId',
+          final userToAdd = ViceBankUser.newUser(
+            name: 'Mat Thompson',
+            currentTokens: 0,
+          );
+
+          final vbApi = ViceBankUserAPI();
+
+          final addedUser = await vbApi.addViceBankUser(userToAdd);
+
+          final depositToAdd = Deposit.newDeposit(
+            userId: addedUser.id,
+            depositQuantity: 1.0,
+            conversionRate: 1.0,
+            depositConversionName: 'depositConversionName',
+            conversionUnit: 'minutes',
+          );
+
+          await DepositAPI().addDeposit(depositToAdd);
+
+          final purchase = Purchase.newPurchase(
+            userId: addedUser.id,
             purchasePriceId: 'abcd',
-            date: DateTime.now(),
-            purchasedQuantity: 1.0,
+            purchasedQuantity: 1,
           );
 
           final api = PurchaseAPI();
 
-          final addedPurchase = await api.addPurchase(purchase);
+          final addedPurchase = (await api.addPurchase(purchase)).purchase;
 
           assert(purchase.id != addedPurchase.id);
 
-          final purchases = await api.getPurchases('userId');
+          final purchases = await api.getPurchases(addedUser.id);
           purchases.retainWhere((el) => el.id == addedPurchase.id);
 
           assert(purchases.length == 1);
 
           final purchaseToUpdate = Purchase.fromJson({
             ...addedPurchase.toJson(),
-            'purchasedQuantity': 2.0,
+            'purchasedQuantity': 2,
           });
 
           final updatedPurchase = await api.updatePurchase(purchaseToUpdate);
@@ -322,6 +348,8 @@ class _PurchaseApiTest extends StatelessWidget {
               purchaseToUpdate.purchasedQuantity);
 
           msgProvider.showSuccessSnackbar('Purchase Tests Passed');
+
+          await vbApi.deleteViceBankUser(addedUser.id);
         } catch (e) {
           msgProvider.showErrorSnackbar(e.toString());
         }
@@ -339,8 +367,7 @@ class _PurchasePriceApiTest extends StatelessWidget {
         final msgProvider = context.read<MessagingProvider>();
 
         try {
-          final price = PurchasePrice(
-            id: Uuid().v4(),
+          final price = PurchasePrice.newPrice(
             userId: 'userId',
             name: 'name',
             price: 1.0,

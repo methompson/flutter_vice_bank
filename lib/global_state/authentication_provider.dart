@@ -5,6 +5,7 @@ class AuthenticationProvider extends ChangeNotifier {
   User? _authenticatedUser;
 
   bool get isAuthenticated => _authenticatedUser != null;
+  User? get authenticatedUser => _authenticatedUser;
 
   void setAuthentication(User? user) {
     _authenticatedUser = user;

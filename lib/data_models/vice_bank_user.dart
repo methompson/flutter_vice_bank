@@ -31,6 +31,11 @@ class ViceBankUser {
     };
   }
 
+  ViceBankUser copyWith(Map<String, dynamic> input) => ViceBankUser.fromJson({
+        ...toJson(),
+        ...input,
+      });
+
   factory ViceBankUser.newUser({
     required String name,
     required num currentTokens,

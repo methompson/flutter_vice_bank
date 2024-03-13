@@ -36,17 +36,18 @@ class SelectUser extends StatelessWidget {
                 openCreateUserDialog(context);
               },
             ),
-            BasicBigTextButton(
-              text: 'Deselect User',
-              topMargin: 20,
-              allPadding: 10,
-              onPressed: () {
-                context.read<ViceBankProvider>().selectUser(null);
-                if (inModal) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
+            if (users.isNotEmpty)
+              BasicBigTextButton(
+                text: 'Deselect User',
+                topMargin: 20,
+                allPadding: 10,
+                onPressed: () {
+                  context.read<ViceBankProvider>().selectUser(null);
+                  if (inModal) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
           ],
         );
       },

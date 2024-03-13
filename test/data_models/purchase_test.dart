@@ -7,7 +7,7 @@ void main() {
   const id = 'id';
   const userId = 'userId';
   const purchasePriceId = 'purchasePriceId';
-  const purchasedQuantity = 1.0;
+  const purchasedQuantity = 1;
 
   const dateStr = '2021-01-01T00:00:00.000Z';
   final date = DateTime.parse(dateStr);

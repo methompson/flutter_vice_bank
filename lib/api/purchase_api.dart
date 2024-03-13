@@ -5,6 +5,16 @@ import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
+class PurchaseResponse {
+  final Purchase purchase;
+  final num currentTokens;
+
+  PurchaseResponse({
+    required this.purchase,
+    required this.currentTokens,
+  });
+}
+
 class PurchaseAPI extends APICommon {
   Future<List<Purchase>> getPurchases(String userId) async {
     final uri = Uri.http(
@@ -44,7 +54,7 @@ class PurchaseAPI extends APICommon {
     return purchases;
   }
 
-  Future<Purchase> addPurchase(Purchase purchase) async {
+  Future<PurchaseResponse> addPurchase(Purchase purchase) async {
     final uri = Uri.http(baseDomain, '$baseApiUrl/addPurchase');
     final token = await getAuthorizationToken();
 
@@ -66,8 +76,12 @@ class PurchaseAPI extends APICommon {
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
     final addedPurchase = Purchase.fromJson(bodyJson['purchase']);
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return addedPurchase;
+    return PurchaseResponse(
+      purchase: addedPurchase,
+      currentTokens: currentTokens,
+    );
   }
 
   Future<Purchase> updatePurchase(Purchase purchase) async {

@@ -5,14 +5,14 @@ class Purchase {
   final String _userId;
   final String _purchasePriceId;
   final DateTime _date;
-  final num _purchasedQuantity;
+  final int _purchasedQuantity;
 
   Purchase({
     required String id,
     required String userId,
     required String purchasePriceId,
     required DateTime date,
-    required num purchasedQuantity,
+    required int purchasedQuantity,
   })  : _id = id,
         _userId = userId,
         _purchasePriceId = purchasePriceId,
@@ -23,7 +23,7 @@ class Purchase {
   String get userId => _userId;
   String get purchasePriceId => _purchasePriceId;
   DateTime get date => _date;
-  num get purchasedQuantity => _purchasedQuantity;
+  int get purchasedQuantity => _purchasedQuantity;
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,6 +34,19 @@ class Purchase {
       'purchasedQuantity': _purchasedQuantity,
     };
   }
+
+  factory Purchase.newPurchase({
+    required String userId,
+    required String purchasePriceId,
+    required int purchasedQuantity,
+  }) =>
+      Purchase(
+        id: '',
+        userId: userId,
+        purchasePriceId: purchasePriceId,
+        date: DateTime.now(),
+        purchasedQuantity: purchasedQuantity,
+      );
 
   factory Purchase.fromJson(dynamic json) {
     const errMsg = 'Purchase.fromJson Failed:';
@@ -56,7 +69,7 @@ class Purchase {
       jsonMap['date'],
       message: '$errMsg date',
     );
-    final purchasedQuantity = isTypeError<num>(
+    final purchasedQuantity = isTypeError<int>(
       jsonMap['purchasedQuantity'],
       message: '$errMsg purchasedQuantity',
     );

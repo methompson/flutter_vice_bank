@@ -1,10 +1,11 @@
 import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:uuid/uuid.dart';
 
 class DepositConversion {
   final String _id;
   final String _userId;
   final String _name;
-  final String _rateName;
+  final String _conversionUnit;
   final num _depositsPer;
   final num _tokensPer;
   final num _minDeposit;
@@ -13,14 +14,14 @@ class DepositConversion {
     required String id,
     required String userId,
     required String name,
-    required String rateName,
+    required String conversionUnit,
     required num depositsPer,
     required num tokensPer,
     required num minDeposit,
   })  : _id = id,
         _userId = userId,
         _name = name,
-        _rateName = rateName,
+        _conversionUnit = conversionUnit,
         _depositsPer = depositsPer,
         _tokensPer = tokensPer,
         _minDeposit = minDeposit;
@@ -28,22 +29,42 @@ class DepositConversion {
   String get id => _id;
   String get userId => _userId;
   String get name => _name;
-  String get rateName => _rateName;
+  String get conversionUnit => _conversionUnit;
   num get depositsPer => _depositsPer;
   num get tokensPer => _tokensPer;
   num get minDeposit => _minDeposit;
+
+  get conversionRate => _tokensPer / _depositsPer;
 
   Map<String, dynamic> toJson() {
     return {
       'id': _id,
       'userId': _userId,
       'name': _name,
-      'rateName': _rateName,
+      'conversionUnit': _conversionUnit,
       'depositsPer': _depositsPer,
       'tokensPer': _tokensPer,
       'minDeposit': _minDeposit,
     };
   }
+
+  factory DepositConversion.newConversion({
+    required String userId,
+    required String name,
+    required String conversionUnit,
+    required num depositsPer,
+    required num tokensPer,
+    required num minDeposit,
+  }) =>
+      DepositConversion(
+        id: Uuid().v4(),
+        userId: userId,
+        name: name,
+        conversionUnit: conversionUnit,
+        depositsPer: depositsPer,
+        tokensPer: tokensPer,
+        minDeposit: minDeposit,
+      );
 
   factory DepositConversion.fromJson(dynamic json) {
     const errMsg = 'DepositConversion.fromJson Failed:';
@@ -62,9 +83,9 @@ class DepositConversion {
       jsonMap['name'],
       message: '$errMsg name',
     );
-    final rateName = isTypeError<String>(
-      jsonMap['rateName'],
-      message: '$errMsg rateName',
+    final conversionUnit = isTypeError<String>(
+      jsonMap['conversionUnit'],
+      message: '$errMsg conversionUnit',
     );
     final depositsPer = isTypeError<num>(
       jsonMap['depositsPer'],
@@ -83,7 +104,7 @@ class DepositConversion {
       id: id,
       userId: userId,
       name: name,
-      rateName: rateName,
+      conversionUnit: conversionUnit,
       depositsPer: depositsPer,
       tokensPer: tokensPer,
       minDeposit: minDeposit,
