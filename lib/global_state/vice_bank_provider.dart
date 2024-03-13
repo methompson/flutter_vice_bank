@@ -84,6 +84,10 @@ class ViceBankProvider extends ChangeNotifier {
 
     _users = {};
     _currentUser = null;
+    _purchasePrices = [];
+    _purchases = [];
+    _depositConversions = [];
+    _deposits = [];
 
     await prefs.remove(viceBankUsersKey);
     await prefs.remove(viceBankCurrentUserKey);
@@ -140,7 +144,7 @@ class ViceBankProvider extends ChangeNotifier {
     return users;
   }
 
-  void selectUser(String? userId) async {
+  Future<void> selectUser(String? userId) async {
     if (userId == null) {
       _currentUser = null;
     } else {
@@ -149,6 +153,7 @@ class ViceBankProvider extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     final cu = _currentUser;
+
     if (cu == null) {
       await prefs.setString(viceBankCurrentUserKey, '');
     } else {
@@ -157,6 +162,8 @@ class ViceBankProvider extends ChangeNotifier {
         jsonEncode(cu.toJson()),
       );
     }
+
+    await getDepositConversions();
 
     notifyListeners();
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const seedColor = Colors.redAccent;
+final seedColor = Colors.redAccent;
 
 final lightColorScheme = ColorScheme.fromSeed(
   seedColor: seedColor,
