@@ -114,6 +114,7 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
       final purchaseToAdd = Purchase.newPurchase(
         vbUserId: widget.currentUser.id,
         purchasePriceId: widget.purchasePrice.id,
+        purchasedName: widget.purchasePrice.name,
         purchasedQuantity: int.parse(purchaseController.text),
       );
 

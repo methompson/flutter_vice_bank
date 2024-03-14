@@ -4,6 +4,7 @@ class Purchase {
   final String _id;
   final String _vbUserId;
   final String _purchasePriceId;
+  final String _purchasedName;
   final DateTime _date;
   final int _purchasedQuantity;
 
@@ -11,10 +12,12 @@ class Purchase {
     required String id,
     required String vbUserId,
     required String purchasePriceId,
+    required String purchasedName,
     required DateTime date,
     required int purchasedQuantity,
   })  : _id = id,
         _vbUserId = vbUserId,
+        _purchasedName = purchasedName,
         _purchasePriceId = purchasePriceId,
         _date = date,
         _purchasedQuantity = purchasedQuantity;
@@ -22,6 +25,7 @@ class Purchase {
   String get id => _id;
   String get vbUserId => _vbUserId;
   String get purchasePriceId => _purchasePriceId;
+  String get purchasedName => _purchasedName;
   DateTime get date => _date;
   int get purchasedQuantity => _purchasedQuantity;
 
@@ -30,6 +34,7 @@ class Purchase {
       'id': _id,
       'vbUserId': _vbUserId,
       'purchasePriceId': _purchasePriceId,
+      'purchasedName': _purchasedName,
       'date': _date.toIso8601String(),
       'purchasedQuantity': _purchasedQuantity,
     };
@@ -39,11 +44,13 @@ class Purchase {
     required String vbUserId,
     required String purchasePriceId,
     required int purchasedQuantity,
+    required String purchasedName,
   }) =>
       Purchase(
         id: '',
         vbUserId: vbUserId,
         purchasePriceId: purchasePriceId,
+        purchasedName: purchasedName,
         date: DateTime.now(),
         purchasedQuantity: purchasedQuantity,
       );
@@ -65,6 +72,10 @@ class Purchase {
       jsonMap['purchasePriceId'],
       message: '$errMsg purchasePriceId',
     );
+    final purchasedName = isTypeError<String>(
+      jsonMap['purchasedName'],
+      message: '$errMsg purchasedName',
+    );
     final dateString = isTypeError<String>(
       jsonMap['date'],
       message: '$errMsg date',
@@ -80,6 +91,7 @@ class Purchase {
       id: id,
       vbUserId: vbUserId,
       purchasePriceId: purchasePriceId,
+      purchasedName: purchasedName,
       date: date,
       purchasedQuantity: purchasedQuantity,
     );

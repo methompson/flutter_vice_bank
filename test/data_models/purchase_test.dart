@@ -8,6 +8,7 @@ void main() {
   const vbUserId = 'vbUserId';
   const purchasePriceId = 'purchasePriceId';
   const purchasedQuantity = 1;
+  const purchasedName = 'purchasedName';
 
   const dateStr = '2021-01-01T00:00:00.000Z';
   final date = DateTime.parse(dateStr);
@@ -16,6 +17,7 @@ void main() {
     'id': id,
     'vbUserId': vbUserId,
     'purchasePriceId': purchasePriceId,
+    'purchaseName': purchasedName,
     'date': dateStr,
     'purchasedQuantity': purchasedQuantity,
   };
@@ -27,6 +29,7 @@ void main() {
           id: id,
           vbUserId: vbUserId,
           purchasePriceId: purchasePriceId,
+          purchasedName: purchasedName,
           date: date,
           purchasedQuantity: purchasedQuantity,
         );
@@ -41,6 +44,7 @@ void main() {
             id: id,
             vbUserId: vbUserId,
             purchasePriceId: purchasePriceId,
+            purchasedName: purchasedName,
             date: date,
             purchasedQuantity: purchasedQuantity,
           );

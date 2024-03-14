@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
+import 'package:flutter_vice_bank/ui/components/withdrawals/purchase_card.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/purchase.dart';
@@ -21,6 +22,7 @@ class WithDrawalContent extends StatelessWidget {
         return Selector<ViceBankProvider, List<Purchase>>(
           selector: (_, vb) => vb.purchases,
           builder: (context, deposits, __) {
+            print('Purchase built');
             final items = [
               ...purchasePriceWidgets(context, depositConversions),
               ...purchaseHistoryWidgets(context, deposits),
@@ -71,15 +73,17 @@ class WithDrawalContent extends StatelessWidget {
 
   List<Widget> purchaseHistoryWidgets(
     BuildContext context,
-    List<Purchase> deposits,
+    List<Purchase> purchases,
   ) {
-    // final List<Widget> depositWidgets = deposits.map((deposit) {
-    //   return DepositCard(deposit: deposit);
-    // }).toList();
+    final List<Widget> purchaseWidgets = purchases.map((purchase) {
+      return PurchaseCard(
+        purchase: purchase,
+      );
+    }).toList();
 
     return [
       TitleWidget(title: 'Purchase History'),
-      // ...depositWidgets,
+      ...purchaseWidgets,
     ];
   }
 

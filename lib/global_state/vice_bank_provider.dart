@@ -254,6 +254,9 @@ class ViceBankProvider extends ChangeNotifier {
     }
 
     _purchases = await purchaseApi.getPurchases(cu.id);
+
+    sortPurchases();
+    notifyListeners();
   }
 
   Future<void> addPurchase(Purchase purchase) async {
@@ -277,7 +280,8 @@ class ViceBankProvider extends ChangeNotifier {
   Future<void> getDepositConversions() async {
     final cu = _currentUser;
     if (cu == null) {
-      throw Exception('No user selected');
+      // throw Exception('No user selected');
+      return;
     }
 
     _depositConversions =
