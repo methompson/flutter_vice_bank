@@ -179,7 +179,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
       final minDeposit = num.tryParse(minDepositController.text) ?? 0;
 
       final newConversion = DepositConversion.newConversion(
-        userId: userId,
+        vbUserId: userId,
         name: name.trim(),
         conversionUnit: conversionUnit.trim(),
         depositsPer: depositsPer,

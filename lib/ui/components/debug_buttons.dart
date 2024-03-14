@@ -184,7 +184,7 @@ class _DepositApiTest extends StatelessWidget {
           final addedUser = await vbApi.addViceBankUser(userToAdd);
 
           final depositToAdd = Deposit.newDeposit(
-            userId: addedUser.id,
+            vbUserId: addedUser.id,
             depositQuantity: 1.0,
             conversionRate: 1.0,
             depositConversionName: 'depositConversionName',
@@ -243,7 +243,7 @@ class _DepositConversionApiTest extends StatelessWidget {
 
         try {
           final depositConversionToAdd = DepositConversion.newConversion(
-            userId: 'userId',
+            vbUserId: 'userId',
             name: 'name',
             conversionUnit: 'conversionUnit',
             depositsPer: 1.0,
@@ -304,7 +304,7 @@ class _PurchaseApiTest extends StatelessWidget {
           final addedUser = await vbApi.addViceBankUser(userToAdd);
 
           final depositToAdd = Deposit.newDeposit(
-            userId: addedUser.id,
+            vbUserId: addedUser.id,
             depositQuantity: 1.0,
             conversionRate: 1.0,
             depositConversionName: 'depositConversionName',
@@ -314,7 +314,7 @@ class _PurchaseApiTest extends StatelessWidget {
           await DepositAPI().addDeposit(depositToAdd);
 
           final purchase = Purchase.newPurchase(
-            userId: addedUser.id,
+            vbUserId: addedUser.id,
             purchasePriceId: 'abcd',
             purchasedQuantity: 1,
           );
@@ -368,7 +368,7 @@ class _PurchasePriceApiTest extends StatelessWidget {
 
         try {
           final price = PurchasePrice.newPrice(
-            userId: 'userId',
+            vbUserId: 'userId',
             name: 'name',
             price: 1.0,
           );

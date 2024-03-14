@@ -93,7 +93,7 @@ class AddDepositFormState extends State<AddDepositForm> {
 
     try {
       final depositToAdd = Deposit.newDeposit(
-        userId: widget.depositConversion.userId,
+        vbUserId: widget.depositConversion.vbUserId,
         depositQuantity: num.parse(depositController.text),
         conversionRate: widget.depositConversion.conversionRate,
         depositConversionName: widget.depositConversion.name,

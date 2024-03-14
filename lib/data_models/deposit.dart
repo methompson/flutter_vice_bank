@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 class Deposit {
   final String _id;
-  final String _userId;
+  final String _vbUserId;
   final DateTime _date;
   final num _depositQuantity;
   final num _conversionRate;
@@ -12,14 +12,14 @@ class Deposit {
 
   Deposit({
     required String id,
-    required String userId,
+    required String vbUserId,
     required DateTime date,
     required num depositQuantity,
     required num conversionRate,
     required String depositConversionName,
     required String conversionUnit,
   })  : _id = id,
-        _userId = userId,
+        _vbUserId = vbUserId,
         _date = date,
         _depositQuantity = depositQuantity,
         _conversionRate = conversionRate,
@@ -27,7 +27,7 @@ class Deposit {
         _conversionUnit = conversionUnit;
 
   String get id => _id;
-  String get userId => _userId;
+  String get vbUserId => _vbUserId;
   DateTime get date => _date;
   num get depositQuantity => _depositQuantity;
   num get conversionRate => _conversionRate;
@@ -41,7 +41,7 @@ class Deposit {
   Map<String, dynamic> toJson() {
     return {
       'id': _id,
-      'userId': _userId,
+      'vbUserId': _vbUserId,
       'date': _date.toIso8601String(),
       'depositQuantity': _depositQuantity,
       'conversionRate': _conversionRate,
@@ -58,9 +58,9 @@ class Deposit {
       jsonMap['id'],
       message: '$errMsg id',
     );
-    final userId = isTypeError<String>(
-      jsonMap['userId'],
-      message: '$errMsg userId',
+    final vbUserId = isTypeError<String>(
+      jsonMap['vbUserId'],
+      message: '$errMsg vbUserId',
     );
     final dateString = isTypeError<String>(
       jsonMap['date'],
@@ -87,7 +87,7 @@ class Deposit {
 
     return Deposit(
       id: id,
-      userId: userId,
+      vbUserId: vbUserId,
       date: date,
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
@@ -97,7 +97,7 @@ class Deposit {
   }
 
   factory Deposit.newDeposit({
-    required String userId,
+    required String vbUserId,
     required num depositQuantity,
     required num conversionRate,
     required String depositConversionName,
@@ -105,7 +105,7 @@ class Deposit {
   }) {
     return Deposit(
       id: Uuid().v4(),
-      userId: userId,
+      vbUserId: vbUserId,
       date: DateTime.now(),
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,

@@ -2,25 +2,25 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class Purchase {
   final String _id;
-  final String _userId;
+  final String _vbUserId;
   final String _purchasePriceId;
   final DateTime _date;
   final int _purchasedQuantity;
 
   Purchase({
     required String id,
-    required String userId,
+    required String vbUserId,
     required String purchasePriceId,
     required DateTime date,
     required int purchasedQuantity,
   })  : _id = id,
-        _userId = userId,
+        _vbUserId = vbUserId,
         _purchasePriceId = purchasePriceId,
         _date = date,
         _purchasedQuantity = purchasedQuantity;
 
   String get id => _id;
-  String get userId => _userId;
+  String get vbUserId => _vbUserId;
   String get purchasePriceId => _purchasePriceId;
   DateTime get date => _date;
   int get purchasedQuantity => _purchasedQuantity;
@@ -28,7 +28,7 @@ class Purchase {
   Map<String, dynamic> toJson() {
     return {
       'id': _id,
-      'userId': _userId,
+      'vbUserId': _vbUserId,
       'purchasePriceId': _purchasePriceId,
       'date': _date.toIso8601String(),
       'purchasedQuantity': _purchasedQuantity,
@@ -36,13 +36,13 @@ class Purchase {
   }
 
   factory Purchase.newPurchase({
-    required String userId,
+    required String vbUserId,
     required String purchasePriceId,
     required int purchasedQuantity,
   }) =>
       Purchase(
         id: '',
-        userId: userId,
+        vbUserId: vbUserId,
         purchasePriceId: purchasePriceId,
         date: DateTime.now(),
         purchasedQuantity: purchasedQuantity,
@@ -57,9 +57,9 @@ class Purchase {
       jsonMap['id'],
       message: '$errMsg id',
     );
-    final userId = isTypeError<String>(
-      jsonMap['userId'],
-      message: '$errMsg userId',
+    final vbUserId = isTypeError<String>(
+      jsonMap['vbUserId'],
+      message: '$errMsg vbUserId',
     );
     final purchasePriceId = isTypeError<String>(
       jsonMap['purchasePriceId'],
@@ -78,7 +78,7 @@ class Purchase {
 
     return Purchase(
       id: id,
-      userId: userId,
+      vbUserId: vbUserId,
       purchasePriceId: purchasePriceId,
       date: date,
       purchasedQuantity: purchasedQuantity,

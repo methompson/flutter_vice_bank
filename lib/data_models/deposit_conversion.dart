@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 class DepositConversion {
   final String _id;
-  final String _userId;
+  final String _vbUserId;
   final String _name;
   final String _conversionUnit;
   final num _depositsPer;
@@ -12,14 +12,14 @@ class DepositConversion {
 
   DepositConversion({
     required String id,
-    required String userId,
+    required String vbUserId,
     required String name,
     required String conversionUnit,
     required num depositsPer,
     required num tokensPer,
     required num minDeposit,
   })  : _id = id,
-        _userId = userId,
+        _vbUserId = vbUserId,
         _name = name,
         _conversionUnit = conversionUnit,
         _depositsPer = depositsPer,
@@ -27,7 +27,7 @@ class DepositConversion {
         _minDeposit = minDeposit;
 
   String get id => _id;
-  String get userId => _userId;
+  String get vbUserId => _vbUserId;
   String get name => _name;
   String get conversionUnit => _conversionUnit;
   num get depositsPer => _depositsPer;
@@ -39,7 +39,7 @@ class DepositConversion {
   Map<String, dynamic> toJson() {
     return {
       'id': _id,
-      'userId': _userId,
+      'vbUserId': _vbUserId,
       'name': _name,
       'conversionUnit': _conversionUnit,
       'depositsPer': _depositsPer,
@@ -49,7 +49,7 @@ class DepositConversion {
   }
 
   factory DepositConversion.newConversion({
-    required String userId,
+    required String vbUserId,
     required String name,
     required String conversionUnit,
     required num depositsPer,
@@ -58,7 +58,7 @@ class DepositConversion {
   }) =>
       DepositConversion(
         id: Uuid().v4(),
-        userId: userId,
+        vbUserId: vbUserId,
         name: name,
         conversionUnit: conversionUnit,
         depositsPer: depositsPer,
@@ -75,9 +75,9 @@ class DepositConversion {
       jsonMap['id'],
       message: '$errMsg id',
     );
-    final userId = isTypeError<String>(
-      jsonMap['userId'],
-      message: '$errMsg userId',
+    final vbUserId = isTypeError<String>(
+      jsonMap['vbUserId'],
+      message: '$errMsg vbUserId',
     );
     final name = isTypeError<String>(
       jsonMap['name'],
@@ -102,7 +102,7 @@ class DepositConversion {
 
     return DepositConversion(
       id: id,
-      userId: userId,
+      vbUserId: vbUserId,
       name: name,
       conversionUnit: conversionUnit,
       depositsPer: depositsPer,

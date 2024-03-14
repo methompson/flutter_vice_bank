@@ -4,13 +4,13 @@ import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 main() {
   const id = 'id';
-  const userId = 'userId';
+  const vbUserId = 'vbUserId';
   const name = 'name';
   const price = 1.0;
 
   final validInput = {
     'id': id,
-    'userId': userId,
+    'vbUserId': vbUserId,
     'name': name,
     'price': price,
   };
@@ -20,7 +20,7 @@ main() {
       test('should return a map with expected data', () {
         final purchasePrice = PurchasePrice(
           id: id,
-          userId: userId,
+          vbUserId: vbUserId,
           name: name,
           price: price,
         );
@@ -33,7 +33,7 @@ main() {
         () {
           final purchasePrice1 = PurchasePrice(
             id: id,
-            userId: userId,
+            vbUserId: vbUserId,
             name: name,
             price: price,
           );
@@ -67,11 +67,11 @@ main() {
         );
 
         input = {...validInput};
-        input.remove('userId');
+        input.remove('vbUserId');
         expect(
           () => PurchasePrice.fromJson(input),
           throwsA(predicate(
-            (e) => e is TypeCheckException && e.message.contains('userId'),
+            (e) => e is TypeCheckException && e.message.contains('vbUserId'),
           )),
         );
 

@@ -106,7 +106,7 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
       final price = num.parse(priceController.text);
 
       final priceToAdd = PurchasePrice.newPrice(
-        userId: userId,
+        vbUserId: userId,
         name: name,
         price: price,
       );

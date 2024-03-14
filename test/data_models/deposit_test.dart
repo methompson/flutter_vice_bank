@@ -5,7 +5,7 @@ import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 void main() {
   const id = 'id';
-  const userId = 'userId';
+  const vbUserId = 'vbUserId';
   const depositQuantity = 1;
   const conversionRate = 2.1;
   const depositConversionName = 'depositConversionName';
@@ -16,7 +16,7 @@ void main() {
 
   final validInput = {
     'id': id,
-    'userId': userId,
+    'vbUserId': vbUserId,
     'date': dateStr,
     'depositQuantity': depositQuantity,
     'conversionRate': conversionRate,
@@ -29,7 +29,7 @@ void main() {
       test('should return a map with expected data', () {
         final deposit = Deposit(
           id: id,
-          userId: userId,
+          vbUserId: vbUserId,
           date: date,
           depositQuantity: depositQuantity,
           conversionRate: conversionRate,
@@ -45,7 +45,7 @@ void main() {
         () {
           final deposit1 = Deposit(
             id: id,
-            userId: userId,
+            vbUserId: vbUserId,
             date: date,
             depositQuantity: depositQuantity,
             conversionRate: conversionRate,
@@ -80,11 +80,11 @@ void main() {
         );
 
         input = {...validInput};
-        input.remove('userId');
+        input.remove('vbUserId');
         expect(
           () => Deposit.fromJson(input),
           throwsA(predicate(
-            (e) => e is TypeCheckException && e.message.contains('userId'),
+            (e) => e is TypeCheckException && e.message.contains('vbUserId'),
           )),
         );
 
