@@ -4,6 +4,7 @@ import 'package:flutter_vice_bank/api/api_common.dart';
 
 import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class ViceBankUserAPI extends APICommon {
@@ -37,7 +38,11 @@ class ViceBankUserAPI extends APICommon {
       }
     }
 
-    // TODO Log the errors
+    if (errors.isNotEmpty) {
+      LoggingProvider.instance.logError(
+        'Error parsing users: $errors',
+      );
+    }
 
     return viceBankUsers;
   }

@@ -17,7 +17,7 @@ void main() {
     'id': id,
     'vbUserId': vbUserId,
     'purchasePriceId': purchasePriceId,
-    'purchaseName': purchasedName,
+    'purchasedName': purchasedName,
     'date': dateStr,
     'purchasedQuantity': purchasedQuantity,
   };

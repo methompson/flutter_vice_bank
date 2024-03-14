@@ -23,8 +23,8 @@ const viceBankCurrentUserKey = 'vice_bank_current_user_key';
 class ViceBankProvider extends ChangeNotifier {
   Map<String, ViceBankUser> _users = {};
 
-  ViceBankUser? _currentUser;
-  ViceBankUser? get currentUser => _currentUser;
+  String? _currentUser;
+  ViceBankUser? get currentUser => _users[_currentUser ?? ''];
 
   List<PurchasePrice> _purchasePrices = [];
   List<Purchase> _purchases = [];
@@ -105,20 +105,16 @@ class ViceBankProvider extends ChangeNotifier {
     }
   }
 
-  Future<ViceBankUser?> getCurrentUserFromSharedPrefs() async {
+  Future<String?> getCurrentUserFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final currentUserString = prefs.getString(viceBankCurrentUserKey);
+    final currentUserId = prefs.getString(viceBankCurrentUserKey);
 
-    if (currentUserString == null) {
+    if (currentUserId == null) {
       return null;
     }
 
-    final userRaw = jsonDecode(currentUserString);
-
-    final user = ViceBankUser.fromJson(userRaw);
-
-    return user;
+    return currentUserId;
   }
 
   Future<List<ViceBankUser>> getUsersFromSharedPrefs() async {
@@ -154,17 +150,16 @@ class ViceBankProvider extends ChangeNotifier {
   }
 
   Future<void> updateViceBankUserTokens(num currentTokens) async {
-    final currentUser = _currentUser;
+    final cu = currentUser;
 
-    if (currentUser == null) {
+    if (cu == null) {
       return;
     }
 
-    final updatedUser = currentUser.copyWith({
+    final updatedUser = cu.copyWith({
       'currentTokens': currentTokens,
     });
 
-    _currentUser = updatedUser;
     _users[updatedUser.id] = updatedUser;
 
     await saveCurrentUserToSharedPrefs();
@@ -174,7 +169,7 @@ class ViceBankProvider extends ChangeNotifier {
     if (userId == null) {
       _currentUser = null;
     } else {
-      _currentUser = _users[userId];
+      _currentUser = userId;
     }
 
     await Future.wait([
@@ -200,7 +195,7 @@ class ViceBankProvider extends ChangeNotifier {
     } else {
       await prefs.setString(
         viceBankCurrentUserKey,
-        jsonEncode(cu.toJson()),
+        cu,
       );
     }
   }
@@ -230,7 +225,7 @@ class ViceBankProvider extends ChangeNotifier {
 
   // Purchase Price Functions
   Future<void> getPurchasePrices() async {
-    final cu = _currentUser;
+    final cu = currentUser;
     if (cu == null) {
       throw Exception('No user selected');
     }
@@ -238,17 +233,19 @@ class ViceBankProvider extends ChangeNotifier {
     _purchasePrices = await purchasePriceApi.getPurchasePrices(cu.id);
   }
 
-  Future<void> createPurchasePrice(PurchasePrice price) async {
+  Future<PurchasePrice> createPurchasePrice(PurchasePrice price) async {
     final result = await purchasePriceApi.addPurchasePrice(price);
 
     _purchasePrices.add(result);
 
     notifyListeners();
+
+    return result;
   }
 
   // Purchase Functions
   Future<void> getPurchases() async {
-    final cu = _currentUser;
+    final cu = currentUser;
     if (cu == null) {
       throw Exception('No user selected');
     }
@@ -278,7 +275,7 @@ class ViceBankProvider extends ChangeNotifier {
 
   // Deposit Conversion Functions
   Future<void> getDepositConversions() async {
-    final cu = _currentUser;
+    final cu = currentUser;
     if (cu == null) {
       // throw Exception('No user selected');
       return;
@@ -290,7 +287,7 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createDepositConversion(
+  Future<DepositConversion> createDepositConversion(
     DepositConversion depositConversion,
   ) async {
     final result =
@@ -299,11 +296,13 @@ class ViceBankProvider extends ChangeNotifier {
     _depositConversions.add(result);
 
     notifyListeners();
+
+    return result;
   }
 
   // Deposit Functions
   Future<void> getDeposits() async {
-    final cu = _currentUser;
+    final cu = currentUser;
     if (cu == null) {
       throw Exception('No user selected');
     }

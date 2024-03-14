@@ -22,7 +22,6 @@ class WithDrawalContent extends StatelessWidget {
         return Selector<ViceBankProvider, List<Purchase>>(
           selector: (_, vb) => vb.purchases,
           builder: (context, deposits, __) {
-            print('Purchase built');
             final items = [
               ...purchasePriceWidgets(context, depositConversions),
               ...purchaseHistoryWidgets(context, deposits),

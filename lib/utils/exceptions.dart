@@ -27,3 +27,7 @@ class Http400Exception extends HttpException {
 class Http500Exception extends HttpException {
   Http500Exception(super.message, super.url, super.statusCode);
 }
+
+class InvalidInputException extends ViceBankException {
+  InvalidInputException(super.message);
+}

@@ -1,6 +1,6 @@
 import 'package:flutter_vice_bank/utils/exceptions.dart';
 
-T? isType<T>(dynamic input, T? defaultValue) {
+T? isType<T>(dynamic input, [T? defaultValue]) {
   if (input is T) {
     return input;
   }

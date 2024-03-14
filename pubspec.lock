@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  debouncer_widget:
+    dependency: "direct main"
+    description:
+      name: debouncer_widget
+      sha256: "3b149789201015eae53512bed22c6debf77a5e7a58c9488a00d6e0b3c7024f25"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   fake_async:
     dependency: transitive
     description:

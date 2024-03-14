@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
@@ -52,7 +53,7 @@ class DepositDataWatcherState extends VBUserDataWatcher {
         vbProvider.getDeposits(),
       ]);
     } catch (e) {
-      // TODO log this data
+      LoggingProvider.instance.logError('Error getting deposit data: $e');
     }
   }
 }

@@ -34,7 +34,7 @@ class DepositConversion {
   num get tokensPer => _tokensPer;
   num get minDeposit => _minDeposit;
 
-  get conversionRate => _tokensPer / _depositsPer;
+  num get conversionRate => _tokensPer / _depositsPer;
 
   Map<String, dynamic> toJson() {
     return {

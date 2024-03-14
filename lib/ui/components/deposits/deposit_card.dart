@@ -47,27 +47,3 @@ class DepositCard extends StatelessWidget {
     );
   }
 }
-
-class _OldDepositCard extends StatelessWidget {
-  final Deposit deposit;
-
-  _OldDepositCard({required this.deposit});
-
-  @override
-  Widget build(BuildContext context) {
-    final date = DateFormat("MM/dd/yyyy").format(deposit.date);
-
-    return Card(
-      child: ListTile(
-        title: Text(deposit.depositConversionName),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${deposit.depositQuantity} ${deposit.conversionUnit}'),
-            Text('Earned ${deposit.tokensEarned.toStringAsFixed(2)} tokens'),
-          ],
-        ),
-      ),
-    );
-  }
-}

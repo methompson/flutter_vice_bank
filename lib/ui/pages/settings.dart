@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
+import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
@@ -26,6 +27,9 @@ class SettingsPage extends StatelessWidget {
 class SettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final config = context.watch<ConfigProvider>();
+    final debugMode = config.getConfig('debugMode').boolean;
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -48,21 +52,27 @@ class SettingsContent extends StatelessWidget {
             topMargin: 10,
             bottomMargin: 10,
           ),
-          Divider(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Debug Buttons',
-                style: Theme.of(context).copyWith().textTheme.bodyLarge,
-              ),
-              DebugButtons(),
-            ],
-          ),
-          ThemeColors(),
+          if (debugMode) ...debugWidgets(context),
         ],
       ),
     );
+  }
+
+  List<Widget> debugWidgets(BuildContext context) {
+    return [
+      Divider(),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Debug Buttons',
+            style: Theme.of(context).copyWith().textTheme.bodyLarge,
+          ),
+          DebugButtons(),
+        ],
+      ),
+      ThemeColors(),
+    ];
   }
 
   Future<void> clearCache(BuildContext context) async {

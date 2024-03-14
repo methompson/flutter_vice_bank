@@ -12,6 +12,7 @@ import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
+import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +27,12 @@ class DebugButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _DisableDebugMode(),
         _ShowLoadingScreenWithCancelButton(),
         _ShowLoadingScreenWithAutoClose(),
         _ShowSnackBarMessage(),
-        _ViceBankUsersTest(),
-        _DepositApiTest(),
-        _DepositConversionApiTest(),
-        _PurchaseApiTest(),
-        _PurchasePriceApiTest(),
+        _AllAPIsTest(),
+        _AppInitialization(),
       ],
     );
   }
@@ -112,11 +111,11 @@ class _ShowSnackBarMessage extends StatelessWidget {
   }
 }
 
-class _ViceBankUsersTest extends StatelessWidget {
+class _AllAPIsTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DebugButton(
-      buttonText: 'Vice Bank Users Tests',
+      buttonText: 'All APIs Tests',
       onPressed: () async {
         final msgProvider = context.read<MessagingProvider>();
         try {
@@ -127,9 +126,9 @@ class _ViceBankUsersTest extends StatelessWidget {
             currentTokens: 0,
           );
 
-          final apis = ViceBankUserAPI();
+          final vbApi = ViceBankUserAPI();
 
-          final addedUser = await apis.addViceBankUser(userToAdd);
+          final addedUser = await vbApi.addViceBankUser(userToAdd);
 
           assert(addedUser.id != userToAdd.id);
 
@@ -145,104 +144,13 @@ class _ViceBankUsersTest extends StatelessWidget {
             'name': 'Mickey Mouse',
           });
 
-          final updatedUser = await apis.updateViceBankUser(userToUpdate);
+          final updatedUser = await vbApi.updateViceBankUser(userToUpdate);
 
           assert(updatedUser.id == addedUser.id);
           assert(updatedUser.name == addedUser.name);
 
-          final deletedUser = await apis.deleteViceBankUser(addedUser.id);
-
-          assert(deletedUser.id == addedUser.id);
-          assert(deletedUser.name == userToUpdate.name);
-
-          msgProvider.showSuccessSnackbar('Vice Bank User Tests Passed');
-        } catch (e) {
-          msgProvider.showErrorSnackbar(e.toString());
-        }
-      },
-    );
-  }
-}
-
-class _DepositApiTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DebugButton(
-      buttonText: 'Deposit Tests',
-      onPressed: () async {
-        final msgProvider = context.read<MessagingProvider>();
-
-        try {
-          final userToAdd = ViceBankUser.newUser(
-            name: 'Mat Thompson',
-            currentTokens: 0,
-          );
-
-          final vbApi = ViceBankUserAPI();
-
-          final addedUser = await vbApi.addViceBankUser(userToAdd);
-
-          final depositToAdd = Deposit.newDeposit(
-            vbUserId: addedUser.id,
-            depositQuantity: 1.0,
-            conversionRate: 1.0,
-            depositConversionName: 'depositConversionName',
-            conversionUnit: 'minutes',
-          );
-
-          final apis = DepositAPI();
-
-          final addedDeposit = (await apis.addDeposit(depositToAdd)).deposit;
-
-          assert(addedDeposit.id != depositToAdd.id);
-
-          final deposits = await apis.getDeposits(addedUser.id);
-
-          deposits.retainWhere((el) => el.id == addedDeposit.id);
-
-          assert(deposits.length == 1);
-
-          final depositToUpdate = Deposit.fromJson({
-            ...addedDeposit.toJson(),
-            'depositQuantity': 2.0,
-          });
-
-          final updatedDeposit = await apis.updateDeposit(depositToUpdate);
-
-          assert(updatedDeposit.id == addedDeposit.id);
-          assert(
-            updatedDeposit.depositQuantity != depositToUpdate.depositQuantity,
-          );
-
-          final deletedDeposit = await apis.deleteDeposit(addedDeposit.id);
-
-          assert(deletedDeposit.id == addedDeposit.id);
-          assert(
-            deletedDeposit.depositQuantity == depositToUpdate.depositQuantity,
-          );
-
-          msgProvider.showSuccessSnackbar('Deposit Tests Passed');
-
-          await vbApi.deleteViceBankUser(addedUser.id);
-        } catch (e) {
-          msgProvider.showErrorSnackbar(e.toString());
-        }
-      },
-    );
-  }
-}
-
-class _DepositConversionApiTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DebugButton(
-      buttonText: 'Deposit Conversion Tests',
-      onPressed: () async {
-        final msgProvider = context.read<MessagingProvider>();
-
-        try {
           final depositConversionToAdd = DepositConversion.newConversion(
-            vbUserId: 'userId',
+            vbUserId: addedUser.id,
             name: 'name',
             conversionUnit: 'conversionUnit',
             depositsPer: 1.0,
@@ -250,13 +158,13 @@ class _DepositConversionApiTest extends StatelessWidget {
             minDeposit: 3.0,
           );
 
-          final api = DepositConversionAPI();
+          final dcApi = DepositConversionAPI();
 
-          final dc = await api.addDepositConversion(depositConversionToAdd);
+          final dc = await dcApi.addDepositConversion(depositConversionToAdd);
 
           assert(dc.id != depositConversionToAdd.id);
 
-          final dcs = await api.getDepositConversions('userId');
+          final dcs = await dcApi.getDepositConversions(addedUser.id);
 
           dcs.retainWhere((el) => el.id == dc.id);
 
@@ -267,40 +175,13 @@ class _DepositConversionApiTest extends StatelessWidget {
             'depositsPer': 2.0,
           });
 
-          final updatedDc = await api.updateDepositConversion(dcToUpdate);
+          final updatedDc = await dcApi.updateDepositConversion(dcToUpdate);
 
           assert(updatedDc.depositsPer != dcToUpdate.depositsPer);
 
-          final deletedDc = await api.deleteDepositConversion(dc.id);
+          final deletedDc = await dcApi.deleteDepositConversion(dc.id);
 
           assert(deletedDc.depositsPer == dcToUpdate.depositsPer);
-
-          msgProvider.showSuccessSnackbar('Deposit Conversion Tests Passed');
-        } catch (e) {
-          msgProvider.showErrorSnackbar(e.toString());
-        }
-      },
-    );
-  }
-}
-
-class _PurchaseApiTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DebugButton(
-      buttonText: 'Purchase Tests',
-      onPressed: () async {
-        final msgProvider = context.read<MessagingProvider>();
-
-        try {
-          final userToAdd = ViceBankUser.newUser(
-            name: 'Mat Thompson',
-            currentTokens: 0,
-          );
-
-          final vbApi = ViceBankUserAPI();
-
-          final addedUser = await vbApi.addViceBankUser(userToAdd);
 
           final depositToAdd = Deposit.newDeposit(
             vbUserId: addedUser.id,
@@ -310,76 +191,50 @@ class _PurchaseApiTest extends StatelessWidget {
             conversionUnit: 'minutes',
           );
 
-          await DepositAPI().addDeposit(depositToAdd);
+          final dApi = DepositAPI();
 
-          final purchase = Purchase.newPurchase(
-            vbUserId: addedUser.id,
-            purchasePriceId: 'abcd',
-            purchasedQuantity: 1,
-            purchasedName: 'purchasedName',
-          );
+          final addedDeposit = (await dApi.addDeposit(depositToAdd)).deposit;
 
-          final api = PurchaseAPI();
+          assert(addedDeposit.id != depositToAdd.id);
 
-          final addedPurchase = (await api.addPurchase(purchase)).purchase;
+          final deposits = await dApi.getDeposits(addedUser.id);
 
-          assert(purchase.id != addedPurchase.id);
+          deposits.retainWhere((el) => el.id == addedDeposit.id);
 
-          final purchases = await api.getPurchases(addedUser.id);
-          purchases.retainWhere((el) => el.id == addedPurchase.id);
+          assert(deposits.length == 1);
 
-          assert(purchases.length == 1);
-
-          final purchaseToUpdate = Purchase.fromJson({
-            ...addedPurchase.toJson(),
-            'purchasedQuantity': 2,
+          final depositToUpdate = Deposit.fromJson({
+            ...addedDeposit.toJson(),
+            'depositQuantity': 2.0,
           });
 
-          final updatedPurchase = await api.updatePurchase(purchaseToUpdate);
+          final updatedDeposit = await dApi.updateDeposit(depositToUpdate);
 
-          assert(purchaseToUpdate.id == updatedPurchase.id);
-          assert(purchaseToUpdate.purchasedQuantity !=
-              updatedPurchase.purchasedQuantity);
+          assert(updatedDeposit.id == addedDeposit.id);
+          assert(
+            updatedDeposit.depositQuantity != depositToUpdate.depositQuantity,
+          );
 
-          final deletedPurchase = await api.deletePurchase(addedPurchase.id);
+          final deletedDeposit = await dApi.deleteDeposit(addedDeposit.id);
 
-          assert(deletedPurchase.id == addedPurchase.id);
-          assert(deletedPurchase.purchasedQuantity ==
-              purchaseToUpdate.purchasedQuantity);
+          assert(deletedDeposit.id == addedDeposit.id);
+          assert(
+            deletedDeposit.depositQuantity == depositToUpdate.depositQuantity,
+          );
 
-          msgProvider.showSuccessSnackbar('Purchase Tests Passed');
-
-          await vbApi.deleteViceBankUser(addedUser.id);
-        } catch (e) {
-          msgProvider.showErrorSnackbar(e.toString());
-        }
-      },
-    );
-  }
-}
-
-class _PurchasePriceApiTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return DebugButton(
-      buttonText: 'Purchase Price Tests',
-      onPressed: () async {
-        final msgProvider = context.read<MessagingProvider>();
-
-        try {
           final price = PurchasePrice.newPrice(
-            vbUserId: 'userId',
+            vbUserId: addedUser.id,
             name: 'name',
             price: 1.0,
           );
 
-          final api = PurchasePriceAPI();
+          final ppApi = PurchasePriceAPI();
 
-          final addedPrice = await api.addPurchasePrice(price);
+          final addedPrice = await ppApi.addPurchasePrice(price);
 
           assert(addedPrice.id != price.id);
 
-          final prices = await api.getPurchasePrices('userId');
+          final prices = await ppApi.getPurchasePrices(addedUser.id);
           prices.retainWhere((el) => el.id == addedPrice.id);
 
           assert(prices.length == 1);
@@ -389,20 +244,147 @@ class _PurchasePriceApiTest extends StatelessWidget {
             'price': 2.0,
           });
 
-          final updated = await api.updatePurchasePrice(updatedPrice);
+          final updated = await ppApi.updatePurchasePrice(updatedPrice);
 
           assert(updated.id == addedPrice.id);
           assert(updated.price != updatedPrice.price);
 
-          final deleted = await api.deletePurchasePrice(addedPrice.id);
+          final deleted = await ppApi.deletePurchasePrice(addedPrice.id);
 
           assert(deleted.id == addedPrice.id);
           assert(deleted.price == updatedPrice.price);
 
-          msgProvider.showSuccessSnackbar('Purchase Price Tests Passed');
+          final purchase = Purchase.newPurchase(
+            vbUserId: addedUser.id,
+            purchasePriceId: addedPrice.id,
+            purchasedQuantity: 1,
+            purchasedName: addedPrice.name,
+          );
+
+          final pApi = PurchaseAPI();
+
+          final addedPurchase = (await pApi.addPurchase(purchase)).purchase;
+
+          assert(purchase.id != addedPurchase.id);
+
+          final purchases = await pApi.getPurchases(addedUser.id);
+          purchases.retainWhere((el) => el.id == addedPurchase.id);
+
+          assert(purchases.length == 1);
+
+          final purchaseToUpdate = Purchase.fromJson({
+            ...addedPurchase.toJson(),
+            'purchasedQuantity': 2,
+          });
+
+          final updatedPurchase = await pApi.updatePurchase(purchaseToUpdate);
+
+          assert(purchaseToUpdate.id == updatedPurchase.id);
+          assert(purchaseToUpdate.purchasedQuantity !=
+              updatedPurchase.purchasedQuantity);
+
+          final deletedPurchase = await pApi.deletePurchase(addedPurchase.id);
+
+          assert(deletedPurchase.id == addedPurchase.id);
+          assert(deletedPurchase.purchasedQuantity ==
+              purchaseToUpdate.purchasedQuantity);
+
+          final deletedUser = await vbApi.deleteViceBankUser(addedUser.id);
+
+          assert(deletedUser.id == addedUser.id);
+          assert(deletedUser.name == userToUpdate.name);
+
+          msgProvider.showSuccessSnackbar('All API Tests Passed');
         } catch (e) {
           msgProvider.showErrorSnackbar(e.toString());
         }
+      },
+    );
+  }
+}
+
+class _AppInitialization extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'App Data Init',
+      onPressed: () async {
+        final vbProvider = context.read<ViceBankProvider>();
+        final msgProvider = context.read<MessagingProvider>();
+
+        try {
+          // create a user
+
+          final user = await vbProvider.createUser('Mat Thompson');
+          await vbProvider.selectUser(user.id);
+
+          // add some deposit conversions
+          final conversion = await vbProvider.createDepositConversion(
+            DepositConversion.newConversion(
+              vbUserId: user.id,
+              name: 'Read a Book',
+              conversionUnit: 'minutes',
+              depositsPer: 15,
+              tokensPer: 0.25,
+              minDeposit: 15,
+            ),
+          );
+
+          // add some deposits
+          await vbProvider.addDeposit(
+            Deposit.newDeposit(
+              vbUserId: user.id,
+              depositQuantity: 60,
+              conversionRate: conversion.conversionRate,
+              depositConversionName: conversion.name,
+              conversionUnit: conversion.conversionUnit,
+            ),
+          );
+          await vbProvider.addDeposit(
+            Deposit.newDeposit(
+              vbUserId: user.id,
+              depositQuantity: 60,
+              conversionRate: conversion.conversionRate,
+              depositConversionName: conversion.name,
+              conversionUnit: conversion.conversionUnit,
+            ),
+          );
+
+          // add some purchase prices
+          final price = await vbProvider.createPurchasePrice(
+            PurchasePrice.newPrice(
+              vbUserId: user.id,
+              name: 'Drink a Beer',
+              price: 1,
+            ),
+          );
+          // add some purchases
+
+          await vbProvider.addPurchase(
+            Purchase.newPurchase(
+              vbUserId: user.id,
+              purchasePriceId: price.id,
+              purchasedQuantity: 1,
+              purchasedName: price.name,
+            ),
+          );
+
+          msgProvider.showSuccessSnackbar('App Initialization Complete');
+        } catch (e) {
+          msgProvider.showErrorSnackbar(e.toString());
+        }
+      },
+    );
+  }
+}
+
+class _DisableDebugMode extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'Disable Debug Mode',
+      onPressed: () {
+        ConfigProvider.instance.setConfig('debugMode', false);
       },
     );
   }

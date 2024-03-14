@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
@@ -49,7 +50,7 @@ class WithdrawalDataWatcherState extends VBUserDataWatcher {
         vbProvider.getPurchases(),
       ]);
     } catch (e) {
-      // TODO log this data
+      LoggingProvider.instance.logError('Error getting withdrawal data: $e');
     }
   }
 }

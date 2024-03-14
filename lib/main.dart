@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
+import 'package:flutter_vice_bank/global_state/config_provider.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +24,11 @@ class ProvidersContainer extends StatelessWidget {
     // return _BootStrap();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider.value(value: MessagingProvider.instance),
-        ChangeNotifierProvider(create: (_) => ViceBankProvider())
+        ChangeNotifierProvider.value(value: ConfigProvider.instance),
+        ChangeNotifierProvider.value(value: LoggingProvider.instance),
+        ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (_) => ViceBankProvider()),
       ],
       child: _BootStrap(),
     );
