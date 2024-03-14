@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -16,6 +17,22 @@ import 'package:flutter_vice_bank/ui/components/page_container.dart';
 class DepositsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        UserHeader(),
+        Expanded(
+          child: DepositsDataContent(),
+        ),
+      ],
+    );
+  }
+}
+
+class DepositsDataContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Selector<ViceBankProvider, List<DepositConversion>>(
       selector: (_, vb) => vb.depositConversions,
       builder: (_, depositConversions, __) {
@@ -30,6 +47,7 @@ class DepositsContent extends StatelessWidget {
             return Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               child: ListView.builder(
+                padding: EdgeInsets.only(top: 0),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   return items[index];
@@ -64,9 +82,11 @@ class DepositsContent extends StatelessWidget {
     }).toList();
 
     return [
-      TitleWidget(title: 'Deposit Conversions'),
+      TitleWithIconButton(
+        title: 'Deposit Conversions',
+        iconButton: AddDepositConversionIconButton(),
+      ),
       ...conversionWidgets,
-      AddDepositConversionButton(),
     ];
   }
 
@@ -108,20 +128,7 @@ class DepositsContent extends StatelessWidget {
   }
 }
 
-class AddDepositConversionButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BasicBigTextButton(
-      topMargin: 20,
-      bottomMargin: 10,
-      allPadding: 10,
-      text: 'Add a New Deposit Conversion',
-      onPressed: () {
-        openAddDepositConversionDialog(context);
-      },
-    );
-  }
-
+abstract class AbstractAddDepositConversionButton extends StatelessWidget {
   void openAddDepositConversionDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -137,6 +144,29 @@ class AddDepositConversionButton extends StatelessWidget {
             child: AddDepositConversionForm(),
           ),
         );
+      },
+    );
+  }
+}
+
+class AddDepositConversionIconButton
+    extends AbstractAddDepositConversionButton {
+  @override
+  Widget build(BuildContext context) {
+    return AddIconButton(onPressed: openAddDepositConversionDialog);
+  }
+}
+
+class AddDepositConversionButton extends AbstractAddDepositConversionButton {
+  @override
+  Widget build(BuildContext context) {
+    return BasicBigTextButton(
+      topMargin: 20,
+      bottomMargin: 10,
+      allPadding: 10,
+      text: 'Add a New Deposit Conversion',
+      onPressed: () {
+        openAddDepositConversionDialog(context);
       },
     );
   }

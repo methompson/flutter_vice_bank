@@ -1,6 +1,5 @@
 import 'package:debouncer_widget/debouncer_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vice_bank/data_models/config.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/ui/components/login/debug_section.dart';
 import 'package:flutter_vice_bank/ui/components/login/login_fields.dart';
@@ -52,6 +51,8 @@ class LoginPage extends StatelessWidget {
 }
 
 class CopyrightBar extends StatefulWidget {
+  CopyrightBar({super.key});
+
   @override
   State createState() => CopyrightBarState();
 }
@@ -72,23 +73,25 @@ class CopyrightBarState extends State<CopyrightBar> {
       timeout: Duration(seconds: 10),
       builder: (context, __) {
         return GestureDetector(
-            onTap: () {
-              taps++;
-              if (taps > 10) {
-                config.setConfig('debugMode', true);
-              }
-            },
-            child: Container(
-              color: color,
-              padding: EdgeInsets.all(20),
-              child: Text(
-                '© $today Mat Thompson',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-            ));
+          onTap: () {
+            taps++;
+            if (taps > 10) {
+              config.setConfig('debugMode', true);
+            }
+            Debouncer.execute(context);
+          },
+          child: Container(
+            color: color,
+            padding: EdgeInsets.all(20),
+            child: Text(
+              '© $today Mat Thompson',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       },
     );
   }

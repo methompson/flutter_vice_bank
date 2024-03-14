@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
+import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/nav.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_vice_bank/ui/components/authentication_watcher.dart';
+import 'package:provider/provider.dart';
 
 class PageContainer extends StatelessWidget {
   final Widget child;
@@ -74,5 +79,97 @@ class CenteredFullSizeContainer extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class DataWatcher extends StatefulWidget {
+  @override
+  State createState() => DataWatcherState();
+}
+
+class DataWatcherState extends State<DataWatcher> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getDataAndResetTimer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<ViceBankProvider, String?>(
+      selector: (_, vbProvider) => vbProvider.currentUser?.id,
+      builder: (_, userId, __) {
+        if (userId == null) {
+          _timer?.cancel();
+          _timer = null;
+        } else {
+          getDataAndResetTimer();
+        }
+
+        return Container();
+      },
+    );
+  }
+
+  Future<void> getDataAndResetTimer() async {
+    _timer?.cancel();
+    await getApiData();
+    resetTimer();
+  }
+
+  void resetTimer() {
+    _timer?.cancel();
+    _timer = Timer(
+      Duration(minutes: 10),
+      getDataAndResetTimer,
+    );
+  }
+
+  Future<void> getApiData() async {
+    print('getting Data');
+    try {
+      await Future.wait([
+        getUserData(),
+        getDataForUser(),
+      ]);
+    } catch (e) {}
+  }
+
+  Future<void> getDataForUser() async {
+    final vbProvider = context.read<ViceBankProvider>();
+    if (vbProvider.currentUser == null) {
+      return;
+    }
+
+    try {
+      await Future.wait([
+        vbProvider.getDepositConversions(),
+        vbProvider.getDeposits(),
+        vbProvider.getPurchasePrices(),
+        vbProvider.getPurchases(),
+      ]);
+    } catch (e) {
+      LoggingProvider.instance.logError('Error getting user data: $e');
+    }
+  }
+
+  Future<void> getUserData() async {
+    final vbProvider = context.read<ViceBankProvider>();
+    try {
+      await vbProvider.getViceBankUsers();
+    } catch (e) {
+      LoggingProvider.instance.logError('Error getting user data: $e');
+    }
   }
 }

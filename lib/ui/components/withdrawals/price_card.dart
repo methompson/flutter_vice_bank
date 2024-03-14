@@ -9,11 +9,12 @@ class PurchasePriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final unit = purchasePrice.price == 1 ? 'token' : 'tokens';
     return Card(
       child: ListTile(
         title: Text(purchasePrice.name),
         onTap: onTap,
-        subtitle: Text('Cost: ${purchasePrice.price}'),
+        subtitle: Text('Cost: ${purchasePrice.price} $unit'),
       ),
     );
   }

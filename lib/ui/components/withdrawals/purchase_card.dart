@@ -11,6 +11,7 @@ class PurchaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateFormat("MM/dd/yyyy").format(purchase.date);
+    final unit = purchase.purchasedQuantity == 1 ? 'token' : 'tokens';
 
     return Card(
       child: Container(
@@ -30,7 +31,7 @@ class PurchaseCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              'Spent ${purchase.purchasedQuantity} token(s)',
+              'Spent ${purchase.purchasedQuantity} $unit',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),

@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_vice_bank/data_models/deposit.dart';
+import 'package:flutter_vice_bank/data_models/purchase.dart';
+import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -10,16 +12,19 @@ import 'package:flutter_vice_bank/ui/components/users/no_user_selected.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Selector<ViceBankProvider, ViceBankUser?>(
-        selector: (_, provider) => provider.currentUser,
-        builder: (context, currentUser, __) {
-          final widget = currentUser == null ? NoUserSelected() : UserPage();
-          return CenteredFullSizeContainer(
-            child: widget,
-          );
-        },
-      ),
+    return Selector<ViceBankProvider, ViceBankUser?>(
+      selector: (_, provider) => provider.currentUser,
+      builder: (context, currentUser, __) {
+        final child = currentUser == null ? NoUserSelected() : UserPage();
+
+        return CenteredFullSizeContainer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [Expanded(child: child)],
+          ),
+        );
+      },
     );
   }
 }
@@ -28,13 +33,12 @@ class UserPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        NameSection(),
-        Expanded(child: WithdrawSection()),
-        Expanded(child: DepositSection()),
-        SelectAUserButton(),
+        UserHeader(),
+        WithdrawSection(),
+        DepositSection(),
       ],
     );
   }
@@ -78,41 +82,63 @@ class NameSection extends StatelessWidget {
 class WithdrawSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.greenAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Card(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  FilledButton.tonal(
-                    child: Column(
-                      children: [
-                        Icon(
-                          CupertinoIcons.minus,
-                          size: 64,
-                        ),
-                        Text(
-                          'Withdraw Tokens',
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      print('withdraw tokens');
-                    },
+    return Selector<ViceBankProvider, List<Purchase>>(
+      selector: (_, vb) => vb.purchases,
+      builder: (context, purchases, _) {
+        final daysAgo = DateTime.now().subtract(Duration(days: 7));
+        final recentPurchases =
+            purchases.where((p) => p.date.isAfter(daysAgo)).toList();
+
+        final totalTokensSpent = recentPurchases.fold<num>(
+          0,
+          (previousValue, purchase) =>
+              previousValue + purchase.purchasedQuantity,
+        );
+
+        final totalPurchases = recentPurchases.length;
+
+        return Card(
+          margin: EdgeInsets.all(20),
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    'Purchases',
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                ],
-              ),
+                ),
+                Text(
+                  'Past Week Purchases:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    '$totalPurchases',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                Text(
+                  'Total Tokens Spent:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    '$totalTokensSpent',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -120,41 +146,62 @@ class WithdrawSection extends StatelessWidget {
 class DepositSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blueAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Card(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  FilledButton.tonal(
-                    child: Column(
-                      children: [
-                        Icon(
-                          CupertinoIcons.add,
-                          size: 64,
-                        ),
-                        Text(
-                          'Deposit Tokens',
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      print('deposit tokens');
-                    },
+    return Selector<ViceBankProvider, List<Deposit>>(
+      selector: (_, vb) => vb.deposits,
+      builder: (context, deposits, _) {
+        final daysAgo = DateTime.now().subtract(Duration(days: 7));
+        final recentDeposits =
+            deposits.where((p) => p.date.isAfter(daysAgo)).toList();
+
+        final totalTokensEarned = deposits.fold<num>(
+          0,
+          (previousValue, deposit) => previousValue + deposit.tokensEarned,
+        );
+
+        final totalDeposits = recentDeposits.length;
+
+        return Card(
+          margin: EdgeInsets.all(20),
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    'Deposits',
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                ],
-              ),
+                ),
+                Text(
+                  'Past Week Deposits:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    '$totalDeposits',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                Text(
+                  'Total Tokens Earned:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    '$totalTokensEarned',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

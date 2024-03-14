@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const seedColor = Colors.redAccent;
+final seedColor = Colors.red;
+// final seedColor = Colors.red[900]!;
 
 final lightColorScheme = ColorScheme.fromSeed(
   seedColor: seedColor,
@@ -24,20 +25,22 @@ const bodyLargeSize = 20.0;
 const bodyMediumSize = 16.0;
 const bodySmallSize = 12.0;
 
+const themeFontWeight = FontWeight.w500;
+
 final lightTextTheme = ThemeData.light().textTheme.copyWith(
       bodyLarge: TextStyle(
         fontSize: bodyLargeSize,
-        fontWeight: FontWeight.w600,
+        fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
       bodyMedium: TextStyle(
         fontSize: bodyMediumSize,
-        fontWeight: FontWeight.w600,
+        // fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
       bodySmall: TextStyle(
         fontSize: bodySmallSize,
-        fontWeight: FontWeight.w600,
+        // fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
     );
@@ -45,17 +48,17 @@ final lightTextTheme = ThemeData.light().textTheme.copyWith(
 final darkTextTheme = ThemeData.dark().textTheme.copyWith(
       bodyLarge: TextStyle(
         fontSize: bodyLargeSize,
-        fontWeight: FontWeight.w600,
+        fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),
       bodyMedium: TextStyle(
         fontSize: bodyMediumSize,
-        fontWeight: FontWeight.w600,
+        // fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),
       bodySmall: TextStyle(
         fontSize: bodySmallSize,
-        fontWeight: FontWeight.w600,
+        // fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),
     );

@@ -11,6 +11,7 @@ class DepositCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateFormat("MM/dd/yyyy").format(deposit.date);
+    final unit = deposit.tokensEarned == 1 ? 'token' : 'tokens';
 
     return Card(
       child: Container(
@@ -36,7 +37,7 @@ class DepositCard extends StatelessWidget {
                   ),
             ),
             Text(
-              'Earned ${deposit.tokensEarned.toStringAsFixed(2)} token(s)',
+              'Earned ${deposit.tokensEarned.toStringAsFixed(2)} $unit',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),

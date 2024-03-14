@@ -15,12 +15,6 @@ import 'package:flutter_vice_bank/ui/components/page_container.dart';
 
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 
-// final _rootNavigatorKey = GlobalKey<NavigatorState>();
-// final _shellNavigatorHomeKey =
-//     GlobalKey<NavigatorState>(debugLabel: 'homePage');
-// final _shellNavigatorDebugKey =
-//     GlobalKey<NavigatorState>(debugLabel: 'debugPage');
-
 final router = GoRouter(
   redirect: (context, goRouterState) {
     final authProvider = context.read<AuthenticationProvider>();
@@ -50,17 +44,8 @@ final router = GoRouter(
         // Authentication Aware Routes & Menu Routes
         StatefulShellRoute.indexedStack(
           builder: (_, routerState, navigationShell) {
-            final fullPath = routerState.fullPath;
-            CupertinoNavigationBar? appBar;
-            if (fullPath != null && fullPath.contains('settings')) {
-              appBar = CupertinoNavigationBar(
-                middle: Text('Settings'),
-              );
-            }
-
             return NavContainer(
               navigationShell: navigationShell,
-              appBar: appBar,
             );
           },
           branches: [
@@ -69,7 +54,12 @@ final router = GoRouter(
                 GoRoute(
                   name: 'home',
                   path: '/home',
-                  builder: (_, __) => HomePage(),
+                  builder: (_, __) => Stack(
+                    children: [
+                      DataWatcher(),
+                      HomePage(),
+                    ],
+                  ),
                 ),
               ],
             ),

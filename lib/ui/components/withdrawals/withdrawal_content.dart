@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
+import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:flutter_vice_bank/ui/components/withdrawals/purchase_card.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,22 @@ import 'package:flutter_vice_bank/ui/components/withdrawals/price_card.dart';
 class WithDrawalContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        UserHeader(),
+        Expanded(
+          child: WithrawalDataContent(),
+        ),
+      ],
+    );
+  }
+}
+
+class WithrawalDataContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Selector<ViceBankProvider, List<PurchasePrice>>(
       selector: (_, vb) => vb.purchasePrices,
       builder: (_, depositConversions, __) {
@@ -30,6 +47,7 @@ class WithDrawalContent extends StatelessWidget {
             return Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
               child: ListView.builder(
+                padding: EdgeInsets.only(top: 0),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   return items[index];
@@ -64,9 +82,11 @@ class WithDrawalContent extends StatelessWidget {
     }).toList();
 
     return [
-      TitleWidget(title: 'Purchase Prices'),
+      TitleWithIconButton(
+        title: 'Purchase Prices',
+        iconButton: AddPurchasePriceIconButton(),
+      ),
       ...priceWidgets,
-      AddPurchasePriceButton(),
     ];
   }
 
@@ -122,20 +142,7 @@ class WithDrawalContent extends StatelessWidget {
   }
 }
 
-class AddPurchasePriceButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BasicBigTextButton(
-      topMargin: 20,
-      bottomMargin: 10,
-      allPadding: 10,
-      text: 'Add a New Purchase Price',
-      onPressed: () {
-        openAddPurchasePriceDialog(context);
-      },
-    );
-  }
-
+abstract class AbstractAddPurchasePriceButton extends StatelessWidget {
   void openAddPurchasePriceDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -151,6 +158,28 @@ class AddPurchasePriceButton extends StatelessWidget {
             child: AddPurchasePriceForm(),
           ),
         );
+      },
+    );
+  }
+}
+
+class AddPurchasePriceIconButton extends AbstractAddPurchasePriceButton {
+  @override
+  Widget build(BuildContext context) {
+    return AddIconButton(onPressed: openAddPurchasePriceDialog);
+  }
+}
+
+class AddPurchasePriceButton extends AbstractAddPurchasePriceButton {
+  @override
+  Widget build(BuildContext context) {
+    return BasicBigTextButton(
+      topMargin: 20,
+      bottomMargin: 10,
+      allPadding: 10,
+      text: 'Add a New Purchase Price',
+      onPressed: () {
+        openAddPurchasePriceDialog(context);
       },
     );
   }

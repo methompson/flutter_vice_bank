@@ -12,8 +12,9 @@ class DepositConversionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final minDeposit = depositConversion.minDeposit;
 
-    final minDepositWidget =
-        minDeposit <= 0 ? Container() : Text('Min Deposit: $minDeposit');
+    final minDepositWidget = minDeposit <= 0
+        ? Container()
+        : Text('Min Deposit: $minDeposit ${depositConversion.conversionUnit}');
 
     final depositTxt =
         '${depositConversion.depositsPer} ${depositConversion.conversionUnit} for ${depositConversion.tokensPer} Token(s)';
