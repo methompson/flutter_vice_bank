@@ -24,7 +24,15 @@ class LoginFieldsState extends State<LoginFields> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Image.asset(
+            'assets/images/vb_logo_1024_transparent.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
           child: TextField(

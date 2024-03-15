@@ -43,6 +43,7 @@ dependencies:
   intl: ^0.19.0
   debouncer_widget: ^1.2.0
   web: ^0.5.1
+  firebase_core: ^2.27.1
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/images/vb_logo_1024_transparent.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

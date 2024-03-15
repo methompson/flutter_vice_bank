@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/nav.dart';
+import 'package:flutter_vice_bank/utils/agent/agent.dart';
 
 import 'package:flutter_vice_bank/ui/components/authentication_watcher.dart';
-import 'package:provider/provider.dart';
 
 class PageContainer extends StatelessWidget {
   final Widget child;
@@ -40,9 +40,7 @@ class NavContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding = kIsWeb ? 25.0 : 0.0;
-
-    print('kIsWeb: $kIsWeb');
+    final padding = AgentGetter().isPWA() ? 25.0 : 0.0;
 
     return Scaffold(
       appBar: appBar,

@@ -19,4 +19,9 @@ class AgentGetter extends AbstractAgentGetter {
 
     return 'Unknown';
   }
+
+  @override
+  bool isPWA() {
+    return false;
+  }
 }

@@ -193,7 +193,7 @@ class DepositSection extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: Text(
-                    '$totalTokensEarned',
+                    totalTokensEarned.toStringAsFixed(2),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),

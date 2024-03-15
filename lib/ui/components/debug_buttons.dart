@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter_vice_bank/utils/agent/agent.dart';
 import 'package:flutter_vice_bank/api/deposit_api.dart';
@@ -401,8 +402,9 @@ class _WebFunctions extends StatelessWidget {
       onPressed: () {
         final userAgent = AgentGetter().getUserAgent();
 
-        MessagingProvider.instance
-            .showSuccessSnackbar('User Agent: $userAgent');
+        MessagingProvider.instance.showSuccessSnackbar(
+          'User Agent: $userAgent. kIsWeb: $kIsWeb. isPWA: ${AgentGetter().isPWA()}',
+        );
       },
     );
   }

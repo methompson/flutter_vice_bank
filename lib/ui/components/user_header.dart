@@ -24,7 +24,7 @@ class UserHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(user.name, style: Theme.of(context).textTheme.headlineMedium),
-            Text('${user.currentTokens} $unit'),
+            Text('${user.currentTokens.toStringAsFixed(2)} $unit'),
           ],
         ),
       ),

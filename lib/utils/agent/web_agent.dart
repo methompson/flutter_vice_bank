@@ -6,4 +6,9 @@ class AgentGetter extends AbstractAgentGetter {
   String getUserAgent() {
     return window.navigator.userAgent;
   }
+
+  @override
+  bool isPWA() {
+    return window.matchMedia('(display-mode: standalone)').matches;
+  }
 }

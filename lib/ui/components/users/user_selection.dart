@@ -89,10 +89,13 @@ class UsersList extends StatelessWidget {
           itemBuilder: (context, index) {
             final user = users[index];
 
+            final unit = user.currentTokens == 1 ? 'token' : 'tokens';
+
             return Card(
               child: ListTile(
                 title: Text(user.name),
-                subtitle: Text('${user.currentTokens} Token(s)'),
+                subtitle:
+                    Text('${user.currentTokens.toStringAsFixed(2)} $unit'),
                 onTap: () {
                   vbProvider.selectUser(user.id);
                   if (inModal) {
