@@ -3,6 +3,8 @@ import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 
 void main() {
   group('ViceBankUserAPI', () {
-    test('mocking data works', () async {});
+    test('mocking data works', () async {
+      ViceBankUserAPI();
+    });
   });
 }

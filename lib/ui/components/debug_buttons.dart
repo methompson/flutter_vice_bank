@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web/web.dart';
 
+import 'package:flutter_vice_bank/utils/agent/agent.dart';
 import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
@@ -399,10 +399,7 @@ class _WebFunctions extends StatelessWidget {
     return DebugButton(
       buttonText: 'Web Functions',
       onPressed: () {
-        final win = window;
-        final nav = win.navigator;
-
-        final userAgent = window.navigator.userAgent;
+        final userAgent = AgentGetter().getUserAgent();
 
         MessagingProvider.instance
             .showSuccessSnackbar('User Agent: $userAgent');
