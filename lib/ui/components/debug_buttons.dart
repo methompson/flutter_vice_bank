@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:web/web.dart';
+
 import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
@@ -14,7 +17,6 @@ import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
-import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
@@ -33,6 +35,7 @@ class DebugButtons extends StatelessWidget {
         _ShowSnackBarMessage(),
         _AllAPIsTest(),
         _AppInitialization(),
+        _WebFunctions(),
       ],
     );
   }
@@ -385,6 +388,24 @@ class _DisableDebugMode extends StatelessWidget {
       buttonText: 'Disable Debug Mode',
       onPressed: () {
         ConfigProvider.instance.setConfig('debugMode', false);
+      },
+    );
+  }
+}
+
+class _WebFunctions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'Web Functions',
+      onPressed: () {
+        final win = window;
+        final nav = win.navigator;
+
+        final userAgent = window.navigator.userAgent;
+
+        MessagingProvider.instance
+            .showSuccessSnackbar('User Agent: $userAgent');
       },
     );
   }

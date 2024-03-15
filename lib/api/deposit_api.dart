@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import 'package:flutter_vice_bank/api/api_common.dart';
 import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -31,7 +33,7 @@ class DepositAPI extends APICommon {
       'authorization': token,
     };
 
-    final response = await httpService.get(
+    final response = await http.get(
       uri,
       headers: headers,
     );
@@ -66,15 +68,16 @@ class DepositAPI extends APICommon {
     final uri = Uri.http(baseDomain, '$baseApiUrl/addDeposit');
     final token = await getAuthorizationToken();
 
-    final headers = {
+    final Map<String, String> headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'deposit': deposit.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -98,13 +101,14 @@ class DepositAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'deposit': deposit.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -124,13 +128,14 @@ class DepositAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'depositId': depositId,
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),

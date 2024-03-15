@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import 'package:flutter_vice_bank/api/api_common.dart';
 
 import 'package:flutter_vice_bank/api/auth_utils.dart';
@@ -16,7 +18,7 @@ class ViceBankUserAPI extends APICommon {
       'authorization': token,
     };
 
-    final response = await httpService.get(
+    final response = await http.get(
       uri,
       headers: headers,
     );
@@ -53,13 +55,14 @@ class ViceBankUserAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'user': user.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -79,13 +82,14 @@ class ViceBankUserAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'user': user.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -105,13 +109,14 @@ class ViceBankUserAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'viceBankUserId': userId,
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),

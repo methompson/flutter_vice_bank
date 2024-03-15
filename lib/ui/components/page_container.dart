@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/nav.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter_vice_bank/ui/components/authentication_watcher.dart';
 import 'package:provider/provider.dart';
@@ -38,10 +41,17 @@ class NavContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final padding = kIsWeb ? 25.0 : 0.0;
+
+    print('kIsWeb: $kIsWeb');
+
     return Scaffold(
       appBar: appBar,
       body: AuthenticationWatcher(navigationShell),
-      bottomNavigationBar: NavBar(navigationShell: navigationShell),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(bottom: padding, top: 1),
+        child: NavBar(navigationShell: navigationShell),
+      ),
     );
   }
 }
@@ -137,13 +147,14 @@ class DataWatcherState extends State<DataWatcher> {
   }
 
   Future<void> getApiData() async {
-    print('getting Data');
     try {
       await Future.wait([
         getUserData(),
         getDataForUser(),
       ]);
-    } catch (e) {}
+    } catch (e) {
+      LoggingProvider.instance.logError('Error getting data: $e');
+    }
   }
 
   Future<void> getDataForUser() async {

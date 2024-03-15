@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import 'package:flutter_vice_bank/api/api_common.dart';
 import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
@@ -20,7 +22,7 @@ class PurchasePriceAPI extends APICommon {
       'authorization': token,
     };
 
-    final response = await httpService.get(
+    final response = await http.get(
       uri,
       headers: headers,
     );
@@ -57,13 +59,14 @@ class PurchasePriceAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'purchasePrice': purchasePrice.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -83,13 +86,14 @@ class PurchasePriceAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'purchasePrice': purchasePrice.toJson(),
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),
@@ -109,13 +113,14 @@ class PurchasePriceAPI extends APICommon {
 
     final headers = {
       'authorization': token,
+      'content-type': 'application/json',
     };
 
     final Map<String, dynamic> body = {
       'purchasePriceId': purchasePriceId,
     };
 
-    final response = await httpService.postJson(
+    final response = await http.post(
       uri,
       headers: headers,
       body: jsonEncode(body),

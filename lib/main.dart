@@ -21,7 +21,6 @@ void main() {
 class ProvidersContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return _BootStrap();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: MessagingProvider.instance),
@@ -55,6 +54,8 @@ class _BootStrap extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     authProvider.setAuthentication(currentUser);
+
+    await ConfigProvider.instance.init();
 
     if (currentUser != null) {
       await vbProvider.init();
