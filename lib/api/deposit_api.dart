@@ -21,7 +21,7 @@ class DepositResponse {
 class DepositAPI extends APICommon {
   // TODO use page and pagination
   Future<List<Deposit>> getDeposits(String userId) async {
-    final uri = Uri.http(
+    final uri = getUri(
       baseDomain,
       '$baseApiUrl/deposits',
       {'userId': userId},
@@ -65,7 +65,7 @@ class DepositAPI extends APICommon {
   }
 
   Future<DepositResponse> addDeposit(Deposit deposit) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/addDeposit');
+    final uri = getUri(baseDomain, '$baseApiUrl/addDeposit');
     final token = await getAuthorizationToken();
 
     final Map<String, String> headers = {
@@ -96,7 +96,7 @@ class DepositAPI extends APICommon {
   }
 
   Future<Deposit> updateDeposit(Deposit deposit) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/updateDeposit');
+    final uri = getUri(baseDomain, '$baseApiUrl/updateDeposit');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -123,7 +123,7 @@ class DepositAPI extends APICommon {
   }
 
   Future<Deposit> deleteDeposit(String depositId) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/deleteDeposit');
+    final uri = getUri(baseDomain, '$baseApiUrl/deleteDeposit');
     final token = await getAuthorizationToken();
 
     final headers = {

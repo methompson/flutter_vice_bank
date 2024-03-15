@@ -19,7 +19,7 @@ class PurchaseResponse {
 
 class PurchaseAPI extends APICommon {
   Future<List<Purchase>> getPurchases(String userId) async {
-    final uri = Uri.http(
+    final uri = getUri(
       baseDomain,
       '$baseApiUrl/purchases',
       {'userId': userId},
@@ -57,7 +57,7 @@ class PurchaseAPI extends APICommon {
   }
 
   Future<PurchaseResponse> addPurchase(Purchase purchase) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/addPurchase');
+    final uri = getUri(baseDomain, '$baseApiUrl/addPurchase');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -88,7 +88,7 @@ class PurchaseAPI extends APICommon {
   }
 
   Future<Purchase> updatePurchase(Purchase purchase) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/updatePurchase');
+    final uri = getUri(baseDomain, '$baseApiUrl/updatePurchase');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -115,7 +115,7 @@ class PurchaseAPI extends APICommon {
   }
 
   Future<Purchase> deletePurchase(String purchaseId) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/deletePurchase');
+    final uri = getUri(baseDomain, '$baseApiUrl/deletePurchase');
     final token = await getAuthorizationToken();
 
     final headers = {

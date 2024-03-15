@@ -10,7 +10,7 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class DepositConversionAPI extends APICommon {
   Future<List<DepositConversion>> getDepositConversions(String userId) async {
-    final uri = Uri.http(
+    final uri = getUri(
       baseDomain,
       '$baseApiUrl/depositConversions',
       {'userId': userId},
@@ -56,7 +56,7 @@ class DepositConversionAPI extends APICommon {
   Future<DepositConversion> addDepositConversion(
     DepositConversion depositConversion,
   ) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/addDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/addDepositConversion');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -86,7 +86,7 @@ class DepositConversionAPI extends APICommon {
   Future<DepositConversion> updateDepositConversion(
     DepositConversion depositConversion,
   ) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/updateDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/updateDepositConversion');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -116,7 +116,7 @@ class DepositConversionAPI extends APICommon {
   Future<DepositConversion> deleteDepositConversion(
     String depositConversionId,
   ) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/deleteDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/deleteDepositConversion');
     final token = await getAuthorizationToken();
 
     final headers = {

@@ -94,6 +94,7 @@ class LoginFieldsState extends State<LoginFields> {
         context.go('/home');
       }
     } catch (e) {
+      await authProvider.signOut();
       msgProvider.showErrorSnackbar(
         'Error logging in: $e',
       );

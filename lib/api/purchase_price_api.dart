@@ -10,7 +10,7 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class PurchasePriceAPI extends APICommon {
   Future<List<PurchasePrice>> getPurchasePrices(String userId) async {
-    final uri = Uri.http(
+    final uri = getUri(
       baseDomain,
       '$baseApiUrl/purchasePrices',
       {'userId': userId},
@@ -54,7 +54,7 @@ class PurchasePriceAPI extends APICommon {
   }
 
   Future<PurchasePrice> addPurchasePrice(PurchasePrice purchasePrice) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/addPurchasePrice');
+    final uri = getUri(baseDomain, '$baseApiUrl/addPurchasePrice');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -81,7 +81,7 @@ class PurchasePriceAPI extends APICommon {
   }
 
   Future<PurchasePrice> updatePurchasePrice(PurchasePrice purchasePrice) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/updatePurchasePrice');
+    final uri = getUri(baseDomain, '$baseApiUrl/updatePurchasePrice');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -108,7 +108,7 @@ class PurchasePriceAPI extends APICommon {
   }
 
   Future<PurchasePrice> deletePurchasePrice(String purchasePriceId) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/deletePurchasePrice');
+    final uri = getUri(baseDomain, '$baseApiUrl/deletePurchasePrice');
     final token = await getAuthorizationToken();
 
     final headers = {

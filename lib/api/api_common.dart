@@ -1,10 +1,30 @@
 import 'package:flutter_vice_bank/utils/exceptions.dart';
 import 'package:http/http.dart';
 
-const baseDomain = 'localhost:8000';
-const baseApiUrl = 'api/vice_bank';
-
 abstract class APICommon {
+  final baseApiUrl = 'api/vice_bank';
+
+  final prodBaseDomain = 'api.methompson.com';
+  final devBaseDomain = 'localhost:8000';
+
+  final isProd = true;
+
+  String get baseDomain => isProd ? prodBaseDomain : devBaseDomain;
+
+  Uri getUri(
+    String authority, [
+    String unencodedPath = '',
+    Map<String, dynamic>? queryParameters,
+  ]) {
+    final uriFunction = isProd ? Uri.https : Uri.http;
+
+    return uriFunction(
+      authority,
+      unencodedPath,
+      queryParameters,
+    );
+  }
+
   bool isOk(Response response) =>
       response.statusCode >= 200 && response.statusCode < 300;
 

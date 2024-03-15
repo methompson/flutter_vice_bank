@@ -11,7 +11,7 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class ViceBankUserAPI extends APICommon {
   Future<List<ViceBankUser>> getViceBankUsers() async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/users');
+    final uri = getUri(baseDomain, '$baseApiUrl/users');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -50,7 +50,7 @@ class ViceBankUserAPI extends APICommon {
   }
 
   Future<ViceBankUser> addViceBankUser(ViceBankUser user) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/addUser');
+    final uri = getUri(baseDomain, '$baseApiUrl/addUser');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -77,7 +77,7 @@ class ViceBankUserAPI extends APICommon {
   }
 
   Future<ViceBankUser> updateViceBankUser(ViceBankUser user) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/updateUser');
+    final uri = getUri(baseDomain, '$baseApiUrl/updateUser');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -104,7 +104,7 @@ class ViceBankUserAPI extends APICommon {
   }
 
   Future<ViceBankUser> deleteViceBankUser(String userId) async {
-    final uri = Uri.http(baseDomain, '$baseApiUrl/deleteUser');
+    final uri = getUri(baseDomain, '$baseApiUrl/deleteUser');
     final token = await getAuthorizationToken();
 
     final headers = {
