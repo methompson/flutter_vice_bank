@@ -1,0 +1,1 @@
+docker stop vice_bank_app

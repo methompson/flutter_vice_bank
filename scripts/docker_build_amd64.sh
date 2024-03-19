@@ -8,5 +8,7 @@ mv build/web docker/artifacts
 
 (
   cd docker && \
-  docker build -t vice_bank_app .
+  docker buildx build \
+  --platform=linux/amd64 \
+  -t vice_bank_app .
 )
