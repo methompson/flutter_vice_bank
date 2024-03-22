@@ -7,7 +7,7 @@ abstract class APICommon {
   final prodBaseDomain = 'api.methompson.com';
   final devBaseDomain = 'localhost:8000';
 
-  final isProd = true;
+  final isProd = false;
 
   String get baseDomain => isProd ? prodBaseDomain : devBaseDomain;
 

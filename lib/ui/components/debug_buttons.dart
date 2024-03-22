@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/api/task_api.dart';
+import 'package:flutter_vice_bank/data_models/task.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -293,6 +297,66 @@ class _AllAPIsTest extends StatelessWidget {
           assert(deletedPurchase.purchasedQuantity ==
               purchaseToUpdate.purchasedQuantity);
 
+          final taskApi = TaskAPI();
+
+          final taskToAdd = Task(
+            id: 'id',
+            vbUserId: updatedUser.id,
+            name: 'Test Task',
+            frequency: Frequency.daily,
+            tokensPer: 1.0,
+          );
+
+          final task = await taskApi.addTask(taskToAdd);
+
+          final tasks = await taskApi.getTasks(updatedUser.id);
+
+          assert(tasks.length == 1);
+
+          final taskToUpdate = Task.fromJson({
+            ...task.toJson(),
+            'name': 'Updated Task',
+            'tokensPer': 1,
+          });
+
+          final updatedTask = await taskApi.updateTask(taskToUpdate);
+
+          final taskDepositToAdd = TaskDeposit(
+            id: 'id',
+            vbUserId: updatedUser.id,
+            date: DateTime.now(),
+            taskName: updatedTask.name,
+            taskId: updatedTask.id,
+            conversionRate: updatedTask.tokensPer,
+            frequency: updatedTask.frequency,
+            tokensEarned: updatedTask.tokensPer,
+          );
+
+          final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);
+
+          final taskDeposits = await taskApi.getTaskDeposits(updatedUser.id);
+
+          assert(taskDeposits.length == 1);
+
+          final updatedTaskDeposit = TaskDeposit.fromJson({
+            ...taskDeposit.taskDeposit.toJson(),
+            'taskName': 'Updated Task',
+            'tokensEarned': 1,
+          });
+
+          assert(taskDeposit.taskDeposit.id == updatedTaskDeposit.id);
+
+          final deletedTaskDeposit = await taskApi.deleteTaskDeposit(
+            taskDeposit.taskDeposit.id,
+          );
+
+          assert(
+              deletedTaskDeposit.taskDeposit.id == taskDeposit.taskDeposit.id);
+
+          final deletedTask = await taskApi.deleteTask(task.id);
+
+          assert(deletedTask.id == task.id);
+
           final deletedUser = await vbApi.deleteViceBankUser(addedUser.id);
 
           assert(deletedUser.id == addedUser.id);
@@ -371,6 +435,17 @@ class _AppInitialization extends StatelessWidget {
               purchasedQuantity: 1,
               purchasedName: price.name,
             ),
+          );
+
+          final task = await vbProvider.createTask(Task.newTask(
+            vbUserId: user.id,
+            name: 'Write in your journal',
+            frequency: Frequency.daily,
+            tokensPer: 1,
+          ));
+
+          await vbProvider.addTaskDeposit(
+            TaskDeposit.newTaskDeposit(vbUserId: user.id, task: task),
           );
 
           msgProvider.showSuccessSnackbar('App Initialization Complete');

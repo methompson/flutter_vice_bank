@@ -1,5 +1,6 @@
-import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class DepositConversion {
   final String _id;
