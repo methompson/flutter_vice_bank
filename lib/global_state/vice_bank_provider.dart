@@ -335,6 +335,16 @@ class ViceBankProvider extends ChangeNotifier {
     return result;
   }
 
+  Future<VBAction> deleteAction(VBAction action) async {
+    final result = await actionAPI.deleteAction(action.id);
+
+    _actions.removeWhere((a) => a.id == action.id);
+
+    notifyListeners();
+
+    return result;
+  }
+
   // Deposit Functions
   Future<void> getDeposits() async {
     final cu = currentUser;
@@ -390,6 +400,16 @@ class ViceBankProvider extends ChangeNotifier {
     filteredTasks.add(task);
 
     _tasks = filteredTasks;
+
+    notifyListeners();
+
+    return result;
+  }
+
+  Future<Task> deleteTask(Task task) async {
+    final result = await taskApi.deleteTask(task.id);
+
+    _tasks.removeWhere((t) => t.id == task.id);
 
     notifyListeners();
 
