@@ -14,6 +14,30 @@ import 'package:flutter_vice_bank/ui/components/withdrawals/add_price.dart';
 import 'package:flutter_vice_bank/ui/components/withdrawals/add_purchase.dart';
 import 'package:flutter_vice_bank/ui/components/withdrawals/price_card.dart';
 
+void openAddPurchasePriceDialog(
+  BuildContext context, {
+  PurchasePrice? purchasePrice,
+}) {
+  showModalBottomSheet(
+    context: context,
+    // isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    builder: (context) {
+      return Scaffold(
+        body: FullSizeContainer(
+          child: AddPurchasePriceForm(
+            purchasePrice: purchasePrice,
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class WithDrawalContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -74,10 +98,13 @@ class WithrawalDataContent extends StatelessWidget {
     final List<Widget> priceWidgets = prices.map((pr) {
       return PurchasePriceCard(
         purchasePrice: pr,
-        onTap: () => openAddPurchaseDialog(
+        addAction: () => openAddPurchaseDialog(
           context: context,
           purchasePrice: pr,
         ),
+        editAction: () {
+          openAddPurchasePriceDialog(context, purchasePrice: pr);
+        },
       );
     }).toList();
 
@@ -142,35 +169,14 @@ class WithrawalDataContent extends StatelessWidget {
   }
 }
 
-abstract class AbstractAddPurchasePriceButton extends StatelessWidget {
-  void openAddPurchasePriceDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      // isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      builder: (context) {
-        return Scaffold(
-          body: FullSizeContainer(
-            child: AddPurchasePriceForm(),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class AddPurchasePriceIconButton extends AbstractAddPurchasePriceButton {
+class AddPurchasePriceIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AddIconButton(onPressed: openAddPurchasePriceDialog);
   }
 }
 
-class AddPurchasePriceButton extends AbstractAddPurchasePriceButton {
+class AddPurchasePriceButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BasicBigTextButton(

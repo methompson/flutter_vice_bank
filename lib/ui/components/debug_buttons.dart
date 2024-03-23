@@ -254,12 +254,12 @@ class _AllAPIsTest extends StatelessWidget {
             'price': 2.0,
           });
 
-          final updated = await ppApi.updatePurchasePrice(updatedPrice);
+          final updated = await vbp.updatePurchasePrice(updatedPrice);
 
           assert(updated.id == addedPrice.id);
           assert(updated.price != updatedPrice.price);
 
-          final deleted = await ppApi.deletePurchasePrice(addedPrice.id);
+          final deleted = await vbp.deletePurchasePrice(addedPrice);
 
           assert(deleted.id == addedPrice.id);
           assert(deleted.price == updatedPrice.price);

@@ -263,6 +263,30 @@ class ViceBankProvider extends ChangeNotifier {
     return result;
   }
 
+  Future<PurchasePrice> updatePurchasePrice(PurchasePrice price) async {
+    final result = await purchasePriceApi.updatePurchasePrice(price);
+
+    final filteredPrices =
+        _purchasePrices.where((p) => p.id != result.id).toList();
+    filteredPrices.add(price);
+
+    _purchasePrices = filteredPrices;
+
+    notifyListeners();
+
+    return result;
+  }
+
+  Future<PurchasePrice> deletePurchasePrice(PurchasePrice price) async {
+    final result = await purchasePriceApi.deletePurchasePrice(price.id);
+
+    _purchasePrices.removeWhere((p) => p.id == price.id);
+
+    notifyListeners();
+
+    return result;
+  }
+
   // Purchase Functions
   Future<void> getPurchases() async {
     final cu = currentUser;
