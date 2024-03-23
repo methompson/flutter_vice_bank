@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_vice_bank/data_models/task.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/add_task.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/task_card.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/task_deposit_card.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:provider/provider.dart';
 
@@ -32,16 +38,40 @@ class DepositsContent extends StatelessWidget {
 
 class DepositsDataContent extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Selector<ViceBankProvider, List<DepositConversion>>(
-      selector: (_, vb) => vb.depositConversions,
-      builder: (_, depositConversions, __) {
-        return Selector<ViceBankProvider, List<Deposit>>(
-          selector: (_, vb) => vb.deposits,
-          builder: (context, deposits, __) {
+  Widget build(BuildContext _) {
+    return Selector<
+        ViceBankProvider,
+        ({
+          List<DepositConversion> depositConversions,
+          List<Task> tasks,
+        })>(
+      selector: (_, vb) => (
+        depositConversions: vb.depositConversions,
+        tasks: vb.tasks,
+      ),
+      builder: (_, data, __) {
+        return Selector<
+            ViceBankProvider,
+            ({
+              List<Deposit> deposits,
+              List<TaskDeposit> taskDeposits,
+            })>(
+          selector: (context, vb) => (
+            deposits: vb.deposits,
+            taskDeposits: vb.taskDeposits,
+          ),
+          builder: (context, depositData, __) {
             final items = [
-              ...depositConversionWidgets(context, depositConversions),
-              ...depositHistoryWidgets(context, deposits),
+              ...depositConversionWidgets(
+                context,
+                data.depositConversions,
+                data.tasks,
+              ),
+              ...depositHistoryWidgets(
+                context,
+                depositData.deposits,
+                depositData.taskDeposits,
+              ),
             ];
 
             return Container(
@@ -63,22 +93,49 @@ class DepositsDataContent extends StatelessWidget {
   List<Widget> depositConversionWidgets(
     BuildContext context,
     List<DepositConversion> conversions,
+    List<Task> tasks,
   ) {
-    if (conversions.isEmpty) {
+    List<dynamic> list = [
+      ...conversions,
+      ...tasks,
+    ];
+
+    list.sort((a, b) {
+      final aname =
+          a is DepositConversion || a is Task ? a.name : 'ZZZZZZZZZZZ';
+      final bname =
+          b is DepositConversion || b is Task ? b.name : 'ZZZZZZZZZZZ';
+
+      return aname.compareTo(bname);
+    });
+
+    if (list.isEmpty) {
       return [
         TitleWidget(title: 'No Deposit Conversions'),
         AddDepositConversionButton(),
       ];
     }
 
-    final List<Widget> conversionWidgets = conversions.map((con) {
-      return DepositConversionCard(
-        depositConversion: con,
-        onTap: () => openAddDepositDialog(
-          context: context,
-          depositConversion: con,
-        ),
-      );
+    final List<Widget> conversionWidgets = list.map((val) {
+      if (val is DepositConversion) {
+        return DepositConversionCard(
+          depositConversion: val,
+          onTap: () => openAddDepositDialog(
+            context: context,
+            depositConversion: val,
+          ),
+        );
+      } else if (val is Task) {
+        return TaskCard(
+          task: val,
+          onTap: () => openAddTaskDialog(
+            context: context,
+            task: val,
+          ),
+        );
+      } else {
+        return Container();
+      }
     }).toList();
 
     return [
@@ -93,10 +150,33 @@ class DepositsDataContent extends StatelessWidget {
   List<Widget> depositHistoryWidgets(
     BuildContext context,
     List<Deposit> deposits,
+    List<TaskDeposit> taskDeposits,
   ) {
-    final List<Widget> depositWidgets = deposits.map((deposit) {
-      return DepositCard(deposit: deposit);
+    List<dynamic> list = [
+      ...deposits,
+      ...taskDeposits,
+    ];
+
+    list.sort((a, b) {
+      final adate = a is DepositConversion || a is Task ? a.date : DateTime(0);
+      final bdate = b is DepositConversion || b is Task ? b.date : DateTime(0);
+
+      return adate.compareTo(bdate);
+    });
+
+    final List<Widget> depositWidgets = list.map((val) {
+      if (val is Deposit) {
+        return DepositCard(deposit: val);
+      } else if (val is TaskDeposit) {
+        return TaskDepositCard(taskDeposit: val);
+      } else {
+        return Container();
+      }
     }).toList();
+
+    // final List<Widget> depositWidgets = deposits.map((deposit) {
+    //   return DepositCard(deposit: deposit);
+    // }).toList();
 
     return [
       TitleWidget(title: 'Deposit History'),
@@ -121,6 +201,27 @@ class DepositsDataContent extends StatelessWidget {
             child: AddDepositForm(
               depositConversion: depositConversion,
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  void openAddTaskDialog({
+    required BuildContext context,
+    required Task task,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (context) {
+        return Scaffold(
+          body: FullSizeContainer(
+            child: AddTaskForm(task: task),
           ),
         );
       },

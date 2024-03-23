@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
@@ -6,7 +8,6 @@ import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/deposit_conversion_card.dart';
-import 'package:provider/provider.dart';
 
 class AddDepositForm extends StatefulWidget {
   final DepositConversion depositConversion;
