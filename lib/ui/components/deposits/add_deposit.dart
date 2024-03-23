@@ -7,12 +7,12 @@ import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
-import 'package:flutter_vice_bank/ui/components/deposits/deposit_conversion_card.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/action_card.dart';
 
 class AddDepositForm extends StatefulWidget {
-  final VBAction depositConversion;
+  final VBAction action;
 
-  AddDepositForm({required this.depositConversion});
+  AddDepositForm({required this.action});
 
   @override
   State<AddDepositForm> createState() => AddDepositFormState();
@@ -24,7 +24,7 @@ class AddDepositFormState extends State<AddDepositForm> {
   bool get canDeposit {
     final number = deposit;
     if (number == null) return false;
-    return number > 0 && number >= widget.depositConversion.minDeposit;
+    return number > 0 && number >= widget.action.minDeposit;
   }
 
   num? get deposit {
@@ -35,7 +35,7 @@ class AddDepositFormState extends State<AddDepositForm> {
   Widget build(BuildContext context) {
     const double verticalMargin = 10;
 
-    final dc = widget.depositConversion;
+    final dc = widget.action;
 
     final d = deposit;
 
@@ -52,7 +52,7 @@ class AddDepositFormState extends State<AddDepositForm> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            DepositConversionCard(depositConversion: dc),
+            ActionCard(action: dc),
             Container(
               margin: EdgeInsets.symmetric(vertical: verticalMargin),
               child: Text(
@@ -94,11 +94,11 @@ class AddDepositFormState extends State<AddDepositForm> {
 
     try {
       final depositToAdd = Deposit.newDeposit(
-        vbUserId: widget.depositConversion.vbUserId,
+        vbUserId: widget.action.vbUserId,
         depositQuantity: num.parse(depositController.text),
-        conversionRate: widget.depositConversion.conversionRate,
-        actionName: widget.depositConversion.name,
-        conversionUnit: widget.depositConversion.conversionUnit,
+        conversionRate: widget.action.conversionRate,
+        actionName: widget.action.name,
+        conversionUnit: widget.action.conversionUnit,
       );
 
       await vbProvider.addDeposit(depositToAdd);

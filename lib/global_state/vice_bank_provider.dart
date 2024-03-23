@@ -293,7 +293,7 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Deposit Conversion Functions
+  // Action Functions
   Future<void> getActions() async {
     final cu = currentUser;
     if (cu == null) {

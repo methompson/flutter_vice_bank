@@ -35,12 +35,12 @@ class WithrawalDataContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<ViceBankProvider, List<PurchasePrice>>(
       selector: (_, vb) => vb.purchasePrices,
-      builder: (_, depositConversions, __) {
+      builder: (_, actions, __) {
         return Selector<ViceBankProvider, List<Purchase>>(
           selector: (_, vb) => vb.purchases,
           builder: (context, deposits, __) {
             final items = [
-              ...purchasePriceWidgets(context, depositConversions),
+              ...purchasePriceWidgets(context, actions),
               ...purchaseHistoryWidgets(context, deposits),
             ];
 

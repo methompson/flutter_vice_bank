@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_vice_bank/data_models/action.dart';
 
-class DepositConversionCard extends StatelessWidget {
-  final VBAction depositConversion;
+class ActionCard extends StatelessWidget {
+  final VBAction action;
   final Function()? onTap;
 
-  DepositConversionCard({required this.depositConversion, this.onTap});
+  ActionCard({required this.action, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final minDeposit = depositConversion.minDeposit;
+    final minDeposit = action.minDeposit;
 
     final minDepositWidget = minDeposit <= 0
         ? Container()
-        : Text('Min Deposit: $minDeposit ${depositConversion.conversionUnit}');
+        : Text('Min Deposit: $minDeposit ${action.conversionUnit}');
 
     final depositTxt =
-        '${depositConversion.depositsPer} ${depositConversion.conversionUnit} for ${depositConversion.tokensPer} Token(s)';
+        '${action.depositsPer} ${action.conversionUnit} for ${action.tokensPer} Token(s)';
 
     return Card(
       child: ListTile(
-        title: Text(depositConversion.name),
+        title: Text(action.name),
         onTap: onTap,
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

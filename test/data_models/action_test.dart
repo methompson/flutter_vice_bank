@@ -24,7 +24,7 @@ void main() {
 
   group('toJson', () {
     test('should return a map with expected data', () {
-      final depositConversion = VBAction(
+      final action = VBAction(
         id: id,
         vbUserId: vbUserId,
         name: name,
@@ -34,13 +34,13 @@ void main() {
         minDeposit: minDeposit,
       );
 
-      expect(depositConversion.toJson(), validInput);
+      expect(action.toJson(), validInput);
     });
 
     test(
       'toJson can be piped into fromJson and return an object with duplicate values',
       () {
-        final depositConversion1 = VBAction(
+        final action1 = VBAction(
           id: id,
           vbUserId: vbUserId,
           name: name,
@@ -50,20 +50,20 @@ void main() {
           minDeposit: minDeposit,
         );
 
-        final depositConversion2 = VBAction.fromJson(
-          depositConversion1.toJson(),
+        final action2 = VBAction.fromJson(
+          action1.toJson(),
         );
 
-        expect(depositConversion1.toJson(), depositConversion2.toJson());
+        expect(action1.toJson(), action2.toJson());
       },
     );
   });
 
   group('fromJson', () {
     test('should return a valid object', () {
-      final depositConversion = VBAction.fromJson(validInput);
+      final action = VBAction.fromJson(validInput);
 
-      expect(depositConversion.toJson(), validInput);
+      expect(action.toJson(), validInput);
     });
 
     test('should throw an exception any required value is missing', () {

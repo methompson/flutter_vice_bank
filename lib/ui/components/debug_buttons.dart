@@ -386,7 +386,7 @@ class _AppInitialization extends StatelessWidget {
           final user = await vbProvider.createUser('Mat Thompson');
           await vbProvider.selectUser(user.id);
 
-          // add some deposit conversions
+          // add some actions
           final conversion = await vbProvider.createAction(
             VBAction.newAction(
               vbUserId: user.id,

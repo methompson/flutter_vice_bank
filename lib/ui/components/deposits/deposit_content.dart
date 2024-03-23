@@ -12,10 +12,10 @@ import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
-import 'package:flutter_vice_bank/ui/components/deposits/add_conversion.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/add_action.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/add_deposit.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/deposit_card.dart';
-import 'package:flutter_vice_bank/ui/components/deposits/deposit_conversion_card.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/action_card.dart';
 import 'package:flutter_vice_bank/ui/components/title_widget.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:flutter_vice_bank/ui/components/page_container.dart';
@@ -42,11 +42,11 @@ class DepositsDataContent extends StatelessWidget {
     return Selector<
         ViceBankProvider,
         ({
-          List<VBAction> depositConversions,
+          List<VBAction> actions,
           List<Task> tasks,
         })>(
       selector: (_, vb) => (
-        depositConversions: vb.actions,
+        actions: vb.actions,
         tasks: vb.tasks,
       ),
       builder: (_, data, __) {
@@ -62,9 +62,9 @@ class DepositsDataContent extends StatelessWidget {
           ),
           builder: (context, depositData, __) {
             final items = [
-              ...depositConversionWidgets(
+              ...actionWidgets(
                 context,
-                data.depositConversions,
+                data.actions,
                 data.tasks,
               ),
               ...depositHistoryWidgets(
@@ -90,7 +90,7 @@ class DepositsDataContent extends StatelessWidget {
     );
   }
 
-  List<Widget> depositConversionWidgets(
+  List<Widget> actionWidgets(
     BuildContext context,
     List<VBAction> conversions,
     List<Task> tasks,
@@ -109,18 +109,18 @@ class DepositsDataContent extends StatelessWidget {
 
     if (list.isEmpty) {
       return [
-        TitleWidget(title: 'No Deposit Conversions'),
-        AddDepositConversionButton(),
+        TitleWidget(title: 'No Tasks or Actions'),
+        AddActionButton(),
       ];
     }
 
     final List<Widget> conversionWidgets = list.map((val) {
       if (val is VBAction) {
-        return DepositConversionCard(
-          depositConversion: val,
+        return ActionCard(
+          action: val,
           onTap: () => openAddDepositDialog(
             context: context,
-            depositConversion: val,
+            action: val,
           ),
         );
       } else if (val is Task) {
@@ -138,8 +138,8 @@ class DepositsDataContent extends StatelessWidget {
 
     return [
       TitleWithIconButton(
-        title: 'Deposit Conversions',
-        iconButton: AddDepositConversionIconButton(),
+        title: 'Actions and Tasks',
+        iconButton: AddActionIconButton(),
       ),
       ...conversionWidgets,
     ];
@@ -184,7 +184,7 @@ class DepositsDataContent extends StatelessWidget {
 
   void openAddDepositDialog({
     required BuildContext context,
-    required VBAction depositConversion,
+    required VBAction action,
   }) {
     showModalBottomSheet(
       context: context,
@@ -197,7 +197,7 @@ class DepositsDataContent extends StatelessWidget {
         return Scaffold(
           body: FullSizeContainer(
             child: AddDepositForm(
-              depositConversion: depositConversion,
+              action: action,
             ),
           ),
         );
@@ -219,7 +219,7 @@ class DepositsDataContent extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           body: FullSizeContainer(
-            child: AddTaskForm(task: task),
+            child: AddTaskFormOld(task: task),
           ),
         );
       },
@@ -227,8 +227,8 @@ class DepositsDataContent extends StatelessWidget {
   }
 }
 
-abstract class AbstractAddDepositConversionButton extends StatelessWidget {
-  void openAddDepositConversionDialog(BuildContext context) {
+abstract class AbstractAddActionButton extends StatelessWidget {
+  void openAddActionDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -240,7 +240,7 @@ abstract class AbstractAddDepositConversionButton extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           body: FullSizeContainer(
-            child: AddDepositConversionForm(),
+            child: AddActionTaskForm(),
           ),
         );
       },
@@ -248,25 +248,66 @@ abstract class AbstractAddDepositConversionButton extends StatelessWidget {
   }
 }
 
-class AddDepositConversionIconButton
-    extends AbstractAddDepositConversionButton {
+class AddActionIconButton extends AbstractAddActionButton {
   @override
   Widget build(BuildContext context) {
-    return AddIconButton(onPressed: openAddDepositConversionDialog);
+    return AddIconButton(onPressed: openAddActionDialog);
   }
 }
 
-class AddDepositConversionButton extends AbstractAddDepositConversionButton {
+class AddActionButton extends AbstractAddActionButton {
   @override
   Widget build(BuildContext context) {
     return BasicBigTextButton(
       topMargin: 20,
       bottomMargin: 10,
       allPadding: 10,
-      text: 'Add a New Deposit Conversion',
+      text: 'Add an Action or Task',
       onPressed: () {
-        openAddDepositConversionDialog(context);
+        openAddActionDialog(context);
       },
     );
+  }
+}
+
+class AddActionTaskForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Add Action or Task'),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Action'),
+              Tab(text: 'Task'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            AddActionForm(),
+            AddTaskForm(),
+          ],
+        ),
+      ),
+    );
+    // return Column(
+    //   children: [
+    //     TabBar(
+    //       tabs: [
+    //         Tab(text: 'Actions'),
+    //         Tab(text: 'Tasks'),
+    //       ],
+    //     ),
+    //     TabBarView(
+    //       children: [
+    //         AddActionForm(),
+    //         AddTaskForm(),
+    //       ],
+    //     ),
+    //   ],
+    // );
   }
 }
