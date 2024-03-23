@@ -7,6 +7,10 @@ import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:provider/provider.dart';
 
 class AddPurchasePriceForm extends StatefulWidget {
+  final PurchasePrice? purchasePrice;
+
+  AddPurchasePriceForm({this.purchasePrice});
+
   @override
   State createState() => AddPurchasePriceFormState();
 }
@@ -15,18 +19,30 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
 
-  get nameIsValid => nameController.text.isNotEmpty;
-  get priceIsValid {
+  bool get nameIsValid => nameController.text.isNotEmpty;
+  bool get priceIsValid {
     final parsedValue = num.tryParse(priceController.text);
     return parsedValue != null && parsedValue > 0;
+  }
+
+  bool get canDeposit => nameIsValid && priceIsValid;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final price = widget.purchasePrice;
+
+    if (price != null) {
+      nameController.text = price.name;
+      priceController.text = price.price.toString();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     const double horizontalMargin = 20;
     const double verticalMargin = 10;
-
-    final canDeposit = nameIsValid && priceIsValid;
 
     return SingleChildScrollView(
       child: Column(
@@ -62,14 +78,10 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
               ),
             ),
           ),
-          BasicBigTextButton(
-            text: 'Add New Action',
-            allMargin: 10,
-            topPadding: 10,
-            bottomPadding: 10,
-            disabled: !canDeposit,
-            onPressed: addNewPrice,
-          ),
+          if (widget.purchasePrice == null)
+            addPriceButton()
+          else
+            editPriceButton(),
           BasicBigTextButton(
             text: 'Cancel',
             allMargin: 10,
@@ -81,6 +93,28 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget addPriceButton() {
+    return BasicBigTextButton(
+      text: 'Add New Price',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canDeposit,
+      onPressed: addNewPrice,
+    );
+  }
+
+  Widget editPriceButton() {
+    return BasicBigTextButton(
+      text: 'Update Price',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canDeposit,
+      onPressed: editPrice,
     );
   }
 
@@ -97,7 +131,7 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
     }
 
     msgProvider.setLoadingScreenData(
-      LoadingScreenData(message: 'Adding Action...'),
+      LoadingScreenData(message: 'Adding Price...'),
     );
 
     try {
@@ -113,12 +147,55 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
 
       await vbProvider.createPurchasePrice(priceToAdd);
 
+      msgProvider.showSuccessSnackbar('Price added');
+
       final c = context;
       if (c.mounted) {
         Navigator.pop(c);
       }
     } catch (e) {
       msgProvider.showErrorSnackbar('Adding Purchase Price Failed: $e');
+    }
+
+    msgProvider.clearLoadingScreen();
+  }
+
+  Future<void> editPrice() async {
+    final msgProvider = context.read<MessagingProvider>();
+    final vbProvider = context.read<ViceBankProvider>();
+
+    final purchasePrice = widget.purchasePrice;
+
+    if (purchasePrice == null) {
+      msgProvider.showErrorSnackbar(
+          'No price selected. Select a Vice Bank User First.');
+      return;
+    }
+
+    msgProvider.setLoadingScreenData(
+      LoadingScreenData(message: 'Updating Price...'),
+    );
+
+    try {
+      final name = nameController.text;
+      final price = num.parse(priceController.text);
+
+      final priceToUpdate = PurchasePrice.fromJson({
+        ...purchasePrice.toJson(),
+        'name': name,
+        'price': price,
+      });
+
+      await vbProvider.updatePurchasePrice(priceToUpdate);
+
+      msgProvider.showSuccessSnackbar('Price updated');
+
+      final c = context;
+      if (c.mounted) {
+        Navigator.pop(c);
+      }
+    } catch (e) {
+      msgProvider.showErrorSnackbar('Updating Purchase Price Failed: $e');
     }
 
     msgProvider.clearLoadingScreen();

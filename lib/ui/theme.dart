@@ -21,25 +21,25 @@ final commonFilledButtonStyle = ButtonStyle(
   ),
 );
 
-const bodyLargeSize = 20.0;
-const bodyMediumSize = 16.0;
-const bodySmallSize = 12.0;
+// const bodyLargeSize = 20.0;
+// const bodyMediumSize = 16.0;
+// const bodySmallSize = 12.0;
 
 const themeFontWeight = FontWeight.w500;
 
 final lightTextTheme = ThemeData.light().textTheme.copyWith(
       bodyLarge: TextStyle(
-        fontSize: bodyLargeSize,
+        // fontSize: bodyLargeSize,
         fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
       bodyMedium: TextStyle(
-        fontSize: bodyMediumSize,
+        // fontSize: bodyMediumSize,
         // fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
       bodySmall: TextStyle(
-        fontSize: bodySmallSize,
+        // fontSize: bodySmallSize,
         // fontWeight: themeFontWeight,
         color: lightColorScheme.onBackground,
       ),
@@ -47,17 +47,17 @@ final lightTextTheme = ThemeData.light().textTheme.copyWith(
 
 final darkTextTheme = ThemeData.dark().textTheme.copyWith(
       bodyLarge: TextStyle(
-        fontSize: bodyLargeSize,
+        // fontSize: bodyLargeSize,
         fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),
       bodyMedium: TextStyle(
-        fontSize: bodyMediumSize,
+        // fontSize: bodyMediumSize,
         // fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),
       bodySmall: TextStyle(
-        fontSize: bodySmallSize,
+        // fontSize: bodySmallSize,
         // fontWeight: themeFontWeight,
         color: darkColorScheme.onBackground,
       ),

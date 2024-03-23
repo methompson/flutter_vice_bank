@@ -142,6 +142,8 @@ class _AllAPIsTest extends StatelessWidget {
 
           await vbp.getViceBankUsers();
 
+          await vbp.selectUser(addedUser.id);
+
           final users = vbp.users;
           users.retainWhere((el) => el.id == addedUser.id);
 
@@ -168,28 +170,28 @@ class _AllAPIsTest extends StatelessWidget {
 
           final dcApi = ActionAPI();
 
-          final dc = await dcApi.addAction(actionToAdd);
+          final action = await vbp.createAction(actionToAdd);
 
-          assert(dc.id != actionToAdd.id);
+          assert(action.id != actionToAdd.id);
 
-          final dcs = await dcApi.getActions(addedUser.id);
+          final dcs = await vbp.getActions();
 
-          dcs.retainWhere((el) => el.id == dc.id);
+          dcs.retainWhere((el) => el.id == action.id);
 
           assert(dcs.length == 1);
 
-          final dcToUpdate = VBAction.fromJson({
-            ...dc.toJson(),
+          final actionToUpdate = VBAction.fromJson({
+            ...action.toJson(),
             'depositsPer': 2.0,
           });
 
-          final updatedDc = await dcApi.updateAction(dcToUpdate);
+          final updatedAction = await vbp.updateAction(actionToUpdate);
 
-          assert(updatedDc.depositsPer != dcToUpdate.depositsPer);
+          assert(updatedAction.depositsPer != actionToUpdate.depositsPer);
 
-          final deletedDc = await dcApi.deleteAction(dc.id);
+          final deletedAction = await vbp.deleteAction(action);
 
-          assert(deletedDc.depositsPer == dcToUpdate.depositsPer);
+          assert(deletedAction.depositsPer == actionToUpdate.depositsPer);
 
           final depositToAdd = Deposit.newDeposit(
             vbUserId: addedUser.id,
@@ -252,12 +254,12 @@ class _AllAPIsTest extends StatelessWidget {
             'price': 2.0,
           });
 
-          final updated = await ppApi.updatePurchasePrice(updatedPrice);
+          final updated = await vbp.updatePurchasePrice(updatedPrice);
 
           assert(updated.id == addedPrice.id);
           assert(updated.price != updatedPrice.price);
 
-          final deleted = await ppApi.deletePurchasePrice(addedPrice.id);
+          final deleted = await vbp.deletePurchasePrice(addedPrice);
 
           assert(deleted.id == addedPrice.id);
           assert(deleted.price == updatedPrice.price);
@@ -307,9 +309,9 @@ class _AllAPIsTest extends StatelessWidget {
             tokensPer: 1.0,
           );
 
-          final task = await taskApi.addTask(taskToAdd);
+          final task = await vbp.createTask(taskToAdd);
 
-          final tasks = await taskApi.getTasks(updatedUser.id);
+          final tasks = await vbp.getTasks();
 
           assert(tasks.length == 1);
 
@@ -319,17 +321,17 @@ class _AllAPIsTest extends StatelessWidget {
             'tokensPer': 1,
           });
 
-          final updatedTask = await taskApi.updateTask(taskToUpdate);
+          await vbp.updateTask(taskToUpdate);
 
           final taskDepositToAdd = TaskDeposit(
             id: 'id',
             vbUserId: updatedUser.id,
             date: DateTime.now(),
-            taskName: updatedTask.name,
-            taskId: updatedTask.id,
-            conversionRate: updatedTask.tokensPer,
-            frequency: updatedTask.frequency,
-            tokensEarned: updatedTask.tokensPer,
+            taskName: taskToUpdate.name,
+            taskId: taskToUpdate.id,
+            conversionRate: taskToUpdate.tokensPer,
+            frequency: taskToUpdate.frequency,
+            tokensEarned: taskToUpdate.tokensPer,
           );
 
           final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);
@@ -353,7 +355,7 @@ class _AllAPIsTest extends StatelessWidget {
           assert(
               deletedTaskDeposit.taskDeposit.id == taskDeposit.taskDeposit.id);
 
-          final deletedTask = await taskApi.deleteTask(task.id);
+          final deletedTask = await vbp.deleteTask(task);
 
           assert(deletedTask.id == task.id);
 
