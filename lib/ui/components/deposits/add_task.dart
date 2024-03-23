@@ -22,15 +22,16 @@ class AddTaskForm extends StatefulWidget {
 class AddTaskFormState extends State<AddTaskForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController tokensPerController = TextEditingController();
+  Frequency? frequency;
 
-  get nameIsValid => nameController.text.isNotEmpty;
+  bool get nameIsValid => nameController.text.isNotEmpty;
 
-  get tokensPerIsValid {
+  bool get tokensPerIsValid {
     final parsedValue = num.tryParse(tokensPerController.text);
     return parsedValue != null && parsedValue > 0;
   }
 
-  bool get canAddTask => nameIsValid && tokensPerIsValid;
+  bool get canAddTask => nameIsValid && tokensPerIsValid && frequency != null;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class AddTaskFormState extends State<AddTaskForm> {
     if (task != null) {
       nameController.text = task.name;
       tokensPerController.text = task.tokensPer.toString();
+      frequency = task.frequency;
     }
   }
 
@@ -79,9 +81,26 @@ class AddTaskFormState extends State<AddTaskForm> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
-                labelText: 'Tokens Per (How many tokens you get for the rate)',
+                labelText: 'How Many Tokens You Get',
               ),
             ),
+          ),
+          DropdownButton<Frequency>(
+            value: frequency,
+            hint: Text('Select Frequency'),
+            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            focusColor: Theme.of(context).scaffoldBackgroundColor,
+            items: [
+              DropdownMenuItem(value: Frequency.daily, child: Text('Daily')),
+              DropdownMenuItem(value: Frequency.weekly, child: Text('Weekly')),
+              DropdownMenuItem(
+                  value: Frequency.monthly, child: Text('Monthly')),
+            ],
+            onChanged: (val) {
+              setState(() {
+                frequency = val;
+              });
+            },
           ),
           if (widget.task == null) addTaskButton() else editTaskButton(),
           BasicBigTextButton(
@@ -120,48 +139,6 @@ class AddTaskFormState extends State<AddTaskForm> {
     );
   }
 
-  Future<void> editTask() async {
-    final msgProvider = context.read<MessagingProvider>();
-    final vbProvider = context.read<ViceBankProvider>();
-
-    final task = widget.task;
-
-    if (task == null) {
-      msgProvider.showErrorSnackbar(
-          'No user selected. Select a Vice Bank User First.');
-      return;
-    }
-
-    msgProvider.setLoadingScreenData(
-      LoadingScreenData(message: 'Updating Task...'),
-    );
-
-    try {
-      final name = nameController.text;
-      final tokensPer = num.parse(tokensPerController.text);
-
-      final updatedTask = Task.fromJson({
-        ...task.toJson(),
-        'name': name.trim(),
-        'frequency': frequencyToString(Frequency.daily),
-        'tokensPer': tokensPer,
-      });
-
-      await vbProvider.updateTask(updatedTask);
-
-      msgProvider.showSuccessSnackbar('Task updated');
-
-      final c = context;
-      if (c.mounted) {
-        Navigator.pop(c);
-      }
-    } catch (e) {
-      msgProvider.showErrorSnackbar('Updating Task Failed: $e');
-    }
-
-    msgProvider.clearLoadingScreen();
-  }
-
   Future<void> addNewTask() async {
     final msgProvider = context.read<MessagingProvider>();
     final vbProvider = context.read<ViceBankProvider>();
@@ -171,6 +148,13 @@ class AddTaskFormState extends State<AddTaskForm> {
     if (currentUser == null) {
       msgProvider.showErrorSnackbar(
           'No user selected. Select a Vice Bank User First.');
+      return;
+    }
+
+    final freq = frequency;
+    if (freq == null) {
+      msgProvider.showErrorSnackbar(
+          'Frequency is not valid. Select a frequency first');
       return;
     }
 
@@ -186,7 +170,7 @@ class AddTaskFormState extends State<AddTaskForm> {
       final newTask = Task.newTask(
         vbUserId: userId,
         name: name.trim(),
-        frequency: Frequency.daily,
+        frequency: freq,
         tokensPer: tokensPer,
       );
 
@@ -200,6 +184,55 @@ class AddTaskFormState extends State<AddTaskForm> {
       }
     } catch (e) {
       msgProvider.showErrorSnackbar('Adding Task Failed: $e');
+    }
+
+    msgProvider.clearLoadingScreen();
+  }
+
+  Future<void> editTask() async {
+    final msgProvider = context.read<MessagingProvider>();
+    final vbProvider = context.read<ViceBankProvider>();
+
+    final task = widget.task;
+
+    if (task == null) {
+      msgProvider.showErrorSnackbar(
+          'No user selected. Select a Vice Bank User First.');
+      return;
+    }
+
+    final freq = frequency;
+    if (freq == null) {
+      msgProvider.showErrorSnackbar(
+          'Frequency is not valid. Select a frequency first');
+      return;
+    }
+
+    msgProvider.setLoadingScreenData(
+      LoadingScreenData(message: 'Updating Task...'),
+    );
+
+    try {
+      final name = nameController.text;
+      final tokensPer = num.parse(tokensPerController.text);
+
+      final updatedTask = Task.fromJson({
+        ...task.toJson(),
+        'name': name.trim(),
+        'frequency': frequencyToString(freq),
+        'tokensPer': tokensPer,
+      });
+
+      await vbProvider.updateTask(updatedTask);
+
+      msgProvider.showSuccessSnackbar('Task updated');
+
+      final c = context;
+      if (c.mounted) {
+        Navigator.pop(c);
+      }
+    } catch (e) {
+      msgProvider.showErrorSnackbar('Updating Task Failed: $e');
     }
 
     msgProvider.clearLoadingScreen();
