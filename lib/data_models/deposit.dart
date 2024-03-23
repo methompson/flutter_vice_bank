@@ -7,7 +7,7 @@ class Deposit {
   final DateTime _date;
   final num _depositQuantity;
   final num _conversionRate;
-  final String _depositConversionName;
+  final String _actionName;
   final String _conversionUnit;
 
   Deposit({
@@ -16,14 +16,14 @@ class Deposit {
     required DateTime date,
     required num depositQuantity,
     required num conversionRate,
-    required String depositConversionName,
+    required String actionName,
     required String conversionUnit,
   })  : _id = id,
         _vbUserId = vbUserId,
         _date = date,
         _depositQuantity = depositQuantity,
         _conversionRate = conversionRate,
-        _depositConversionName = depositConversionName,
+        _actionName = actionName,
         _conversionUnit = conversionUnit;
 
   String get id => _id;
@@ -31,7 +31,7 @@ class Deposit {
   DateTime get date => _date;
   num get depositQuantity => _depositQuantity;
   num get conversionRate => _conversionRate;
-  String get depositConversionName => _depositConversionName;
+  String get actionName => _actionName;
   String get conversionUnit => _conversionUnit;
 
   num get tokensEarned {
@@ -45,7 +45,7 @@ class Deposit {
       'date': _date.toIso8601String(),
       'depositQuantity': _depositQuantity,
       'conversionRate': _conversionRate,
-      'depositConversionName': _depositConversionName,
+      'actionName': _actionName,
       'conversionUnit': _conversionUnit,
     };
   }
@@ -74,9 +74,9 @@ class Deposit {
       jsonMap['conversionRate'],
       message: '$errMsg conversionRate',
     );
-    final depositConversionName = isTypeError<String>(
-      jsonMap['depositConversionName'],
-      message: '$errMsg depositConversionName',
+    final actionName = isTypeError<String>(
+      jsonMap['actionName'],
+      message: '$errMsg actionName',
     );
     final conversionUnit = isTypeError<String>(
       jsonMap['conversionUnit'],
@@ -91,7 +91,7 @@ class Deposit {
       date: date,
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
-      depositConversionName: depositConversionName,
+      actionName: actionName,
       conversionUnit: conversionUnit,
     );
   }
@@ -100,7 +100,7 @@ class Deposit {
     required String vbUserId,
     required num depositQuantity,
     required num conversionRate,
-    required String depositConversionName,
+    required String actionName,
     required String conversionUnit,
   }) {
     return Deposit(
@@ -109,7 +109,7 @@ class Deposit {
       date: DateTime.now(),
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
-      depositConversionName: depositConversionName,
+      actionName: actionName,
       conversionUnit: conversionUnit,
     );
   }

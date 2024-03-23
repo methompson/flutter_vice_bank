@@ -11,12 +11,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter_vice_bank/utils/agent/agent.dart';
 import 'package:flutter_vice_bank/api/deposit_api.dart';
-import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
 import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
@@ -157,7 +157,7 @@ class _AllAPIsTest extends StatelessWidget {
           assert(updatedUser.id == addedUser.id);
           assert(updatedUser.name == addedUser.name);
 
-          final depositConversionToAdd = DepositConversion.newConversion(
+          final actionToAdd = VBAction.newAction(
             vbUserId: addedUser.id,
             name: 'name',
             conversionUnit: 'conversionUnit',
@@ -166,28 +166,28 @@ class _AllAPIsTest extends StatelessWidget {
             minDeposit: 3.0,
           );
 
-          final dcApi = DepositConversionAPI();
+          final dcApi = ActionAPI();
 
-          final dc = await dcApi.addDepositConversion(depositConversionToAdd);
+          final dc = await dcApi.addAction(actionToAdd);
 
-          assert(dc.id != depositConversionToAdd.id);
+          assert(dc.id != actionToAdd.id);
 
-          final dcs = await dcApi.getDepositConversions(addedUser.id);
+          final dcs = await dcApi.getActions(addedUser.id);
 
           dcs.retainWhere((el) => el.id == dc.id);
 
           assert(dcs.length == 1);
 
-          final dcToUpdate = DepositConversion.fromJson({
+          final dcToUpdate = VBAction.fromJson({
             ...dc.toJson(),
             'depositsPer': 2.0,
           });
 
-          final updatedDc = await dcApi.updateDepositConversion(dcToUpdate);
+          final updatedDc = await dcApi.updateAction(dcToUpdate);
 
           assert(updatedDc.depositsPer != dcToUpdate.depositsPer);
 
-          final deletedDc = await dcApi.deleteDepositConversion(dc.id);
+          final deletedDc = await dcApi.deleteAction(dc.id);
 
           assert(deletedDc.depositsPer == dcToUpdate.depositsPer);
 
@@ -195,7 +195,7 @@ class _AllAPIsTest extends StatelessWidget {
             vbUserId: addedUser.id,
             depositQuantity: 1.0,
             conversionRate: 1.0,
-            depositConversionName: 'depositConversionName',
+            actionName: 'actionName',
             conversionUnit: 'minutes',
           );
 
@@ -387,8 +387,8 @@ class _AppInitialization extends StatelessWidget {
           await vbProvider.selectUser(user.id);
 
           // add some deposit conversions
-          final conversion = await vbProvider.createDepositConversion(
-            DepositConversion.newConversion(
+          final conversion = await vbProvider.createAction(
+            VBAction.newAction(
               vbUserId: user.id,
               name: 'Read a Book',
               conversionUnit: 'minutes',
@@ -404,7 +404,7 @@ class _AppInitialization extends StatelessWidget {
               vbUserId: user.id,
               depositQuantity: 60,
               conversionRate: conversion.conversionRate,
-              depositConversionName: conversion.name,
+              actionName: conversion.name,
               conversionUnit: conversion.conversionUnit,
             ),
           );
@@ -413,7 +413,7 @@ class _AppInitialization extends StatelessWidget {
               vbUserId: user.id,
               depositQuantity: 60,
               conversionRate: conversion.conversionRate,
-              depositConversionName: conversion.name,
+              actionName: conversion.name,
               conversionUnit: conversion.conversionUnit,
             ),
           );

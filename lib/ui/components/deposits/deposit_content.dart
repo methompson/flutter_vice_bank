@@ -9,7 +9,7 @@ import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
 import 'package:flutter_vice_bank/ui/components/deposits/add_conversion.dart';
@@ -42,11 +42,11 @@ class DepositsDataContent extends StatelessWidget {
     return Selector<
         ViceBankProvider,
         ({
-          List<DepositConversion> depositConversions,
+          List<VBAction> depositConversions,
           List<Task> tasks,
         })>(
       selector: (_, vb) => (
-        depositConversions: vb.depositConversions,
+        depositConversions: vb.actions,
         tasks: vb.tasks,
       ),
       builder: (_, data, __) {
@@ -92,7 +92,7 @@ class DepositsDataContent extends StatelessWidget {
 
   List<Widget> depositConversionWidgets(
     BuildContext context,
-    List<DepositConversion> conversions,
+    List<VBAction> conversions,
     List<Task> tasks,
   ) {
     List<dynamic> list = [
@@ -101,10 +101,8 @@ class DepositsDataContent extends StatelessWidget {
     ];
 
     list.sort((a, b) {
-      final aname =
-          a is DepositConversion || a is Task ? a.name : 'ZZZZZZZZZZZ';
-      final bname =
-          b is DepositConversion || b is Task ? b.name : 'ZZZZZZZZZZZ';
+      final aname = a is VBAction || a is Task ? a.name : 'ZZZZZZZZZZZ';
+      final bname = b is VBAction || b is Task ? b.name : 'ZZZZZZZZZZZ';
 
       return aname.compareTo(bname);
     });
@@ -117,7 +115,7 @@ class DepositsDataContent extends StatelessWidget {
     }
 
     final List<Widget> conversionWidgets = list.map((val) {
-      if (val is DepositConversion) {
+      if (val is VBAction) {
         return DepositConversionCard(
           depositConversion: val,
           onTap: () => openAddDepositDialog(
@@ -158,8 +156,8 @@ class DepositsDataContent extends StatelessWidget {
     ];
 
     list.sort((a, b) {
-      final adate = a is DepositConversion || a is Task ? a.date : DateTime(0);
-      final bdate = b is DepositConversion || b is Task ? b.date : DateTime(0);
+      final adate = a is VBAction || a is Task ? a.date : DateTime(0);
+      final bdate = b is VBAction || b is Task ? b.date : DateTime(0);
 
       return adate.compareTo(bdate);
     });
@@ -186,7 +184,7 @@ class DepositsDataContent extends StatelessWidget {
 
   void openAddDepositDialog({
     required BuildContext context,
-    required DepositConversion depositConversion,
+    required VBAction depositConversion,
   }) {
     showModalBottomSheet(
       context: context,

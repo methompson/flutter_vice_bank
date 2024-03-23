@@ -33,7 +33,7 @@ void main() {
           date: date,
           depositQuantity: depositQuantity,
           conversionRate: conversionRate,
-          depositConversionName: depositConversionName,
+          actionName: depositConversionName,
           conversionUnit: conversionUnit,
         );
 
@@ -49,7 +49,7 @@ void main() {
             date: date,
             depositQuantity: depositQuantity,
             conversionRate: conversionRate,
-            depositConversionName: depositConversionName,
+            actionName: depositConversionName,
             conversionUnit: conversionUnit,
           );
 

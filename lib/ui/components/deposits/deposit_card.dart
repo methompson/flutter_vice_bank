@@ -27,7 +27,7 @@ class DepositCard extends StatelessWidget {
                   ),
             ),
             Text(
-              deposit.depositConversionName,
+              deposit.actionName,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(

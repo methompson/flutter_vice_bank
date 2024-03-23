@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 
 class DepositConversionCard extends StatelessWidget {
-  final DepositConversion depositConversion;
+  final VBAction depositConversion;
   final Function()? onTap;
 
   DepositConversionCard({required this.depositConversion, this.onTap});

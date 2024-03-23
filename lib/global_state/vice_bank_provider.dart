@@ -8,13 +8,13 @@ import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_vice_bank/api/deposit_api.dart';
-import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
 import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
@@ -31,7 +31,7 @@ class ViceBankProvider extends ChangeNotifier {
 
   List<PurchasePrice> _purchasePrices = [];
   List<Purchase> _purchases = [];
-  List<DepositConversion> _depositConversions = [];
+  List<VBAction> _actions = [];
   List<Deposit> _deposits = [];
   List<Task> _tasks = [];
   List<TaskDeposit> _taskDeposits = [];
@@ -39,7 +39,7 @@ class ViceBankProvider extends ChangeNotifier {
   List<ViceBankUser> get users => [..._users.values];
   List<PurchasePrice> get purchasePrices => [..._purchasePrices];
   List<Purchase> get purchases => [..._purchases];
-  List<DepositConversion> get depositConversions => [..._depositConversions];
+  List<VBAction> get actions => [..._actions];
   List<Deposit> get deposits => [..._deposits];
   List<Task> get tasks => [..._tasks];
   List<TaskDeposit> get taskDeposits => [..._taskDeposits];
@@ -69,13 +69,12 @@ class ViceBankProvider extends ChangeNotifier {
     _purchaseAPI = api;
   }
 
-  DepositConversionAPI? _depositConversionAPI;
+  ActionAPI? _actionAPI;
   @visibleForTesting
-  DepositConversionAPI get depositConversionApi =>
-      _depositConversionAPI ?? DepositConversionAPI();
+  ActionAPI get actionAPI => _actionAPI ?? ActionAPI();
   @visibleForTesting
-  set depositConversionApi(DepositConversionAPI api) {
-    _depositConversionAPI = api;
+  set actionAPI(ActionAPI api) {
+    _actionAPI = api;
   }
 
   DepositAPI? _depositAPI;
@@ -101,7 +100,7 @@ class ViceBankProvider extends ChangeNotifier {
     _currentUser = null;
     _purchasePrices = [];
     _purchases = [];
-    _depositConversions = [];
+    _actions = [];
     _deposits = [];
     _tasks = [];
     _taskDeposits = [];
@@ -195,7 +194,7 @@ class ViceBankProvider extends ChangeNotifier {
 
     await Future.wait([
       saveCurrentUserToSharedPrefs(),
-      getDepositConversions(),
+      getActions(),
     ]);
 
     notifyListeners();
@@ -295,26 +294,24 @@ class ViceBankProvider extends ChangeNotifier {
   }
 
   // Deposit Conversion Functions
-  Future<void> getDepositConversions() async {
+  Future<void> getActions() async {
     final cu = currentUser;
     if (cu == null) {
       // throw Exception('No user selected');
       return;
     }
 
-    _depositConversions =
-        await depositConversionApi.getDepositConversions(cu.id);
+    _actions = await actionAPI.getActions(cu.id);
 
     notifyListeners();
   }
 
-  Future<DepositConversion> createDepositConversion(
-    DepositConversion depositConversion,
+  Future<VBAction> createAction(
+    VBAction action,
   ) async {
-    final result =
-        await depositConversionApi.addDepositConversion(depositConversion);
+    final result = await actionAPI.addAction(action);
 
-    _depositConversions.add(result);
+    _actions.add(result);
 
     notifyListeners();
 

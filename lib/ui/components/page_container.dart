@@ -162,7 +162,7 @@ class DataWatcherState extends State<DataWatcher> {
 
     try {
       await Future.wait([
-        vbProvider.getDepositConversions(),
+        vbProvider.getActions(),
         vbProvider.getDeposits(),
         vbProvider.getPurchasePrices(),
         vbProvider.getPurchases(),

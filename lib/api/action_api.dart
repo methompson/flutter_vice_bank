@@ -4,15 +4,15 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter_vice_bank/api/api_common.dart';
 import 'package:flutter_vice_bank/api/auth_utils.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
-class DepositConversionAPI extends APICommon {
-  Future<List<DepositConversion>> getDepositConversions(String userId) async {
+class ActionAPI extends APICommon {
+  Future<List<VBAction>> getActions(String userId) async {
     final uri = getUri(
       baseDomain,
-      '$baseApiUrl/depositConversions',
+      '$baseApiUrl/actions',
       {'userId': userId},
     );
 
@@ -30,15 +30,15 @@ class DepositConversionAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final depositsList = isTypeError<List>(bodyJson['depositConversions']);
+    final actionsList = isTypeError<List>(bodyJson['actions']);
 
-    final List<DepositConversion> depositConversions = [];
+    final List<VBAction> actions = [];
     final errors = <dynamic>[];
 
-    for (final d in depositsList) {
+    for (final d in actionsList) {
       try {
-        final deposit = DepositConversion.fromJson(d);
-        depositConversions.add(deposit);
+        final action = VBAction.fromJson(d);
+        actions.add(action);
       } catch (e) {
         errors.add(e);
       }
@@ -46,17 +46,17 @@ class DepositConversionAPI extends APICommon {
 
     if (errors.isNotEmpty) {
       LoggingProvider.instance.logError(
-        'Error parsing depositConversions: $errors',
+        'Error parsing actions: $errors',
       );
     }
 
-    return depositConversions;
+    return actions;
   }
 
-  Future<DepositConversion> addDepositConversion(
-    DepositConversion depositConversion,
+  Future<VBAction> addAction(
+    VBAction action,
   ) async {
-    final uri = getUri(baseDomain, '$baseApiUrl/addDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/addAction');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -65,7 +65,7 @@ class DepositConversionAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'depositConversion': depositConversion.toJson(),
+      'action': action.toJson(),
     };
 
     final response = await http.post(
@@ -77,16 +77,15 @@ class DepositConversionAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final addedDeposit =
-        DepositConversion.fromJson(bodyJson['depositConversion']);
+    final addedAction = VBAction.fromJson(bodyJson['action']);
 
-    return addedDeposit;
+    return addedAction;
   }
 
-  Future<DepositConversion> updateDepositConversion(
-    DepositConversion depositConversion,
+  Future<VBAction> updateAction(
+    VBAction action,
   ) async {
-    final uri = getUri(baseDomain, '$baseApiUrl/updateDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/updateAction');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -95,7 +94,7 @@ class DepositConversionAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'depositConversion': depositConversion.toJson(),
+      'action': action.toJson(),
     };
 
     final response = await http.post(
@@ -107,16 +106,15 @@ class DepositConversionAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final oldDeposit =
-        DepositConversion.fromJson(bodyJson['depositConversion']);
+    final oldAction = VBAction.fromJson(bodyJson['action']);
 
-    return oldDeposit;
+    return oldAction;
   }
 
-  Future<DepositConversion> deleteDepositConversion(
-    String depositConversionId,
+  Future<VBAction> deleteAction(
+    String actionId,
   ) async {
-    final uri = getUri(baseDomain, '$baseApiUrl/deleteDepositConversion');
+    final uri = getUri(baseDomain, '$baseApiUrl/deleteAction');
     final token = await getAuthorizationToken();
 
     final headers = {
@@ -125,7 +123,7 @@ class DepositConversionAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'depositConversionId': depositConversionId,
+      'actionId': actionId,
     };
 
     final response = await http.post(
@@ -137,9 +135,8 @@ class DepositConversionAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final deletedDeposit =
-        DepositConversion.fromJson(bodyJson['depositConversion']);
+    final deletedAction = VBAction.fromJson(bodyJson['action']);
 
-    return deletedDeposit;
+    return deletedAction;
   }
 }
