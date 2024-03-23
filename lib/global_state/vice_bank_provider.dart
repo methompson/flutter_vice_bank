@@ -294,16 +294,18 @@ class ViceBankProvider extends ChangeNotifier {
   }
 
   // Action Functions
-  Future<void> getActions() async {
+  Future<List<VBAction>> getActions() async {
     final cu = currentUser;
     if (cu == null) {
       // throw Exception('No user selected');
-      return;
+      return [];
     }
 
     _actions = await actionAPI.getActions(cu.id);
 
     notifyListeners();
+
+    return _actions;
   }
 
   Future<VBAction> createAction(
@@ -312,6 +314,21 @@ class ViceBankProvider extends ChangeNotifier {
     final result = await actionAPI.addAction(action);
 
     _actions.add(result);
+
+    notifyListeners();
+
+    return result;
+  }
+
+  Future<VBAction> updateAction(
+    VBAction action,
+  ) async {
+    final result = await actionAPI.updateAction(action);
+
+    final filteredActions = _actions.where((a) => a.id != result.id).toList();
+    filteredActions.add(action);
+
+    _actions = filteredActions;
 
     notifyListeners();
 
@@ -343,7 +360,7 @@ class ViceBankProvider extends ChangeNotifier {
     return result.deposit;
   }
 
-  Future<void> getTasks() async {
+  Future<List<Task>> getTasks() async {
     final cu = currentUser;
     if (cu == null) {
       throw Exception('No user selected');
@@ -352,12 +369,27 @@ class ViceBankProvider extends ChangeNotifier {
     _tasks = await taskApi.getTasks(cu.id);
 
     notifyListeners();
+
+    return _tasks;
   }
 
   Future<Task> createTask(Task task) async {
     final result = await taskApi.addTask(task);
 
     _tasks.add(result);
+
+    notifyListeners();
+
+    return result;
+  }
+
+  Future<Task> updateTask(Task task) async {
+    final result = await taskApi.updateTask(task);
+
+    final filteredTasks = _tasks.where((t) => t.id != result.id).toList();
+    filteredTasks.add(task);
+
+    _tasks = filteredTasks;
 
     notifyListeners();
 

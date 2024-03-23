@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/add_task.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/add_task_deposit.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/task_card.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/task_deposit_card.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
@@ -19,6 +20,32 @@ import 'package:flutter_vice_bank/ui/components/deposits/action_card.dart';
 import 'package:flutter_vice_bank/ui/components/title_widget.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 import 'package:flutter_vice_bank/ui/components/page_container.dart';
+
+void openAddActionTaskDialog(
+  BuildContext context, {
+  VBAction? action,
+  Task? task,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+    ),
+    builder: (context) {
+      return Scaffold(
+        body: FullSizeContainer(
+          child: AddActionTaskForm(
+            action: action,
+            task: task,
+          ),
+        ),
+      );
+    },
+  );
+}
 
 class DepositsContent extends StatelessWidget {
   @override
@@ -118,18 +145,30 @@ class DepositsDataContent extends StatelessWidget {
       if (val is VBAction) {
         return ActionCard(
           action: val,
-          onTap: () => openAddDepositDialog(
+          addAction: () => openAddDepositDialog(
             context: context,
             action: val,
           ),
+          editAction: () {
+            openAddActionTaskDialog(
+              context,
+              action: val,
+            );
+          },
         );
       } else if (val is Task) {
         return TaskCard(
           task: val,
-          onTap: () => openAddTaskDialog(
+          addAction: () => openAddTaskDialog(
             context: context,
             task: val,
           ),
+          editAction: () {
+            openAddActionTaskDialog(
+              context,
+              task: val,
+            );
+          },
         );
       } else {
         return Container();
@@ -209,6 +248,8 @@ class DepositsDataContent extends StatelessWidget {
     required BuildContext context,
     required Task task,
   }) {
+    print('openAddTaskDialog');
+
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -219,7 +260,7 @@ class DepositsDataContent extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           body: FullSizeContainer(
-            child: AddTaskFormOld(task: task),
+            child: AddTaskDepositForm(task: task),
           ),
         );
       },
@@ -227,35 +268,42 @@ class DepositsDataContent extends StatelessWidget {
   }
 }
 
-abstract class AbstractAddActionButton extends StatelessWidget {
-  void openAddActionDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      builder: (context) {
-        return Scaffold(
-          body: FullSizeContainer(
-            child: AddActionTaskForm(),
-          ),
-        );
-      },
-    );
-  }
-}
+// abstract class AbstractAddActionTaskButton extends StatelessWidget {
+//   void openAddActionDialog(
+//     BuildContext context, {
+//     VBAction? action,
+//     Task? task,
+//   }) {
+//     showModalBottomSheet(
+//       context: context,
+//       isScrollControlled: true,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(
+//           top: Radius.circular(20),
+//         ),
+//       ),
+//       builder: (context) {
+//         return Scaffold(
+//           body: FullSizeContainer(
+//             child: AddActionTaskForm(
+//               action: action,
+//               task: task,
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
 
-class AddActionIconButton extends AbstractAddActionButton {
+class AddActionIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AddIconButton(onPressed: openAddActionDialog);
+    return AddIconButton(onPressed: openAddActionTaskDialog);
   }
 }
 
-class AddActionButton extends AbstractAddActionButton {
+class AddActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BasicBigTextButton(
@@ -264,15 +312,31 @@ class AddActionButton extends AbstractAddActionButton {
       allPadding: 10,
       text: 'Add an Action or Task',
       onPressed: () {
-        openAddActionDialog(context);
+        openAddActionTaskDialog(context);
       },
     );
   }
 }
 
 class AddActionTaskForm extends StatelessWidget {
+  final Task? task;
+  final VBAction? action;
+
+  AddActionTaskForm({
+    this.task,
+    this.action,
+  });
+
   @override
   Widget build(BuildContext context) {
+    if (task != null) {
+      return AddTaskForm(task: task!);
+    }
+
+    if (action != null) {
+      return AddActionForm(action: action!);
+    }
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -287,27 +351,11 @@ class AddActionTaskForm extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            AddActionForm(),
-            AddTaskForm(),
+            AddActionForm(action: action),
+            AddTaskForm(task: task),
           ],
         ),
       ),
     );
-    // return Column(
-    //   children: [
-    //     TabBar(
-    //       tabs: [
-    //         Tab(text: 'Actions'),
-    //         Tab(text: 'Tasks'),
-    //       ],
-    //     ),
-    //     TabBarView(
-    //       children: [
-    //         AddActionForm(),
-    //         AddTaskForm(),
-    //       ],
-    //     ),
-    //   ],
-    // );
   }
 }

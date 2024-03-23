@@ -4,9 +4,10 @@ import 'package:flutter_vice_bank/data_models/action.dart';
 
 class ActionCard extends StatelessWidget {
   final VBAction action;
-  final Function()? onTap;
+  final Function()? addAction;
+  final Function()? editAction;
 
-  ActionCard({required this.action, this.onTap});
+  ActionCard({required this.action, this.addAction, this.editAction});
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +15,19 @@ class ActionCard extends StatelessWidget {
 
     final minDepositWidget = minDeposit <= 0
         ? Container()
-        : Text('Min Deposit: $minDeposit ${action.conversionUnit}');
+        : Text(
+            'Min Deposit: $minDeposit ${action.conversionUnit}',
+          );
 
     final depositTxt =
         '${action.depositsPer} ${action.conversionUnit} for ${action.tokensPer} Token(s)';
 
     return Card(
       child: ListTile(
-        title: Text(action.name),
-        onTap: onTap,
+        title: Text(
+          action.name,
+        ),
+        onTap: addAction,
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -30,6 +35,12 @@ class ActionCard extends StatelessWidget {
             minDepositWidget,
           ],
         ),
+        trailing: editAction == null
+            ? null
+            : IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: editAction,
+              ),
       ),
     );
   }

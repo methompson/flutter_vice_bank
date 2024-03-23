@@ -5,9 +5,10 @@ import 'package:flutter_vice_bank/utils/frequency.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
-  final Function()? onTap;
+  final Function()? addAction;
+  final Function()? editAction;
 
-  TaskCard({required this.task, this.onTap});
+  TaskCard({required this.task, this.addAction, this.editAction});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,14 @@ class TaskCard extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(task.name),
-        onTap: onTap,
+        onTap: addAction,
         subtitle: Text(frequency),
+        trailing: editAction == null
+            ? null
+            : IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: editAction,
+              ),
       ),
     );
   }

@@ -142,6 +142,8 @@ class _AllAPIsTest extends StatelessWidget {
 
           await vbp.getViceBankUsers();
 
+          await vbp.selectUser(addedUser.id);
+
           final users = vbp.users;
           users.retainWhere((el) => el.id == addedUser.id);
 
@@ -168,11 +170,13 @@ class _AllAPIsTest extends StatelessWidget {
 
           final dcApi = ActionAPI();
 
-          final dc = await dcApi.addAction(actionToAdd);
+          final dc = await vbp.createAction(actionToAdd);
 
           assert(dc.id != actionToAdd.id);
 
-          final dcs = await dcApi.getActions(addedUser.id);
+          final dcs = await vbp.getActions();
+
+          print('');
 
           dcs.retainWhere((el) => el.id == dc.id);
 
@@ -183,7 +187,7 @@ class _AllAPIsTest extends StatelessWidget {
             'depositsPer': 2.0,
           });
 
-          final updatedDc = await dcApi.updateAction(dcToUpdate);
+          final updatedDc = await vbp.updateAction(dcToUpdate);
 
           assert(updatedDc.depositsPer != dcToUpdate.depositsPer);
 
@@ -307,9 +311,9 @@ class _AllAPIsTest extends StatelessWidget {
             tokensPer: 1.0,
           );
 
-          final task = await taskApi.addTask(taskToAdd);
+          final task = await vbp.createTask(taskToAdd);
 
-          final tasks = await taskApi.getTasks(updatedUser.id);
+          final tasks = await vbp.getTasks();
 
           assert(tasks.length == 1);
 
@@ -319,17 +323,17 @@ class _AllAPIsTest extends StatelessWidget {
             'tokensPer': 1,
           });
 
-          final updatedTask = await taskApi.updateTask(taskToUpdate);
+          await vbp.updateTask(taskToUpdate);
 
           final taskDepositToAdd = TaskDeposit(
             id: 'id',
             vbUserId: updatedUser.id,
             date: DateTime.now(),
-            taskName: updatedTask.name,
-            taskId: updatedTask.id,
-            conversionRate: updatedTask.tokensPer,
-            frequency: updatedTask.frequency,
-            tokensEarned: updatedTask.tokensPer,
+            taskName: taskToUpdate.name,
+            taskId: taskToUpdate.id,
+            conversionRate: taskToUpdate.tokensPer,
+            frequency: taskToUpdate.frequency,
+            tokensEarned: taskToUpdate.tokensPer,
           );
 
           final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);

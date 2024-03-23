@@ -11,12 +11,17 @@ class DepositCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateFormat("MM/dd/yyyy").format(deposit.date);
+    final actionName = deposit.actionName;
+    final depositQuantity =
+        '${deposit.depositQuantity} ${deposit.conversionUnit}';
+
     final unit = deposit.tokensEarned == 1 ? 'token' : 'tokens';
+    final tokensEarned =
+        'Earned ${deposit.tokensEarned.toStringAsFixed(2)} $unit';
 
     return Card(
-      child: Container(
-        padding: EdgeInsets.all(12),
-        child: Column(
+      child: ListTile(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -26,22 +31,14 @@ class DepositCard extends StatelessWidget {
                     fontSize: 11,
                   ),
             ),
-            Text(
-              deposit.actionName,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            Text(
-              '${deposit.depositQuantity} ${deposit.conversionUnit}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-            ),
-            Text(
-              'Earned ${deposit.tokensEarned.toStringAsFixed(2)} $unit',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-            ),
+            Text(actionName),
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(depositQuantity),
+            Text(tokensEarned),
           ],
         ),
       ),
