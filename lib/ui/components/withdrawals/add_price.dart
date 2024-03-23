@@ -63,7 +63,7 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
             ),
           ),
           BasicBigTextButton(
-            text: 'Add New Deposit Conversion',
+            text: 'Add New Action',
             allMargin: 10,
             topPadding: 10,
             bottomPadding: 10,
@@ -97,7 +97,7 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
     }
 
     msgProvider.setLoadingScreenData(
-      LoadingScreenData(message: 'Adding Deposit Conversion...'),
+      LoadingScreenData(message: 'Adding Action...'),
     );
 
     try {

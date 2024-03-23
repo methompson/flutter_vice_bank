@@ -1,17 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_vice_bank/api/task_api.dart';
+import 'package:flutter_vice_bank/data_models/task.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_vice_bank/api/deposit_api.dart';
-import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
 import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
@@ -28,14 +31,18 @@ class ViceBankProvider extends ChangeNotifier {
 
   List<PurchasePrice> _purchasePrices = [];
   List<Purchase> _purchases = [];
-  List<DepositConversion> _depositConversions = [];
+  List<VBAction> _actions = [];
   List<Deposit> _deposits = [];
+  List<Task> _tasks = [];
+  List<TaskDeposit> _taskDeposits = [];
 
   List<ViceBankUser> get users => [..._users.values];
   List<PurchasePrice> get purchasePrices => [..._purchasePrices];
   List<Purchase> get purchases => [..._purchases];
-  List<DepositConversion> get depositConversions => [..._depositConversions];
+  List<VBAction> get actions => [..._actions];
   List<Deposit> get deposits => [..._deposits];
+  List<Task> get tasks => [..._tasks];
+  List<TaskDeposit> get taskDeposits => [..._taskDeposits];
 
   ViceBankUserAPI? _viceBankUserAPI;
   @visibleForTesting
@@ -62,13 +69,12 @@ class ViceBankProvider extends ChangeNotifier {
     _purchaseAPI = api;
   }
 
-  DepositConversionAPI? _depositConversionAPI;
+  ActionAPI? _actionAPI;
   @visibleForTesting
-  DepositConversionAPI get depositConversionApi =>
-      _depositConversionAPI ?? DepositConversionAPI();
+  ActionAPI get actionAPI => _actionAPI ?? ActionAPI();
   @visibleForTesting
-  set depositConversionApi(DepositConversionAPI api) {
-    _depositConversionAPI = api;
+  set actionAPI(ActionAPI api) {
+    _actionAPI = api;
   }
 
   DepositAPI? _depositAPI;
@@ -79,6 +85,14 @@ class ViceBankProvider extends ChangeNotifier {
     _depositAPI = api;
   }
 
+  TaskAPI? _taskAPI;
+  @visibleForTesting
+  TaskAPI get taskApi => _taskAPI ?? TaskAPI();
+  @visibleForTesting
+  set taskApi(TaskAPI api) {
+    _taskAPI = api;
+  }
+
   Future<void> clearCache() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -86,8 +100,10 @@ class ViceBankProvider extends ChangeNotifier {
     _currentUser = null;
     _purchasePrices = [];
     _purchases = [];
-    _depositConversions = [];
+    _actions = [];
     _deposits = [];
+    _tasks = [];
+    _taskDeposits = [];
 
     await prefs.remove(viceBankUsersKey);
     await prefs.remove(viceBankCurrentUserKey);
@@ -149,6 +165,10 @@ class ViceBankProvider extends ChangeNotifier {
     _purchases.sort((a, b) => b.date.compareTo(a.date));
   }
 
+  void sortTaskDeposits() {
+    _taskDeposits.sort((a, b) => b.date.compareTo(a.date));
+  }
+
   Future<void> updateViceBankUserTokens(num currentTokens) async {
     final cu = currentUser;
 
@@ -174,7 +194,7 @@ class ViceBankProvider extends ChangeNotifier {
 
     await Future.wait([
       saveCurrentUserToSharedPrefs(),
-      getDepositConversions(),
+      getActions(),
     ]);
 
     notifyListeners();
@@ -273,27 +293,25 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Deposit Conversion Functions
-  Future<void> getDepositConversions() async {
+  // Action Functions
+  Future<void> getActions() async {
     final cu = currentUser;
     if (cu == null) {
       // throw Exception('No user selected');
       return;
     }
 
-    _depositConversions =
-        await depositConversionApi.getDepositConversions(cu.id);
+    _actions = await actionAPI.getActions(cu.id);
 
     notifyListeners();
   }
 
-  Future<DepositConversion> createDepositConversion(
-    DepositConversion depositConversion,
+  Future<VBAction> createAction(
+    VBAction action,
   ) async {
-    final result =
-        await depositConversionApi.addDepositConversion(depositConversion);
+    final result = await actionAPI.addAction(action);
 
-    _depositConversions.add(result);
+    _actions.add(result);
 
     notifyListeners();
 
@@ -312,7 +330,7 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addDeposit(Deposit deposit) async {
+  Future<Deposit> addDeposit(Deposit deposit) async {
     final result = await depositApi.addDeposit(deposit);
 
     _deposits.add(result.deposit);
@@ -321,5 +339,52 @@ class ViceBankProvider extends ChangeNotifier {
     updateViceBankUserTokens(result.currentTokens);
 
     notifyListeners();
+
+    return result.deposit;
+  }
+
+  Future<void> getTasks() async {
+    final cu = currentUser;
+    if (cu == null) {
+      throw Exception('No user selected');
+    }
+
+    _tasks = await taskApi.getTasks(cu.id);
+
+    notifyListeners();
+  }
+
+  Future<Task> createTask(Task task) async {
+    final result = await taskApi.addTask(task);
+
+    _tasks.add(result);
+
+    notifyListeners();
+
+    return result;
+  }
+
+  Future<void> getTaskDeposits() async {
+    final cu = currentUser;
+    if (cu == null) {
+      throw Exception('No user selected');
+    }
+
+    _taskDeposits = await taskApi.getTaskDeposits(cu.id);
+
+    notifyListeners();
+  }
+
+  Future<TaskDeposit> addTaskDeposit(TaskDeposit taskDeposit) async {
+    final result = await taskApi.addTaskDeposit(taskDeposit);
+
+    _taskDeposits.add(result.taskDeposit);
+    sortTaskDeposits();
+
+    updateViceBankUserTokens(result.currentTokens);
+
+    notifyListeners();
+
+    return result.taskDeposit;
   }
 }

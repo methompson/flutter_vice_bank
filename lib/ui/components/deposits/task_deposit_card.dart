@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_vice_bank/data_models/deposit.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:intl/intl.dart';
 
-class DepositCard extends StatelessWidget {
-  final Deposit deposit;
+class TaskDepositCard extends StatelessWidget {
+  final TaskDeposit taskDeposit;
 
-  DepositCard({required this.deposit});
+  TaskDepositCard({required this.taskDeposit});
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat("MM/dd/yyyy").format(deposit.date);
-    final unit = deposit.tokensEarned == 1 ? 'token' : 'tokens';
+    final date = DateFormat("MM/dd/yyyy").format(taskDeposit.date);
+    final unit = taskDeposit.tokensEarned == 1 ? 'token' : 'tokens';
 
     return Card(
       child: Container(
@@ -27,17 +27,11 @@ class DepositCard extends StatelessWidget {
                   ),
             ),
             Text(
-              deposit.actionName,
+              taskDeposit.taskName,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              '${deposit.depositQuantity} ${deposit.conversionUnit}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-            ),
-            Text(
-              'Earned ${deposit.tokensEarned.toStringAsFixed(2)} $unit',
+              'Earned ${taskDeposit.tokensEarned.toStringAsFixed(2)} $unit',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),

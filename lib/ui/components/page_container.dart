@@ -162,10 +162,12 @@ class DataWatcherState extends State<DataWatcher> {
 
     try {
       await Future.wait([
-        vbProvider.getDepositConversions(),
+        vbProvider.getActions(),
         vbProvider.getDeposits(),
         vbProvider.getPurchasePrices(),
         vbProvider.getPurchases(),
+        vbProvider.getTasks(),
+        vbProvider.getTaskDeposits(),
       ]);
     } catch (e) {
       LoggingProvider.instance.logError('Error getting user data: $e');

@@ -1,7 +1,8 @@
-import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:uuid/uuid.dart';
 
-class DepositConversion {
+import 'package:flutter_vice_bank/utils/type_checker.dart';
+
+class VBAction {
   final String _id;
   final String _vbUserId;
   final String _name;
@@ -10,7 +11,7 @@ class DepositConversion {
   final num _tokensPer;
   final num _minDeposit;
 
-  DepositConversion({
+  VBAction({
     required String id,
     required String vbUserId,
     required String name,
@@ -48,7 +49,7 @@ class DepositConversion {
     };
   }
 
-  factory DepositConversion.newConversion({
+  factory VBAction.newAction({
     required String vbUserId,
     required String name,
     required String conversionUnit,
@@ -56,7 +57,7 @@ class DepositConversion {
     required num tokensPer,
     required num minDeposit,
   }) =>
-      DepositConversion(
+      VBAction(
         id: Uuid().v4(),
         vbUserId: vbUserId,
         name: name,
@@ -66,8 +67,8 @@ class DepositConversion {
         minDeposit: minDeposit,
       );
 
-  factory DepositConversion.fromJson(dynamic json) {
-    const errMsg = 'DepositConversion.fromJson Failed:';
+  factory VBAction.fromJson(dynamic json) {
+    const errMsg = 'VBAction.fromJson Failed:';
 
     final jsonMap = isTypeError<Map>(json, message: '$errMsg root');
 
@@ -100,7 +101,7 @@ class DepositConversion {
       message: '$errMsg minDeposit',
     );
 
-    return DepositConversion(
+    return VBAction(
       id: id,
       vbUserId: vbUserId,
       name: name,

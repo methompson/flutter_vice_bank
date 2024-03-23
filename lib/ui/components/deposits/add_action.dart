@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 
-class AddDepositConversionForm extends StatefulWidget {
+class AddActionForm extends StatefulWidget {
   @override
-  State<AddDepositConversionForm> createState() =>
-      AddDepositConversionFormState();
+  State<AddActionForm> createState() => AddActionFormState();
 }
 
-class AddDepositConversionFormState extends State<AddDepositConversionForm> {
+class AddActionFormState extends State<AddActionForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController unitController = TextEditingController();
   final TextEditingController depositsPerController = TextEditingController();
@@ -97,8 +96,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
-                labelText:
-                    'Deposits Per (How much of the rate you need to accomplish)',
+                labelText: 'How much you must deposit',
               ),
             ),
           ),
@@ -113,7 +111,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
-                labelText: 'Tokens Per (How many tokens you get for the rate)',
+                labelText: 'How many tokens you get',
               ),
             ),
           ),
@@ -133,12 +131,12 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
             ),
           ),
           BasicBigTextButton(
-            text: 'Add New Deposit Conversion',
+            text: 'Add New Action',
             allMargin: 10,
             topPadding: 10,
             bottomPadding: 10,
             disabled: !canDeposit,
-            onPressed: addNewConversion,
+            onPressed: addNewAction,
           ),
           BasicBigTextButton(
             text: 'Cancel',
@@ -154,7 +152,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
     );
   }
 
-  Future<void> addNewConversion() async {
+  Future<void> addNewAction() async {
     final msgProvider = context.read<MessagingProvider>();
     final vbProvider = context.read<ViceBankProvider>();
 
@@ -167,7 +165,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
     }
 
     msgProvider.setLoadingScreenData(
-      LoadingScreenData(message: 'Adding Deposit Conversion...'),
+      LoadingScreenData(message: 'Adding Action...'),
     );
 
     try {
@@ -178,7 +176,7 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
       final tokensPer = num.parse(tokensPerController.text);
       final minDeposit = num.tryParse(minDepositController.text) ?? 0;
 
-      final newConversion = DepositConversion.newConversion(
+      final newAction = VBAction.newAction(
         vbUserId: userId,
         name: name.trim(),
         conversionUnit: conversionUnit.trim(),
@@ -187,14 +185,16 @@ class AddDepositConversionFormState extends State<AddDepositConversionForm> {
         minDeposit: minDeposit,
       );
 
-      await vbProvider.createDepositConversion(newConversion);
+      await vbProvider.createAction(newAction);
+
+      msgProvider.showSuccessSnackbar('Action added');
 
       final c = context;
       if (c.mounted) {
         Navigator.pop(c);
       }
     } catch (e) {
-      msgProvider.showErrorSnackbar('Adding Deposit Conversion Failed: $e');
+      msgProvider.showErrorSnackbar('Adding Action Failed: $e');
     }
 
     msgProvider.clearLoadingScreen();

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 void main() {
@@ -24,7 +24,7 @@ void main() {
 
   group('toJson', () {
     test('should return a map with expected data', () {
-      final depositConversion = DepositConversion(
+      final action = VBAction(
         id: id,
         vbUserId: vbUserId,
         name: name,
@@ -34,13 +34,13 @@ void main() {
         minDeposit: minDeposit,
       );
 
-      expect(depositConversion.toJson(), validInput);
+      expect(action.toJson(), validInput);
     });
 
     test(
       'toJson can be piped into fromJson and return an object with duplicate values',
       () {
-        final depositConversion1 = DepositConversion(
+        final action1 = VBAction(
           id: id,
           vbUserId: vbUserId,
           name: name,
@@ -50,20 +50,20 @@ void main() {
           minDeposit: minDeposit,
         );
 
-        final depositConversion2 = DepositConversion.fromJson(
-          depositConversion1.toJson(),
+        final action2 = VBAction.fromJson(
+          action1.toJson(),
         );
 
-        expect(depositConversion1.toJson(), depositConversion2.toJson());
+        expect(action1.toJson(), action2.toJson());
       },
     );
   });
 
   group('fromJson', () {
     test('should return a valid object', () {
-      final depositConversion = DepositConversion.fromJson(validInput);
+      final action = VBAction.fromJson(validInput);
 
-      expect(depositConversion.toJson(), validInput);
+      expect(action.toJson(), validInput);
     });
 
     test('should throw an exception any required value is missing', () {
@@ -72,7 +72,7 @@ void main() {
       input = {...validInput};
       input.remove('id');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('id'),
         )),
@@ -81,7 +81,7 @@ void main() {
       input = {...validInput};
       input.remove('vbUserId');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('vbUserId'),
         )),
@@ -89,7 +89,7 @@ void main() {
       input = {...validInput};
       input.remove('vbUserId');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('vbUserId'),
         )),
@@ -97,7 +97,7 @@ void main() {
       input = {...validInput};
       input.remove('conversionUnit');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) =>
               e is TypeCheckException && e.message.contains('conversionUnit'),
@@ -106,7 +106,7 @@ void main() {
       input = {...validInput};
       input.remove('depositsPer');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('depositsPer'),
         )),
@@ -114,7 +114,7 @@ void main() {
       input = {...validInput};
       input.remove('tokensPer');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('tokensPer'),
         )),
@@ -122,7 +122,7 @@ void main() {
       input = {...validInput};
       input.remove('minDeposit');
       expect(
-        () => DepositConversion.fromJson(input),
+        () => VBAction.fromJson(input),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('minDeposit'),
         )),
@@ -131,35 +131,35 @@ void main() {
 
     test('should throw an exception if the argument is not a map', () {
       expect(
-        () => DepositConversion.fromJson(''),
+        () => VBAction.fromJson(''),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('root'),
         )),
       );
 
       expect(
-        () => DepositConversion.fromJson(0),
+        () => VBAction.fromJson(0),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('root'),
         )),
       );
 
       expect(
-        () => DepositConversion.fromJson(true),
+        () => VBAction.fromJson(true),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('root'),
         )),
       );
 
       expect(
-        () => DepositConversion.fromJson([]),
+        () => VBAction.fromJson([]),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('root'),
         )),
       );
 
       expect(
-        () => DepositConversion.fromJson(null),
+        () => VBAction.fromJson(null),
         throwsA(predicate(
           (e) => e is TypeCheckException && e.message.contains('root'),
         )),

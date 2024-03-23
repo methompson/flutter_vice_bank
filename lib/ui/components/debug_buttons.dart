@@ -2,17 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/api/task_api.dart';
+import 'package:flutter_vice_bank/data_models/task.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter_vice_bank/utils/agent/agent.dart';
 import 'package:flutter_vice_bank/api/deposit_api.dart';
-import 'package:flutter_vice_bank/api/deposit_conversion_api.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
 import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
-import 'package:flutter_vice_bank/data_models/deposit_conversion.dart';
+import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
@@ -153,7 +157,7 @@ class _AllAPIsTest extends StatelessWidget {
           assert(updatedUser.id == addedUser.id);
           assert(updatedUser.name == addedUser.name);
 
-          final depositConversionToAdd = DepositConversion.newConversion(
+          final actionToAdd = VBAction.newAction(
             vbUserId: addedUser.id,
             name: 'name',
             conversionUnit: 'conversionUnit',
@@ -162,28 +166,28 @@ class _AllAPIsTest extends StatelessWidget {
             minDeposit: 3.0,
           );
 
-          final dcApi = DepositConversionAPI();
+          final dcApi = ActionAPI();
 
-          final dc = await dcApi.addDepositConversion(depositConversionToAdd);
+          final dc = await dcApi.addAction(actionToAdd);
 
-          assert(dc.id != depositConversionToAdd.id);
+          assert(dc.id != actionToAdd.id);
 
-          final dcs = await dcApi.getDepositConversions(addedUser.id);
+          final dcs = await dcApi.getActions(addedUser.id);
 
           dcs.retainWhere((el) => el.id == dc.id);
 
           assert(dcs.length == 1);
 
-          final dcToUpdate = DepositConversion.fromJson({
+          final dcToUpdate = VBAction.fromJson({
             ...dc.toJson(),
             'depositsPer': 2.0,
           });
 
-          final updatedDc = await dcApi.updateDepositConversion(dcToUpdate);
+          final updatedDc = await dcApi.updateAction(dcToUpdate);
 
           assert(updatedDc.depositsPer != dcToUpdate.depositsPer);
 
-          final deletedDc = await dcApi.deleteDepositConversion(dc.id);
+          final deletedDc = await dcApi.deleteAction(dc.id);
 
           assert(deletedDc.depositsPer == dcToUpdate.depositsPer);
 
@@ -191,7 +195,7 @@ class _AllAPIsTest extends StatelessWidget {
             vbUserId: addedUser.id,
             depositQuantity: 1.0,
             conversionRate: 1.0,
-            depositConversionName: 'depositConversionName',
+            actionName: 'actionName',
             conversionUnit: 'minutes',
           );
 
@@ -293,6 +297,66 @@ class _AllAPIsTest extends StatelessWidget {
           assert(deletedPurchase.purchasedQuantity ==
               purchaseToUpdate.purchasedQuantity);
 
+          final taskApi = TaskAPI();
+
+          final taskToAdd = Task(
+            id: 'id',
+            vbUserId: updatedUser.id,
+            name: 'Test Task',
+            frequency: Frequency.daily,
+            tokensPer: 1.0,
+          );
+
+          final task = await taskApi.addTask(taskToAdd);
+
+          final tasks = await taskApi.getTasks(updatedUser.id);
+
+          assert(tasks.length == 1);
+
+          final taskToUpdate = Task.fromJson({
+            ...task.toJson(),
+            'name': 'Updated Task',
+            'tokensPer': 1,
+          });
+
+          final updatedTask = await taskApi.updateTask(taskToUpdate);
+
+          final taskDepositToAdd = TaskDeposit(
+            id: 'id',
+            vbUserId: updatedUser.id,
+            date: DateTime.now(),
+            taskName: updatedTask.name,
+            taskId: updatedTask.id,
+            conversionRate: updatedTask.tokensPer,
+            frequency: updatedTask.frequency,
+            tokensEarned: updatedTask.tokensPer,
+          );
+
+          final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);
+
+          final taskDeposits = await taskApi.getTaskDeposits(updatedUser.id);
+
+          assert(taskDeposits.length == 1);
+
+          final updatedTaskDeposit = TaskDeposit.fromJson({
+            ...taskDeposit.taskDeposit.toJson(),
+            'taskName': 'Updated Task',
+            'tokensEarned': 1,
+          });
+
+          assert(taskDeposit.taskDeposit.id == updatedTaskDeposit.id);
+
+          final deletedTaskDeposit = await taskApi.deleteTaskDeposit(
+            taskDeposit.taskDeposit.id,
+          );
+
+          assert(
+              deletedTaskDeposit.taskDeposit.id == taskDeposit.taskDeposit.id);
+
+          final deletedTask = await taskApi.deleteTask(task.id);
+
+          assert(deletedTask.id == task.id);
+
           final deletedUser = await vbApi.deleteViceBankUser(addedUser.id);
 
           assert(deletedUser.id == addedUser.id);
@@ -322,9 +386,9 @@ class _AppInitialization extends StatelessWidget {
           final user = await vbProvider.createUser('Mat Thompson');
           await vbProvider.selectUser(user.id);
 
-          // add some deposit conversions
-          final conversion = await vbProvider.createDepositConversion(
-            DepositConversion.newConversion(
+          // add some actions
+          final conversion = await vbProvider.createAction(
+            VBAction.newAction(
               vbUserId: user.id,
               name: 'Read a Book',
               conversionUnit: 'minutes',
@@ -340,7 +404,7 @@ class _AppInitialization extends StatelessWidget {
               vbUserId: user.id,
               depositQuantity: 60,
               conversionRate: conversion.conversionRate,
-              depositConversionName: conversion.name,
+              actionName: conversion.name,
               conversionUnit: conversion.conversionUnit,
             ),
           );
@@ -349,7 +413,7 @@ class _AppInitialization extends StatelessWidget {
               vbUserId: user.id,
               depositQuantity: 60,
               conversionRate: conversion.conversionRate,
-              depositConversionName: conversion.name,
+              actionName: conversion.name,
               conversionUnit: conversion.conversionUnit,
             ),
           );
@@ -371,6 +435,17 @@ class _AppInitialization extends StatelessWidget {
               purchasedQuantity: 1,
               purchasedName: price.name,
             ),
+          );
+
+          final task = await vbProvider.createTask(Task.newTask(
+            vbUserId: user.id,
+            name: 'Write in your journal',
+            frequency: Frequency.daily,
+            tokensPer: 1,
+          ));
+
+          await vbProvider.addTaskDeposit(
+            TaskDeposit.newTaskDeposit(vbUserId: user.id, task: task),
           );
 
           msgProvider.showSuccessSnackbar('App Initialization Complete');

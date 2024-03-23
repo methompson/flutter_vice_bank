@@ -8,7 +8,7 @@ void main() {
   const vbUserId = 'vbUserId';
   const depositQuantity = 1;
   const conversionRate = 2.1;
-  const depositConversionName = 'depositConversionName';
+  const actionName = 'actionName';
   const conversionUnit = 'minutes';
 
   const dateStr = '2021-01-01T00:00:00.000Z';
@@ -20,7 +20,7 @@ void main() {
     'date': dateStr,
     'depositQuantity': depositQuantity,
     'conversionRate': conversionRate,
-    'depositConversionName': depositConversionName,
+    'actionName': actionName,
     'conversionUnit': conversionUnit,
   };
 
@@ -33,7 +33,7 @@ void main() {
           date: date,
           depositQuantity: depositQuantity,
           conversionRate: conversionRate,
-          depositConversionName: depositConversionName,
+          actionName: actionName,
           conversionUnit: conversionUnit,
         );
 
@@ -49,7 +49,7 @@ void main() {
             date: date,
             depositQuantity: depositQuantity,
             conversionRate: conversionRate,
-            depositConversionName: depositConversionName,
+            actionName: actionName,
             conversionUnit: conversionUnit,
           );
 
@@ -119,13 +119,11 @@ void main() {
         );
 
         input = {...validInput};
-        input.remove('depositConversionName');
+        input.remove('actionName');
         expect(
           () => Deposit.fromJson(input),
           throwsA(predicate(
-            (e) =>
-                e is TypeCheckException &&
-                e.message.contains('depositConversionName'),
+            (e) => e is TypeCheckException && e.message.contains('actionName'),
           )),
         );
       });
