@@ -5,36 +5,51 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
-import 'package:flutter_vice_bank/ui/components/deposits/task_card.dart';
 import 'package:flutter_vice_bank/utils/frequency.dart';
 
 class AddTaskForm extends StatefulWidget {
+  final Task? task;
+
+  AddTaskForm({this.task});
+
   @override
   State<AddTaskForm> createState() => AddTaskFormState();
 }
 
 class AddTaskFormState extends State<AddTaskForm> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController frequencyController = TextEditingController();
   final TextEditingController tokensPerController = TextEditingController();
+  Frequency? frequency;
 
-  get nameIsValid => nameController.text.isNotEmpty;
+  bool get nameIsValid => nameController.text.isNotEmpty;
 
-  get tokensPerIsValid {
+  bool get tokensPerIsValid {
     final parsedValue = num.tryParse(tokensPerController.text);
     return parsedValue != null && parsedValue > 0;
+  }
+
+  bool get canAddTask => nameIsValid && tokensPerIsValid && frequency != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final task = widget.task;
+
+    if (task != null) {
+      nameController.text = task.name;
+      tokensPerController.text = task.tokensPer.toString();
+      frequency = task.frequency;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     const double horizontalMargin = 20;
     const double verticalMargin = 10;
-
-    final canDeposit = nameIsValid && nameIsValid && tokensPerIsValid;
 
     return SingleChildScrollView(
       child: Column(
@@ -66,18 +81,28 @@ class AddTaskFormState extends State<AddTaskForm> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
-                labelText: 'Tokens Per (How many tokens you get for the rate)',
+                labelText: 'How Many Tokens You Get',
               ),
             ),
           ),
-          BasicBigTextButton(
-            text: 'Add New Task',
-            allMargin: 10,
-            topPadding: 10,
-            bottomPadding: 10,
-            disabled: !canDeposit,
-            onPressed: addNewTask,
+          DropdownButton<Frequency>(
+            value: frequency,
+            hint: Text('Select Frequency'),
+            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            focusColor: Theme.of(context).scaffoldBackgroundColor,
+            items: [
+              DropdownMenuItem(value: Frequency.daily, child: Text('Daily')),
+              DropdownMenuItem(value: Frequency.weekly, child: Text('Weekly')),
+              DropdownMenuItem(
+                  value: Frequency.monthly, child: Text('Monthly')),
+            ],
+            onChanged: (val) {
+              setState(() {
+                frequency = val;
+              });
+            },
           ),
+          if (widget.task == null) addTaskButton() else editTaskButton(),
           BasicBigTextButton(
             text: 'Cancel',
             allMargin: 10,
@@ -89,6 +114,28 @@ class AddTaskFormState extends State<AddTaskForm> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget addTaskButton() {
+    return BasicBigTextButton(
+      text: 'Add New Task',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canAddTask,
+      onPressed: addNewTask,
+    );
+  }
+
+  Widget editTaskButton() {
+    return BasicBigTextButton(
+      text: 'Update Task',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canAddTask,
+      onPressed: editTask,
     );
   }
 
@@ -104,6 +151,13 @@ class AddTaskFormState extends State<AddTaskForm> {
       return;
     }
 
+    final freq = frequency;
+    if (freq == null) {
+      msgProvider.showErrorSnackbar(
+          'Frequency is not valid. Select a frequency first');
+      return;
+    }
+
     msgProvider.setLoadingScreenData(
       LoadingScreenData(message: 'Adding Task...'),
     );
@@ -116,7 +170,7 @@ class AddTaskFormState extends State<AddTaskForm> {
       final newTask = Task.newTask(
         vbUserId: userId,
         name: name.trim(),
-        frequency: Frequency.daily,
+        frequency: freq,
         tokensPer: tokensPer,
       );
 
@@ -134,66 +188,51 @@ class AddTaskFormState extends State<AddTaskForm> {
 
     msgProvider.clearLoadingScreen();
   }
-}
 
-class AddTaskFormOld extends StatefulWidget {
-  final Task task;
-
-  AddTaskFormOld({required this.task});
-
-  @override
-  State<AddTaskFormOld> createState() => AddTaskFormOldState();
-}
-
-class AddTaskFormOldState extends State<AddTaskFormOld> {
-  @override
-  Widget build(BuildContext context) {
-    const double verticalMargin = 10;
-
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: verticalMargin),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TaskCard(task: widget.task),
-            BasicBigTextButton(
-              text: 'Deposit',
-              topMargin: 10,
-              topPadding: 10,
-              bottomPadding: 10,
-              onPressed: addDeposit,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> addDeposit() async {
+  Future<void> editTask() async {
     final msgProvider = context.read<MessagingProvider>();
     final vbProvider = context.read<ViceBankProvider>();
 
+    final task = widget.task;
+
+    if (task == null) {
+      msgProvider.showErrorSnackbar(
+          'No task selected. Select a Vice Bank User First.');
+      return;
+    }
+
+    final freq = frequency;
+    if (freq == null) {
+      msgProvider.showErrorSnackbar(
+          'Frequency is not valid. Select a frequency first');
+      return;
+    }
+
     msgProvider.setLoadingScreenData(
-      LoadingScreenData(message: 'Adding Deposit...'),
+      LoadingScreenData(message: 'Updating Task...'),
     );
 
     try {
-      final depositToAdd = TaskDeposit.newTaskDeposit(
-        vbUserId: widget.task.vbUserId,
-        task: widget.task,
-      );
+      final name = nameController.text;
+      final tokensPer = num.parse(tokensPerController.text);
 
-      await vbProvider.addTaskDeposit(depositToAdd);
+      final updatedTask = Task.fromJson({
+        ...task.toJson(),
+        'name': name.trim(),
+        'frequency': frequencyToString(freq),
+        'tokensPer': tokensPer,
+      });
 
-      msgProvider.showSuccessSnackbar('Deposit Added');
+      await vbProvider.updateTask(updatedTask);
+
+      msgProvider.showSuccessSnackbar('Task updated');
 
       final c = context;
       if (c.mounted) {
         Navigator.pop(c);
       }
     } catch (e) {
-      msgProvider.showErrorSnackbar('Adding Deposit Failed: $e');
+      msgProvider.showErrorSnackbar('Updating Task Failed: $e');
     }
 
     msgProvider.clearLoadingScreen();

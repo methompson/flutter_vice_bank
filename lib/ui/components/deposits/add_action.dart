@@ -10,6 +10,12 @@ import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 
 class AddActionForm extends StatefulWidget {
+  final VBAction? action;
+
+  AddActionForm({
+    this.action,
+  });
+
   @override
   State<AddActionForm> createState() => AddActionFormState();
 }
@@ -40,16 +46,32 @@ class AddActionFormState extends State<AddActionForm> {
     return parsedValue != null && parsedValue > 0;
   }
 
+  bool get canAddAction =>
+      nameIsValid &&
+      rateIsValid &&
+      depositsPerIsValid &&
+      tokensPerIsValid &&
+      minDepositIsValid;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final action = widget.action;
+
+    if (action != null) {
+      nameController.text = action.name;
+      unitController.text = action.conversionUnit;
+      depositsPerController.text = action.depositsPer.toString();
+      tokensPerController.text = action.tokensPer.toString();
+      minDepositController.text = action.minDeposit.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const double horizontalMargin = 20;
     const double verticalMargin = 10;
-
-    final canDeposit = nameIsValid &&
-        rateIsValid &&
-        depositsPerIsValid &&
-        tokensPerIsValid &&
-        minDepositIsValid;
 
     return SingleChildScrollView(
       child: Column(
@@ -130,14 +152,7 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          BasicBigTextButton(
-            text: 'Add New Action',
-            allMargin: 10,
-            topPadding: 10,
-            bottomPadding: 10,
-            disabled: !canDeposit,
-            onPressed: addNewAction,
-          ),
+          widget.action == null ? addActionButton() : editActionButton(),
           BasicBigTextButton(
             text: 'Cancel',
             allMargin: 10,
@@ -149,6 +164,28 @@ class AddActionFormState extends State<AddActionForm> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget addActionButton() {
+    return BasicBigTextButton(
+      text: 'Add New Action',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canAddAction,
+      onPressed: addNewAction,
+    );
+  }
+
+  Widget editActionButton() {
+    return BasicBigTextButton(
+      text: 'Update Action',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canAddAction,
+      onPressed: editAction,
     );
   }
 
@@ -195,6 +232,52 @@ class AddActionFormState extends State<AddActionForm> {
       }
     } catch (e) {
       msgProvider.showErrorSnackbar('Adding Action Failed: $e');
+    }
+
+    msgProvider.clearLoadingScreen();
+  }
+
+  Future<void> editAction() async {
+    final msgProvider = context.read<MessagingProvider>();
+    final vbProvider = context.read<ViceBankProvider>();
+
+    final currentAction = widget.action;
+
+    if (currentAction == null) {
+      msgProvider.showErrorSnackbar('No task selected. Try Again.');
+      return;
+    }
+
+    msgProvider.setLoadingScreenData(
+      LoadingScreenData(message: 'Updating Action...'),
+    );
+
+    try {
+      final name = nameController.text;
+      final conversionUnit = unitController.text;
+      final depositsPer = num.parse(depositsPerController.text);
+      final tokensPer = num.parse(tokensPerController.text);
+      final minDeposit = num.tryParse(minDepositController.text) ?? 0;
+
+      final updatedAction = VBAction.fromJson({
+        ...currentAction.toJson(),
+        'name': name.trim(),
+        'conversionUnit': conversionUnit.trim(),
+        'depositsPer': depositsPer,
+        'tokensPer': tokensPer,
+        'minDeposit': minDeposit,
+      });
+
+      await vbProvider.updateAction(updatedAction);
+
+      msgProvider.showSuccessSnackbar('Action Updated');
+
+      final c = context;
+      if (c.mounted) {
+        Navigator.pop(c);
+      }
+    } catch (e) {
+      msgProvider.showErrorSnackbar('Updating Action Failed: $e');
     }
 
     msgProvider.clearLoadingScreen();
