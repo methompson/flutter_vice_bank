@@ -197,7 +197,7 @@ class AddTaskFormState extends State<AddTaskForm> {
 
     if (task == null) {
       msgProvider.showErrorSnackbar(
-          'No user selected. Select a Vice Bank User First.');
+          'No task selected. Select a Vice Bank User First.');
       return;
     }
 
