@@ -44,6 +44,8 @@ dependencies:
   debouncer_widget: ^1.2.0
   web: ^0.5.1
   firebase_core: ^2.27.1
+  sqflite: ^2.3.2
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:

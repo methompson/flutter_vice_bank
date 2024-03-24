@@ -2,29 +2,29 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vice_bank/api/task_api.dart';
-import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
-import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:flutter_vice_bank/utils/agent/agent.dart';
 import 'package:flutter_vice_bank/api/deposit_api.dart';
-import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
 import 'package:flutter_vice_bank/api/purchase_price_api.dart';
+import 'package:flutter_vice_bank/api/task_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/data_models/action.dart';
+import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
+import 'package:flutter_vice_bank/data_models/task.dart';
+import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
-import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
-
-import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
+import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
+import 'package:flutter_vice_bank/utils/agent/agent.dart';
+import 'package:flutter_vice_bank/utils/data_persistence/data_persistence.dart';
+import 'package:flutter_vice_bank/utils/frequency.dart';
+
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
 
 class DebugButtons extends StatelessWidget {
@@ -41,6 +41,7 @@ class DebugButtons extends StatelessWidget {
         _AllAPIsTest(),
         _AppInitialization(),
         _WebFunctions(),
+        _DataPersistence(),
       ],
     );
   }
@@ -168,7 +169,7 @@ class _AllAPIsTest extends StatelessWidget {
             minDeposit: 3.0,
           );
 
-          final dcApi = ActionAPI();
+          // final dcApi = ActionAPI();
 
           final action = await vbp.createAction(actionToAdd);
 
@@ -482,6 +483,31 @@ class _WebFunctions extends StatelessWidget {
         MessagingProvider.instance.showSuccessSnackbar(
           'User Agent: $userAgent. kIsWeb: $kIsWeb. isPWA: ${AgentGetter().isPWA()}',
         );
+      },
+    );
+  }
+}
+
+class _DataPersistence extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'Data Persistence Test',
+      onPressed: () async {
+        final pers = await DataPersistence().init();
+
+        try {
+          await pers.set('key', 'value');
+          final result = await pers.get('key');
+
+          assert(result == 'value');
+
+          MessagingProvider.instance.showSuccessSnackbar(
+            'Data Persistence Test Passed',
+          );
+        } catch (e) {
+          MessagingProvider.instance.showErrorSnackbar(e.toString());
+        }
       },
     );
   }
