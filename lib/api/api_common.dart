@@ -1,13 +1,13 @@
-import 'package:flutter_vice_bank/utils/exceptions.dart';
 import 'package:http/http.dart';
+
+import 'package:flutter_vice_bank/utils/env.dart';
+import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 abstract class APICommon {
   final baseApiUrl = 'api/vice_bank';
 
   final prodBaseDomain = 'api.methompson.com';
   final devBaseDomain = 'localhost:8000';
-
-  final isProd = true;
 
   String get baseDomain => isProd ? prodBaseDomain : devBaseDomain;
 
@@ -16,7 +16,7 @@ abstract class APICommon {
     String unencodedPath = '',
     Map<String, dynamic>? queryParameters,
   ]) {
-    final uriFunction = isProd ? Uri.https : Uri.http;
+    const uriFunction = isProd ? Uri.https : Uri.http;
 
     return uriFunction(
       authority,
