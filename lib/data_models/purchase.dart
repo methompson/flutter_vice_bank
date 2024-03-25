@@ -1,42 +1,30 @@
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
 class Purchase {
-  final String _id;
-  final String _vbUserId;
-  final String _purchasePriceId;
-  final String _purchasedName;
-  final DateTime _date;
-  final int _purchasedQuantity;
+  final String id;
+  final String vbUserId;
+  final String purchasePriceId;
+  final String purchasedName;
+  final DateTime date;
+  final int purchasedQuantity;
 
   Purchase({
-    required String id,
-    required String vbUserId,
-    required String purchasePriceId,
-    required String purchasedName,
-    required DateTime date,
-    required int purchasedQuantity,
-  })  : _id = id,
-        _vbUserId = vbUserId,
-        _purchasedName = purchasedName,
-        _purchasePriceId = purchasePriceId,
-        _date = date,
-        _purchasedQuantity = purchasedQuantity;
-
-  String get id => _id;
-  String get vbUserId => _vbUserId;
-  String get purchasePriceId => _purchasePriceId;
-  String get purchasedName => _purchasedName;
-  DateTime get date => _date;
-  int get purchasedQuantity => _purchasedQuantity;
+    required this.id,
+    required this.vbUserId,
+    required this.purchasePriceId,
+    required this.purchasedName,
+    required this.date,
+    required this.purchasedQuantity,
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      'id': _id,
-      'vbUserId': _vbUserId,
-      'purchasePriceId': _purchasePriceId,
-      'purchasedName': _purchasedName,
-      'date': _date.toIso8601String(),
-      'purchasedQuantity': _purchasedQuantity,
+      'id': id,
+      'vbUserId': vbUserId,
+      'purchasePriceId': purchasePriceId,
+      'purchasedName': purchasedName,
+      'date': date.toIso8601String(),
+      'purchasedQuantity': purchasedQuantity,
     };
   }
 

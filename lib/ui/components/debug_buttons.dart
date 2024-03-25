@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/data_models/log.dart';
+import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -38,6 +40,7 @@ class DebugButtons extends StatelessWidget {
         _ShowLoadingScreenWithCancelButton(),
         _ShowLoadingScreenWithAutoClose(),
         _ShowSnackBarMessage(),
+        _AddSomeLogs(),
         _AllAPIsTest(),
         _AppInitialization(),
         _WebFunctions(),
@@ -115,6 +118,33 @@ class _ShowSnackBarMessage extends StatelessWidget {
       buttonText: 'Show Snack Bar Message',
       onPressed: () {
         context.read<MessagingProvider>().showErrorSnackbar('Error Message');
+      },
+    );
+  }
+}
+
+class _AddSomeLogs extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DebugButton(
+      buttonText: 'Add Some Logs',
+      onPressed: () {
+        final lp = context.read<LoggingProvider>();
+
+        final lastWeek = DateTime.now().subtract(Duration(days: 8));
+
+        lp.logError('Test Error');
+        lp.logInfo('Test Info');
+        lp.logWarning('Test Warning');
+
+        final log = Log(
+          date: lastWeek,
+          message: 'Old Log',
+          type: MessageType.error,
+          id: 'id',
+        );
+
+        lp.addLog(log);
       },
     );
   }
