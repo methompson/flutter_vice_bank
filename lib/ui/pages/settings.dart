@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
+import 'package:flutter_vice_bank/ui/components/copyright_bar.dart';
 import 'package:flutter_vice_bank/ui/components/debug_buttons.dart';
 import 'package:flutter_vice_bank/ui/components/theme_colors.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:flutter_vice_bank/ui/components/users/no_user_selected.dart';
-import 'package:flutter_vice_bank/ui/pages/login.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
