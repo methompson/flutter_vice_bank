@@ -34,14 +34,20 @@ class LoggingContent extends StatelessWidget {
                 ? Theme.of(context).colorScheme.surface
                 : Theme.of(context).colorScheme.onInverseSurface;
 
-            var icon = Icon(Icons.info);
+            var icon = Icon(
+              Icons.info,
+              color: Colors.blue,
+            );
             if (log.type == MessageType.error) {
               icon = Icon(
                 Icons.error,
-                color: Theme.of(context).colorScheme.error,
+                color: Colors.red,
               );
             } else if (log.type == MessageType.warning) {
-              icon = Icon(Icons.warning);
+              icon = Icon(
+                Icons.warning,
+                color: Colors.orangeAccent[400],
+              );
             }
 
             return ListTile(
