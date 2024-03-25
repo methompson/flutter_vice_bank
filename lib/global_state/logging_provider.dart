@@ -64,6 +64,12 @@ class LoggingProvider extends ChangeNotifier {
     saveLogs();
   }
 
+  Future<void> clearLogs() async {
+    _logs = [];
+    await saveLogs();
+    notifyListeners();
+  }
+
   void sortLogs() {
     final lastWeek = DateTime.now().subtract(Duration(days: 7));
 
