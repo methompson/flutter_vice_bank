@@ -122,6 +122,36 @@ class ThemeColors extends StatelessWidget {
             color: colorScheme.onSurfaceVariant,
           ),
         ),
+        Text(
+          'onError',
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onError,
+          ),
+        ),
+        Text(
+          'onErrorContainer',
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onErrorContainer,
+          ),
+        ),
+        Text(
+          'error',
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.error,
+          ),
+        ),
+        Text(
+          'surfaceTint',
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.surfaceTint,
+          ),
+        ),
+        Text(
+          'surfaceVariant',
+          style: textTheme.bodyLarge?.copyWith(
+            color: colorScheme.surfaceVariant,
+          ),
+        ),
       ],
     );
   }

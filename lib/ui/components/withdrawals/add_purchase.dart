@@ -62,7 +62,7 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
             Container(
               margin: EdgeInsets.symmetric(vertical: verticalMargin),
               child: Text(
-                'Tokens Available: ${widget.currentUser.currentTokens}',
+                'Tokens Available: ${widget.currentUser.currentTokens.toStringAsFixed(2)}',
               ),
             ),
             TextField(

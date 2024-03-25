@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_vice_bank/ui/pages/logging.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,11 @@ final router = GoRouter(
           name: 'login',
           path: '/login',
           builder: (_, __) => LoginPage(),
+        ),
+        GoRoute(
+          name: 'logging',
+          path: '/settings/logging',
+          builder: (_, __) => LoggingPage(),
         ),
         // Authentication Aware Routes & Menu Routes
         StatefulShellRoute.indexedStack(
