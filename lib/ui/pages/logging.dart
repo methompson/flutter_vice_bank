@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/data_models/log.dart';
+import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,23 +30,29 @@ class LoggingContent extends StatelessWidget {
 
             final date = DateFormat("MM/dd/yyyy").add_jm().format(log.date);
 
-            final color = index % 2 == 0
+            final bgColor = index % 2 == 0
                 ? Theme.of(context).colorScheme.surface
                 : Theme.of(context).colorScheme.onInverseSurface;
 
+            var icon = Icon(Icons.info);
+            if (log.type == MessageType.error) {
+              icon = Icon(
+                Icons.error,
+                color: Theme.of(context).colorScheme.error,
+              );
+            } else if (log.type == MessageType.warning) {
+              icon = Icon(Icons.warning);
+            }
+
             return ListTile(
-              tileColor: color,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    date,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontSize: 11,
-                        ),
-                  ),
-                  Text(log.message),
-                ],
+              leading: icon,
+              tileColor: bgColor,
+              // dense: true,
+              title: Text(
+                date,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    // fontSize: 11,
+                    ),
               ),
               subtitle: Text(log.message),
             );
