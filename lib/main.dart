@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
+import 'package:flutter_vice_bank/global_state/data_provider.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
@@ -26,6 +27,7 @@ class ProvidersContainer extends StatelessWidget {
         ChangeNotifierProvider.value(value: MessagingProvider.instance),
         ChangeNotifierProvider.value(value: ConfigProvider.instance),
         ChangeNotifierProvider.value(value: LoggingProvider.instance),
+        ChangeNotifierProvider.value(value: DataProvider.instance),
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => ViceBankProvider()),
       ],
@@ -47,6 +49,8 @@ class _BootStrap extends StatelessWidget {
     final authProvider = context.read<AuthenticationProvider>();
     final vbProvider = context.read<ViceBankProvider>();
 
+    await DataProvider.instance.init();
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -56,6 +60,8 @@ class _BootStrap extends StatelessWidget {
     authProvider.setAuthentication(currentUser);
 
     await ConfigProvider.instance.init();
+
+    await LoggingProvider.instance.init();
 
     if (currentUser != null) {
       await vbProvider.init();
