@@ -8,15 +8,21 @@ import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
-class DepositResponse {
-  final Deposit deposit;
-  final num currentTokens;
+typedef AddDepositResponse = ({
+  num currentTokens,
+  Deposit deposit,
+});
 
-  DepositResponse({
-    required this.deposit,
-    required this.currentTokens,
-  });
-}
+typedef UpdateDepositResponse = ({
+  num currentTokens,
+  Deposit deposit,
+  Deposit oldDeposit,
+});
+
+typedef DeleteDepositResponse = ({
+  num currentTokens,
+  Deposit deposit,
+});
 
 class DepositAPI extends APICommon {
   // TODO use page and pagination
@@ -64,7 +70,7 @@ class DepositAPI extends APICommon {
     return deposits;
   }
 
-  Future<DepositResponse> addDeposit(Deposit deposit) async {
+  Future<AddDepositResponse> addDeposit(Deposit deposit) async {
     final uri = getUri(baseDomain, '$baseApiUrl/addDeposit');
     final token = await getAuthorizationToken();
 
@@ -89,13 +95,13 @@ class DepositAPI extends APICommon {
     final addedDeposit = Deposit.fromJson(bodyJson['deposit']);
     final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return DepositResponse(
+    return (
       deposit: addedDeposit,
       currentTokens: currentTokens,
     );
   }
 
-  Future<Deposit> updateDeposit(Deposit deposit) async {
+  Future<UpdateDepositResponse> updateDeposit(Deposit depositToUpdate) async {
     final uri = getUri(baseDomain, '$baseApiUrl/updateDeposit');
     final token = await getAuthorizationToken();
 
@@ -105,7 +111,7 @@ class DepositAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'deposit': deposit.toJson(),
+      'deposit': depositToUpdate.toJson(),
     };
 
     final response = await http.post(
@@ -117,12 +123,18 @@ class DepositAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final oldDeposit = Deposit.fromJson(bodyJson['deposit']);
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
+    final deposit = Deposit.fromJson(bodyJson['deposit']);
+    final oldDeposit = Deposit.fromJson(bodyJson['oldDeposit']);
 
-    return oldDeposit;
+    return (
+      oldDeposit: oldDeposit,
+      deposit: deposit,
+      currentTokens: currentTokens,
+    );
   }
 
-  Future<Deposit> deleteDeposit(String depositId) async {
+  Future<DeleteDepositResponse> deleteDeposit(String depositId) async {
     final uri = getUri(baseDomain, '$baseApiUrl/deleteDeposit');
     final token = await getAuthorizationToken();
 
@@ -144,8 +156,12 @@ class DepositAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
     final deletedDeposit = Deposit.fromJson(bodyJson['deposit']);
 
-    return deletedDeposit;
+    return (
+      deposit: deletedDeposit,
+      currentTokens: currentTokens,
+    );
   }
 }

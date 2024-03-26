@@ -8,6 +8,7 @@ void main() {
   const vbUserId = 'vbUserId';
   const depositQuantity = 1;
   const conversionRate = 2.1;
+  const actionId = 'actionId';
   const actionName = 'actionName';
   const conversionUnit = 'minutes';
 
@@ -20,6 +21,7 @@ void main() {
     'date': dateStr,
     'depositQuantity': depositQuantity,
     'conversionRate': conversionRate,
+    'actionId': actionId,
     'actionName': actionName,
     'conversionUnit': conversionUnit,
   };
@@ -33,6 +35,7 @@ void main() {
           date: date,
           depositQuantity: depositQuantity,
           conversionRate: conversionRate,
+          actionId: actionId,
           actionName: actionName,
           conversionUnit: conversionUnit,
         );
@@ -49,6 +52,7 @@ void main() {
             date: date,
             depositQuantity: depositQuantity,
             conversionRate: conversionRate,
+            actionId: actionId,
             actionName: actionName,
             conversionUnit: conversionUnit,
           );

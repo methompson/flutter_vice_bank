@@ -1,6 +1,7 @@
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskDeposit {
   final String _id;
@@ -53,12 +54,11 @@ class TaskDeposit {
   }
 
   factory TaskDeposit.newTaskDeposit({
-    required String vbUserId,
     required Task task,
   }) =>
       TaskDeposit(
-        id: '',
-        vbUserId: vbUserId,
+        id: Uuid().v4(),
+        vbUserId: task.vbUserId,
         date: DateTime.now(),
         taskName: task.name,
         taskId: task.id,

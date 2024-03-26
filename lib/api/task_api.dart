@@ -9,15 +9,21 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/api/api_common.dart';
 
-class TaskDepositResponse {
-  final TaskDeposit taskDeposit;
-  final num currentTokens;
+typedef AddTaskDepositResponse = ({
+  num currentTokens,
+  TaskDeposit taskDeposit,
+});
 
-  TaskDepositResponse({
-    required this.taskDeposit,
-    required this.currentTokens,
-  });
-}
+typedef UpdateTaskDepositResponse = ({
+  num currentTokens,
+  TaskDeposit taskDeposit,
+  TaskDeposit oldTaskDeposit,
+});
+
+typedef DeleteTaskDepositResponse = ({
+  num currentTokens,
+  TaskDeposit taskDeposit,
+});
 
 class TaskAPI extends APICommon {
   Future<List<Task>> getTasks(String userId) async {
@@ -189,7 +195,7 @@ class TaskAPI extends APICommon {
     return tasks;
   }
 
-  Future<TaskDepositResponse> addTaskDeposit(TaskDeposit taskDeposit) async {
+  Future<AddTaskDepositResponse> addTaskDeposit(TaskDeposit taskDeposit) async {
     final uri = getUri(baseDomain, '$baseApiUrl/addTaskDeposit');
     final token = await getAuthorizationToken();
 
@@ -211,16 +217,17 @@ class TaskAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final addedtaskDeposit = TaskDeposit.fromJson(bodyJson['taskDeposit']);
     final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
+    final addedtaskDeposit = TaskDeposit.fromJson(bodyJson['taskDeposit']);
 
-    return TaskDepositResponse(
+    return (
       taskDeposit: addedtaskDeposit,
       currentTokens: currentTokens,
     );
   }
 
-  Future<TaskDepositResponse> updateTaskDeposit(TaskDeposit taskDeposit) async {
+  Future<UpdateTaskDepositResponse> updateTaskDeposit(
+      TaskDeposit taskDepositToUpdate) async {
     final uri = getUri(baseDomain, '$baseApiUrl/updateTaskDeposit');
     final token = await getAuthorizationToken();
 
@@ -230,7 +237,7 @@ class TaskAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'taskDeposit': taskDeposit.toJson(),
+      'taskDeposit': taskDepositToUpdate.toJson(),
     };
 
     final response = await http.post(
@@ -242,16 +249,19 @@ class TaskAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final oldTaskDeposit = TaskDeposit.fromJson(bodyJson['taskDeposit']);
+    final taskDeposit = TaskDeposit.fromJson(bodyJson['taskDeposit']);
+    final oldTaskDeposit = TaskDeposit.fromJson(bodyJson['oldTaskDeposit']);
     final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return TaskDepositResponse(
-      taskDeposit: oldTaskDeposit,
+    return (
+      oldTaskDeposit: oldTaskDeposit,
+      taskDeposit: taskDeposit,
       currentTokens: currentTokens,
     );
   }
 
-  Future<TaskDepositResponse> deleteTaskDeposit(String taskDepositId) async {
+  Future<DeleteTaskDepositResponse> deleteTaskDeposit(
+      String taskDepositId) async {
     final uri = getUri(baseDomain, '$baseApiUrl/deleteTaskDeposit');
     final token = await getAuthorizationToken();
 
@@ -276,7 +286,7 @@ class TaskAPI extends APICommon {
     final deletedTaskDeposit = TaskDeposit.fromJson(bodyJson['taskDeposit']);
     final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return TaskDepositResponse(
+    return (
       taskDeposit: deletedTaskDeposit,
       currentTokens: currentTokens,
     );
