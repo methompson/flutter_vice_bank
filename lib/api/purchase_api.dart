@@ -7,15 +7,21 @@ import 'package:flutter_vice_bank/api/auth_utils.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
-class PurchaseResponse {
-  final Purchase purchase;
-  final num currentTokens;
+typedef AddPurchaseResponse = ({
+  Purchase purchase,
+  num currentTokens,
+});
 
-  PurchaseResponse({
-    required this.purchase,
-    required this.currentTokens,
-  });
-}
+typedef UpdatePurchaseResponse = ({
+  Purchase purchase,
+  Purchase oldPurchase,
+  num currentTokens,
+});
+
+typedef DeletePurchaseResponse = ({
+  Purchase purchase,
+  num currentTokens,
+});
 
 class PurchaseAPI extends APICommon {
   Future<List<Purchase>> getPurchases(String userId) async {
@@ -56,7 +62,7 @@ class PurchaseAPI extends APICommon {
     return purchases;
   }
 
-  Future<PurchaseResponse> addPurchase(Purchase purchase) async {
+  Future<AddPurchaseResponse> addPurchase(Purchase purchase) async {
     final uri = getUri(baseDomain, '$baseApiUrl/addPurchase');
     final token = await getAuthorizationToken();
 
@@ -81,13 +87,14 @@ class PurchaseAPI extends APICommon {
     final addedPurchase = Purchase.fromJson(bodyJson['purchase']);
     final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
 
-    return PurchaseResponse(
+    return (
       purchase: addedPurchase,
       currentTokens: currentTokens,
     );
   }
 
-  Future<Purchase> updatePurchase(Purchase purchase) async {
+  Future<UpdatePurchaseResponse> updatePurchase(
+      Purchase purchaseToUpdate) async {
     final uri = getUri(baseDomain, '$baseApiUrl/updatePurchase');
     final token = await getAuthorizationToken();
 
@@ -97,7 +104,7 @@ class PurchaseAPI extends APICommon {
     };
 
     final Map<String, dynamic> body = {
-      'purchase': purchase.toJson(),
+      'purchase': purchaseToUpdate.toJson(),
     };
 
     final response = await http.post(
@@ -109,12 +116,18 @@ class PurchaseAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
-    final oldPurchase = Purchase.fromJson(bodyJson['purchase']);
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
+    final oldPurchase = Purchase.fromJson(bodyJson['oldPurchase']);
+    final purchase = Purchase.fromJson(bodyJson['purchase']);
 
-    return oldPurchase;
+    return (
+      oldPurchase: oldPurchase,
+      purchase: purchase,
+      currentTokens: currentTokens,
+    );
   }
 
-  Future<Purchase> deletePurchase(String purchaseId) async {
+  Future<DeletePurchaseResponse> deletePurchase(String purchaseId) async {
     final uri = getUri(baseDomain, '$baseApiUrl/deletePurchase');
     final token = await getAuthorizationToken();
 
@@ -136,8 +149,12 @@ class PurchaseAPI extends APICommon {
     commonResponseCheck(response, uri);
 
     final bodyJson = isTypeError<Map>(jsonDecode(response.body));
+    final currentTokens = isTypeError<num>(bodyJson['currentTokens']);
     final deletedPurchase = Purchase.fromJson(bodyJson['purchase']);
 
-    return deletedPurchase;
+    return (
+      purchase: deletedPurchase,
+      currentTokens: currentTokens,
+    );
   }
 }

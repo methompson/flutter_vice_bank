@@ -354,9 +354,11 @@ class _AllAPIsTest extends StatelessWidget {
 
     final updatedPurchase = await pApi.updatePurchase(purchaseToUpdate);
 
-    assert(purchaseToUpdate.id == updatedPurchase.id);
-    assert(purchaseToUpdate.purchasedQuantity !=
-        updatedPurchase.purchasedQuantity);
+    assert(purchaseToUpdate.id == updatedPurchase.purchase.id);
+    assert(
+      purchaseToUpdate.purchasedQuantity !=
+          updatedPurchase.oldPurchase.purchasedQuantity,
+    );
 
     return purchaseToUpdate;
   }
@@ -442,8 +444,9 @@ class _AllAPIsTest extends StatelessWidget {
 
     final deletedPurchase = await PurchaseAPI().deletePurchase(purchase.id);
 
-    assert(deletedPurchase.id == purchase.id);
-    assert(deletedPurchase.purchasedQuantity == purchase.purchasedQuantity);
+    assert(deletedPurchase.purchase.id == purchase.id);
+    assert(deletedPurchase.purchase.purchasedQuantity ==
+        purchase.purchasedQuantity);
 
     final deleted = await vbp.deletePurchasePrice(price);
 

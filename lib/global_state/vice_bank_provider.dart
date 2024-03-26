@@ -317,6 +317,16 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deletePurchase(Purchase purchase) async {
+    final result = await purchaseApi.deletePurchase(purchase.id);
+
+    _purchases.removeWhere((p) => p.id == purchase.id);
+
+    updateViceBankUserTokens(result.currentTokens);
+
+    notifyListeners();
+  }
+
   // Action Functions
   Future<List<VBAction>> getActions() async {
     final cu = currentUser;
@@ -394,6 +404,18 @@ class ViceBankProvider extends ChangeNotifier {
     return result.deposit;
   }
 
+  Future<Deposit> deleteDeposit(Deposit deposit) async {
+    final result = await depositApi.deleteDeposit(deposit.id);
+
+    _deposits.removeWhere((d) => d.id == deposit.id);
+
+    updateViceBankUserTokens(result.currentTokens);
+
+    notifyListeners();
+
+    return result.deposit;
+  }
+
   Future<List<Task>> getTasks() async {
     final cu = currentUser;
     if (cu == null) {
@@ -456,6 +478,18 @@ class ViceBankProvider extends ChangeNotifier {
 
     _taskDeposits.add(result.taskDeposit);
     sortTaskDeposits();
+
+    updateViceBankUserTokens(result.currentTokens);
+
+    notifyListeners();
+
+    return result.taskDeposit;
+  }
+
+  Future<TaskDeposit> deleteTaskDeposit(TaskDeposit taskDeposit) async {
+    final result = await taskApi.deleteTaskDeposit(taskDeposit.id);
+
+    _taskDeposits.removeWhere((td) => td.id == taskDeposit.id);
 
     updateViceBankUserTokens(result.currentTokens);
 
