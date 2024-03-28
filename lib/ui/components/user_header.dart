@@ -15,18 +15,17 @@ class UserHeader extends StatelessWidget {
 
     final unit = user.currentTokens == 1 ? 'token' : 'tokens';
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      color: Theme.of(context).colorScheme.onInverseSurface,
-      child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(user.name, style: Theme.of(context).textTheme.headlineMedium),
-            Text('${user.currentTokens.toStringAsFixed(2)} $unit'),
-          ],
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      child: ListTile(
+        title: Text(
+          user.name,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
+        subtitle: Text('${user.currentTokens.toStringAsFixed(2)} $unit'),
       ),
     );
   }

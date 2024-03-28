@@ -116,6 +116,8 @@ class ViceBankProvider extends ChangeNotifier {
       _users = listToMap(users, (u) => u.id);
 
       _currentUser = await getCurrentUserFromSharedPrefs();
+
+      await _apiTaskQueue.init(this);
     } catch (e) {
       // print('Error getting users from prefs: $e');
     }

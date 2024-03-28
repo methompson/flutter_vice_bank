@@ -39,4 +39,12 @@ class PurchaseTask implements APITask {
       rethrow;
     }
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'purchaseTask',
+      'purchase': purchase.toJson(),
+    };
+  }
 }

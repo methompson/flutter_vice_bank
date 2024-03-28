@@ -39,4 +39,12 @@ class TaskDepositTask implements APITask {
       rethrow;
     }
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'taskDepositTask',
+      'taskDeposit': taskDeposit.toJson(),
+    };
+  }
 }
