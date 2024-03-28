@@ -101,7 +101,7 @@ class AddDepositFormState extends State<AddDepositForm> {
         conversionUnit: widget.action.conversionUnit,
       );
 
-      await vbProvider.addDeposit(depositToAdd);
+      await vbProvider.addDepositTask(depositToAdd);
 
       msgProvider.showSuccessSnackbar('Deposit Added');
 

@@ -4,13 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_vice_bank/api/task_api.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/utils/task_queue/api_queue.dart';
+import 'package:flutter_vice_bank/utils/task_queue/api_task.dart';
+import 'package:flutter_vice_bank/utils/task_queue/deposit_tasks.dart';
+import 'package:flutter_vice_bank/utils/task_queue/purchase_tasks.dart';
+import 'package:flutter_vice_bank/utils/task_queue/task_tasks.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
-import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -28,6 +31,14 @@ class ViceBankProvider extends ChangeNotifier {
 
   String? _currentUser;
   ViceBankUser? get currentUser => _users[_currentUser ?? ''];
+
+  late APITaskQueue _apiTaskQueue;
+  @visibleForTesting
+  APITaskQueue get apiTaskQueue => _apiTaskQueue;
+  @visibleForTesting
+  set apiTaskQueue(APITaskQueue queue) {
+    _apiTaskQueue = queue;
+  }
 
   List<PurchasePrice> _purchasePrices = [];
   List<Purchase> _purchases = [];
@@ -52,15 +63,6 @@ class ViceBankProvider extends ChangeNotifier {
     _viceBankUserAPI = api;
   }
 
-  PurchasePriceAPI? _purchasePriceAPI;
-  @visibleForTesting
-  PurchasePriceAPI get purchasePriceApi =>
-      _purchasePriceAPI ?? PurchasePriceAPI();
-  @visibleForTesting
-  set purchasePriceApi(PurchasePriceAPI api) {
-    _purchasePriceAPI = api;
-  }
-
   PurchaseAPI? _purchaseAPI;
   @visibleForTesting
   PurchaseAPI get purchaseApi => _purchaseAPI ?? PurchaseAPI();
@@ -77,20 +79,18 @@ class ViceBankProvider extends ChangeNotifier {
     _actionAPI = api;
   }
 
-  DepositAPI? _depositAPI;
-  @visibleForTesting
-  DepositAPI get depositApi => _depositAPI ?? DepositAPI();
-  @visibleForTesting
-  set depositApi(DepositAPI api) {
-    _depositAPI = api;
-  }
-
   TaskAPI? _taskAPI;
   @visibleForTesting
   TaskAPI get taskApi => _taskAPI ?? TaskAPI();
   @visibleForTesting
   set taskApi(TaskAPI api) {
     _taskAPI = api;
+  }
+
+  ViceBankProvider() {
+    _apiTaskQueue = APITaskQueue(
+      onTaskCompleted: onTaskCompleted,
+    );
   }
 
   Future<void> clearCache() async {
@@ -250,11 +250,11 @@ class ViceBankProvider extends ChangeNotifier {
       throw Exception('No user selected');
     }
 
-    _purchasePrices = await purchasePriceApi.getPurchasePrices(cu.id);
+    _purchasePrices = await purchaseApi.getPurchasePrices(cu.id);
   }
 
   Future<PurchasePrice> createPurchasePrice(PurchasePrice price) async {
-    final result = await purchasePriceApi.addPurchasePrice(price);
+    final result = await purchaseApi.addPurchasePrice(price);
 
     _purchasePrices.add(result);
 
@@ -264,7 +264,7 @@ class ViceBankProvider extends ChangeNotifier {
   }
 
   Future<PurchasePrice> updatePurchasePrice(PurchasePrice price) async {
-    final result = await purchasePriceApi.updatePurchasePrice(price);
+    final result = await purchaseApi.updatePurchasePrice(price);
 
     final filteredPrices =
         _purchasePrices.where((p) => p.id != result.id).toList();
@@ -278,7 +278,7 @@ class ViceBankProvider extends ChangeNotifier {
   }
 
   Future<PurchasePrice> deletePurchasePrice(PurchasePrice price) async {
-    final result = await purchasePriceApi.deletePurchasePrice(price.id);
+    final result = await purchaseApi.deletePurchasePrice(price.id);
 
     _purchasePrices.removeWhere((p) => p.id == price.id);
 
@@ -300,21 +300,20 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addPurchase(Purchase purchase) async {
-    final currentUser = _currentUser;
-
-    if (currentUser == null) {
-      throw Exception('No user selected');
-    }
-
-    final result = await purchaseApi.addPurchase(purchase);
-
-    _purchases.add(result.purchase);
+  void addPurchase(Purchase purchase, num currentTokens) {
+    _purchases.add(purchase);
     sortPurchases();
 
-    updateViceBankUserTokens(result.currentTokens);
+    updateViceBankUserTokens(currentTokens);
 
     notifyListeners();
+  }
+
+  Future<void> addPurchaseTask(Purchase purchase) async {
+    _apiTaskQueue.addTask(PurchaseTask(
+      viceBankProvider: this,
+      purchase: purchase,
+    ));
   }
 
   Future<void> deletePurchase(Purchase purchase) async {
@@ -386,26 +385,29 @@ class ViceBankProvider extends ChangeNotifier {
       throw Exception('No user selected');
     }
 
-    _deposits = await depositApi.getDeposits(cu.id);
+    _deposits = await actionAPI.getDeposits(cu.id);
 
     notifyListeners();
   }
 
-  Future<Deposit> addDeposit(Deposit deposit) async {
-    final result = await depositApi.addDeposit(deposit);
-
-    _deposits.add(result.deposit);
+  void addDeposit(Deposit deposit, num currentTokens) {
+    _deposits.add(deposit);
     sortDeposits();
 
-    updateViceBankUserTokens(result.currentTokens);
+    updateViceBankUserTokens(currentTokens);
 
     notifyListeners();
+  }
 
-    return result.deposit;
+  Future<void> addDepositTask(Deposit deposit) async {
+    _apiTaskQueue.addTask(DepositTask(
+      viceBankProvider: this,
+      deposit: deposit,
+    ));
   }
 
   Future<Deposit> deleteDeposit(Deposit deposit) async {
-    final result = await depositApi.deleteDeposit(deposit.id);
+    final result = await actionAPI.deleteDeposit(deposit.id);
 
     _deposits.removeWhere((d) => d.id == deposit.id);
 
@@ -473,17 +475,20 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<TaskDeposit> addTaskDeposit(TaskDeposit taskDeposit) async {
-    final result = await taskApi.addTaskDeposit(taskDeposit);
-
-    _taskDeposits.add(result.taskDeposit);
+  void addTaskDeposit(TaskDeposit taskDeposit, num currentTokens) {
+    _taskDeposits.add(taskDeposit);
     sortTaskDeposits();
 
-    updateViceBankUserTokens(result.currentTokens);
+    updateViceBankUserTokens(currentTokens);
 
     notifyListeners();
+  }
 
-    return result.taskDeposit;
+  Future<void> addTaskDepositTask(TaskDeposit taskDeposit) async {
+    _apiTaskQueue.addTask(TaskDepositTask(
+      viceBankProvider: this,
+      taskDeposit: taskDeposit,
+    ));
   }
 
   Future<TaskDeposit> deleteTaskDeposit(TaskDeposit taskDeposit) async {
@@ -496,5 +501,44 @@ class ViceBankProvider extends ChangeNotifier {
     notifyListeners();
 
     return result.taskDeposit;
+  }
+
+  void onTaskCompleted(APITask task) {
+    if (task.status != TaskStatus.success) {
+      return;
+    }
+
+    if (task is PurchaseTask) {
+      final purchaseResult = task.purchaseResult;
+      final currentTokens = task.currentTokens;
+
+      if (purchaseResult != null && currentTokens != null) {
+        addPurchase(purchaseResult, currentTokens);
+      }
+
+      return;
+    }
+
+    if (task is DepositTask) {
+      final depositResult = task.depositResult;
+      final currentTokens = task.currentTokens;
+
+      if (depositResult != null && currentTokens != null) {
+        addDeposit(depositResult, currentTokens);
+      }
+
+      return;
+    }
+
+    if (task is TaskDepositTask) {
+      final taskDepositResult = task.taskDepositResult;
+      final currentTokens = task.currentTokens;
+
+      if (taskDepositResult != null && currentTokens != null) {
+        addTaskDeposit(taskDepositResult, currentTokens);
+      }
+
+      return;
+    }
   }
 }

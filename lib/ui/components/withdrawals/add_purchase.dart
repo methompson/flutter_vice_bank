@@ -116,7 +116,7 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
         purchasedQuantity: int.parse(purchaseController.text),
       );
 
-      await vbProvider.addPurchase(purchaseToAdd);
+      await vbProvider.addPurchaseTask(purchaseToAdd);
 
       msgProvider.showSuccessSnackbar('Purchase Added');
 

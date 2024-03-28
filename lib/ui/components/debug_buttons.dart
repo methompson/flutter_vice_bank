@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/data_models/log.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
-import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/task_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -267,13 +266,13 @@ class _AllAPIsTest extends StatelessWidget {
       conversionUnit: 'minutes',
     );
 
-    final dApi = DepositAPI();
+    final aapi = ActionAPI();
 
-    final addedDeposit = (await dApi.addDeposit(depositToAdd)).deposit;
+    final addedDeposit = (await aapi.addDeposit(depositToAdd)).deposit;
 
     assert(addedDeposit.id != depositToAdd.id);
 
-    final deposits = await dApi.getDeposits(action.vbUserId);
+    final deposits = await aapi.getDeposits(action.vbUserId);
 
     deposits.retainWhere((el) => el.id == addedDeposit.id);
 
@@ -284,7 +283,7 @@ class _AllAPIsTest extends StatelessWidget {
       'depositQuantity': 2.0,
     });
 
-    final updatedDeposit = await dApi.updateDeposit(depositToUpdate);
+    final updatedDeposit = await aapi.updateDeposit(depositToUpdate);
 
     assert(updatedDeposit.oldDeposit.id == addedDeposit.id);
     assert(
@@ -305,13 +304,13 @@ class _AllAPIsTest extends StatelessWidget {
       price: 1.0,
     );
 
-    final ppApi = PurchasePriceAPI();
+    final pApi = PurchaseAPI();
 
-    final addedPrice = await ppApi.addPurchasePrice(price);
+    final addedPrice = await pApi.addPurchasePrice(price);
 
     assert(addedPrice.id != price.id);
 
-    final prices = await ppApi.getPurchasePrices(user.id);
+    final prices = await pApi.getPurchasePrices(user.id);
     prices.retainWhere((el) => el.id == addedPrice.id);
 
     assert(prices.length == 1);
@@ -429,7 +428,7 @@ class _AllAPIsTest extends StatelessWidget {
     required TaskDeposit taskDeposit,
     required ViceBankUser user,
   }) async {
-    final deletedDeposit = await DepositAPI().deleteDeposit(deposit.id);
+    final deletedDeposit = await ActionAPI().deleteDeposit(deposit.id);
 
     assert(deletedDeposit.deposit.id == deposit.id);
     assert(
@@ -496,7 +495,7 @@ class _AppInitialization extends StatelessWidget {
           );
 
           // add some deposits
-          await vbProvider.addDeposit(
+          await vbProvider.addDepositTask(
             Deposit.newDeposit(
               vbUserId: user.id,
               depositQuantity: 60,
@@ -505,7 +504,7 @@ class _AppInitialization extends StatelessWidget {
               conversionUnit: action.conversionUnit,
             ),
           );
-          await vbProvider.addDeposit(
+          await vbProvider.addDepositTask(
             Deposit.newDeposit(
               vbUserId: user.id,
               depositQuantity: 60,
@@ -525,7 +524,7 @@ class _AppInitialization extends StatelessWidget {
           );
           // add some purchases
 
-          await vbProvider.addPurchase(
+          await vbProvider.addPurchaseTask(
             Purchase.newPurchase(
               purchasePrice: price,
               purchasedQuantity: 1,
@@ -539,7 +538,7 @@ class _AppInitialization extends StatelessWidget {
             tokensPer: 1,
           ));
 
-          await vbProvider.addTaskDeposit(
+          await vbProvider.addTaskDepositTask(
             TaskDeposit.newTaskDeposit(task: task),
           );
 
