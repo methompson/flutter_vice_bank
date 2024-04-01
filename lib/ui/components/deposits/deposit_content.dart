@@ -65,7 +65,7 @@ class DepositsContent extends StatelessWidget {
 
 class DepositsDataContent extends StatelessWidget {
   @override
-  Widget build(BuildContext _) {
+  Widget build(BuildContext context) {
     return Selector<
         ViceBankProvider,
         ({
@@ -248,8 +248,6 @@ class DepositsDataContent extends StatelessWidget {
     required BuildContext context,
     required Task task,
   }) {
-    print('openAddTaskDialog');
-
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(

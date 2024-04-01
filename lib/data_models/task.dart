@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:uuid/uuid.dart';
+
 import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 
@@ -43,7 +46,7 @@ class Task {
     required num tokensPer,
   }) =>
       Task(
-        id: '',
+        id: Uuid().v4(),
         vbUserId: vbUserId,
         name: name,
         frequency: frequency,
@@ -83,5 +86,18 @@ class Task {
       frequency: stringToFrequency(frequency),
       tokensPer: tokensPer,
     );
+  }
+
+  static List<Task> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<Task> output = [];
+
+    for (final p in rawList) {
+      output.add(Task.fromJson(p));
+    }
+
+    return output;
   }
 }

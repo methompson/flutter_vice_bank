@@ -1,52 +1,45 @@
-import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'dart:convert';
+
 import 'package:uuid/uuid.dart';
 
+import 'package:flutter_vice_bank/data_models/action.dart';
+import 'package:flutter_vice_bank/utils/type_checker.dart';
+
 class Deposit {
-  final String _id;
-  final String _vbUserId;
-  final DateTime _date;
-  final num _depositQuantity;
-  final num _conversionRate;
-  final String _actionName;
-  final String _conversionUnit;
+  final String id;
+  final String vbUserId;
+  final DateTime date;
+  final num depositQuantity;
+  final num conversionRate;
+  final String actionId;
+  final String actionName;
+  final String conversionUnit;
 
   Deposit({
-    required String id,
-    required String vbUserId,
-    required DateTime date,
-    required num depositQuantity,
-    required num conversionRate,
-    required String actionName,
-    required String conversionUnit,
-  })  : _id = id,
-        _vbUserId = vbUserId,
-        _date = date,
-        _depositQuantity = depositQuantity,
-        _conversionRate = conversionRate,
-        _actionName = actionName,
-        _conversionUnit = conversionUnit;
-
-  String get id => _id;
-  String get vbUserId => _vbUserId;
-  DateTime get date => _date;
-  num get depositQuantity => _depositQuantity;
-  num get conversionRate => _conversionRate;
-  String get actionName => _actionName;
-  String get conversionUnit => _conversionUnit;
+    required this.id,
+    required this.vbUserId,
+    required this.date,
+    required this.depositQuantity,
+    required this.conversionRate,
+    required this.actionName,
+    required this.actionId,
+    required this.conversionUnit,
+  });
 
   num get tokensEarned {
-    return _depositQuantity * _conversionRate;
+    return depositQuantity * conversionRate;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': _id,
-      'vbUserId': _vbUserId,
-      'date': _date.toIso8601String(),
-      'depositQuantity': _depositQuantity,
-      'conversionRate': _conversionRate,
-      'actionName': _actionName,
-      'conversionUnit': _conversionUnit,
+      'id': id,
+      'vbUserId': vbUserId,
+      'date': date.toIso8601String(),
+      'depositQuantity': depositQuantity,
+      'conversionRate': conversionRate,
+      'actionId': actionId,
+      'actionName': actionName,
+      'conversionUnit': conversionUnit,
     };
   }
 
@@ -78,6 +71,10 @@ class Deposit {
       jsonMap['actionName'],
       message: '$errMsg actionName',
     );
+    final actionId = isTypeError<String>(
+      jsonMap['actionId'],
+      message: '$errMsg actionId',
+    );
     final conversionUnit = isTypeError<String>(
       jsonMap['conversionUnit'],
       message: '$errMsg conversionUnit',
@@ -91,6 +88,7 @@ class Deposit {
       date: date,
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
+      actionId: actionId,
       actionName: actionName,
       conversionUnit: conversionUnit,
     );
@@ -100,7 +98,7 @@ class Deposit {
     required String vbUserId,
     required num depositQuantity,
     required num conversionRate,
-    required String actionName,
+    required VBAction action,
     required String conversionUnit,
   }) {
     return Deposit(
@@ -109,8 +107,22 @@ class Deposit {
       date: DateTime.now(),
       depositQuantity: depositQuantity,
       conversionRate: conversionRate,
-      actionName: actionName,
+      actionId: action.id,
+      actionName: action.name,
       conversionUnit: conversionUnit,
     );
+  }
+
+  static List<Deposit> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<Deposit> output = [];
+
+    for (final p in rawList) {
+      output.add(Deposit.fromJson(p));
+    }
+
+    return output;
   }
 }

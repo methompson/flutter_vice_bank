@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_vice_bank/data_models/log.dart';
 import 'package:flutter_vice_bank/global_state/data_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
@@ -32,13 +33,16 @@ class LoggingProvider extends ChangeNotifier {
           final log = Log.fromJson(el);
           logs.add(log);
         } catch (e) {
-          print(e);
+          // print(e);
           // Do nothing for now
         }
       }
 
       _logs = logs;
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing for now
+      // print(e);
+    }
 
     return this;
   }

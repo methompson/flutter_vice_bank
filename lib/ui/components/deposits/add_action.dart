@@ -114,6 +114,7 @@ class AddActionFormState extends State<AddActionForm> {
             ),
             child: TextField(
               controller: depositsPerController,
+              keyboardType: TextInputType.number,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -129,6 +130,7 @@ class AddActionFormState extends State<AddActionForm> {
             ),
             child: TextField(
               controller: tokensPerController,
+              keyboardType: TextInputType.number,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -144,6 +146,7 @@ class AddActionFormState extends State<AddActionForm> {
             ),
             child: TextField(
               controller: minDepositController,
+              keyboardType: TextInputType.number,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),

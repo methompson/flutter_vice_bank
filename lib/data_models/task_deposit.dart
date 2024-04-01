@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:uuid/uuid.dart';
+
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
@@ -53,12 +57,11 @@ class TaskDeposit {
   }
 
   factory TaskDeposit.newTaskDeposit({
-    required String vbUserId,
     required Task task,
   }) =>
       TaskDeposit(
-        id: '',
-        vbUserId: vbUserId,
+        id: Uuid().v4(),
+        vbUserId: task.vbUserId,
         date: DateTime.now(),
         taskName: task.name,
         taskId: task.id,
@@ -115,5 +118,18 @@ class TaskDeposit {
       frequency: stringToFrequency(frequency),
       tokensEarned: tokensEarned,
     );
+  }
+
+  static List<TaskDeposit> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<TaskDeposit> output = [];
+
+    for (final p in rawList) {
+      output.add(TaskDeposit.fromJson(p));
+    }
+
+    return output;
   }
 }

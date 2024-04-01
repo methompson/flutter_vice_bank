@@ -112,13 +112,11 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
 
     try {
       final purchaseToAdd = Purchase.newPurchase(
-        vbUserId: widget.currentUser.id,
-        purchasePriceId: widget.purchasePrice.id,
-        purchasedName: widget.purchasePrice.name,
+        purchasePrice: widget.purchasePrice,
         purchasedQuantity: int.parse(purchaseController.text),
       );
 
-      await vbProvider.addPurchase(purchaseToAdd);
+      await vbProvider.addPurchaseTask(purchaseToAdd);
 
       msgProvider.showSuccessSnackbar('Purchase Added');
 
