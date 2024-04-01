@@ -1,6 +1,6 @@
 import 'package:http/http.dart';
 
-import 'package:flutter_vice_bank/utils/env.dart';
+import 'package:flutter_vice_bank/env.dart';
 import 'package:flutter_vice_bank/utils/exceptions.dart';
 
 abstract class APICommon {
