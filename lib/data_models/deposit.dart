@@ -1,6 +1,9 @@
+import 'dart:convert';
+
+import 'package:uuid/uuid.dart';
+
 import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
-import 'package:uuid/uuid.dart';
 
 class Deposit {
   final String id;
@@ -108,5 +111,18 @@ class Deposit {
       actionName: action.name,
       conversionUnit: conversionUnit,
     );
+  }
+
+  static List<Deposit> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<Deposit> output = [];
+
+    for (final p in rawList) {
+      output.add(Deposit.fromJson(p));
+    }
+
+    return output;
   }
 }

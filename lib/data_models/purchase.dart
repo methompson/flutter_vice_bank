@@ -1,6 +1,9 @@
+import 'dart:convert';
+
+import 'package:uuid/uuid.dart';
+
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
-import 'package:uuid/uuid.dart';
 
 class Purchase {
   final String id;
@@ -83,5 +86,18 @@ class Purchase {
       date: date,
       purchasedQuantity: purchasedQuantity,
     );
+  }
+
+  static List<Purchase> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<Purchase> output = [];
+
+    for (final p in rawList) {
+      output.add(Purchase.fromJson(p));
+    }
+
+    return output;
   }
 }

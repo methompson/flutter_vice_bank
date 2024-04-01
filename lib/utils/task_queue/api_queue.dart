@@ -18,9 +18,16 @@ class APITaskQueue {
   Timer? _timer;
   bool _working = false;
 
+  num get totalTasks => _tasks.length;
+
   void Function(APITask task) onTaskCompleted;
 
   APITaskQueue({required this.onTaskCompleted});
+
+  Future<void> clearTaskQueue() async {
+    _tasks.clear();
+    await persistTasks();
+  }
 
   Future<void> init(ViceBankProvider vbProvider) async {
     final dataProvider = DataProvider.instance;
@@ -98,14 +105,19 @@ class APITaskQueue {
     _working = true;
 
     try {
-      final task = _tasks[0];
-      await task.execute();
-      _tasks.removeAt(0);
+      while (true) {
+        if (_tasks.isEmpty) {
+          _working = false;
+          return;
+        }
+        final task = _tasks[0];
+        await task.execute();
+        _tasks.removeAt(0);
 
-      await persistTasks();
+        await persistTasks();
 
-      onTaskCompleted(task);
-      execute();
+        onTaskCompleted(task);
+      }
     } catch (e) {
       _timer = Timer(Duration(seconds: 30), execute);
       _working = false;

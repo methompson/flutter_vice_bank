@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_vice_bank/utils/data_persistence/data_persistence.dart';
 
 class DataProvider extends ChangeNotifier {
