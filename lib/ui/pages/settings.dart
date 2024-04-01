@@ -65,8 +65,9 @@ class SettingsSelectAUserButton extends SelectAUserButton {
 class SettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final config = context.watch<ConfigProvider>();
-    final debugMode = config.getConfig('debugMode').boolean;
+    final configProvider = context.watch<ConfigProvider>();
+    final vbp = context.watch<ViceBankProvider>();
+    final debugMode = configProvider.getConfig('debugMode').boolean;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -80,6 +81,13 @@ class SettingsContent extends StatelessWidget {
         CommonMargin(BasicBigTextButton(
           onPressed: () => clearCache(context),
           text: 'Clear Cache',
+          topMargin: 10,
+          bottomMargin: 10,
+        )),
+        CommonMargin(Text('Total Tasks: ${vbp.totalTasks}')),
+        CommonMargin(BasicBigTextButton(
+          onPressed: () => vbp.clearTaskQueue(),
+          text: 'Clear Task Queue',
           topMargin: 10,
           bottomMargin: 10,
         )),

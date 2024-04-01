@@ -64,6 +64,7 @@ class AddDepositFormState extends State<AddDepositForm> {
             TextField(
               onChanged: (_) => setState(() {}),
               controller: depositController,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,

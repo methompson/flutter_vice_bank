@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter_vice_bank/utils/type_checker.dart';
@@ -110,5 +112,18 @@ class VBAction {
       tokensPer: tokensPer,
       minDeposit: minDeposit,
     );
+  }
+
+  static List<VBAction> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<VBAction> output = [];
+
+    for (final p in rawList) {
+      output.add(VBAction.fromJson(p));
+    }
+
+    return output;
   }
 }

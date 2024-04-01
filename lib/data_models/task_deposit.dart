@@ -1,7 +1,10 @@
+import 'dart:convert';
+
+import 'package:uuid/uuid.dart';
+
 import 'package:flutter_vice_bank/data_models/task.dart';
 import 'package:flutter_vice_bank/utils/frequency.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
-import 'package:uuid/uuid.dart';
 
 class TaskDeposit {
   final String _id;
@@ -115,5 +118,18 @@ class TaskDeposit {
       frequency: stringToFrequency(frequency),
       tokensEarned: tokensEarned,
     );
+  }
+
+  static List<TaskDeposit> parseJsonList(String input) {
+    final json = jsonDecode(input);
+    final rawList = isTypeError<List>(json);
+
+    final List<TaskDeposit> output = [];
+
+    for (final p in rawList) {
+      output.add(TaskDeposit.fromJson(p));
+    }
+
+    return output;
   }
 }

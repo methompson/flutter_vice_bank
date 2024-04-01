@@ -44,7 +44,7 @@ class NavContainer extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar,
-      body: AuthenticationWatcher(navigationShell),
+      body: SafeArea(child: AuthenticationWatcher(navigationShell)),
       bottomNavigationBar: Container(
         padding: EdgeInsets.only(bottom: padding, top: 1),
         child: NavBar(navigationShell: navigationShell),
@@ -161,14 +161,7 @@ class DataWatcherState extends State<DataWatcher> {
     }
 
     try {
-      await Future.wait([
-        vbProvider.getActions(),
-        vbProvider.getDeposits(),
-        vbProvider.getPurchasePrices(),
-        vbProvider.getPurchases(),
-        vbProvider.getTasks(),
-        vbProvider.getTaskDeposits(),
-      ]);
+      await vbProvider.getAllUserData();
     } catch (e) {
       LoggingProvider.instance.logError('Error getting user data: $e');
     }

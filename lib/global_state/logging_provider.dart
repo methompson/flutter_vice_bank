@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_vice_bank/data_models/log.dart';
 import 'package:flutter_vice_bank/global_state/data_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
