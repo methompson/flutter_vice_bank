@@ -55,11 +55,10 @@ class AddTaskDepositFormState extends State<AddTaskDepositForm> {
 
     try {
       final depositToAdd = TaskDeposit.newTaskDeposit(
-        vbUserId: widget.task.vbUserId,
         task: widget.task,
       );
 
-      await vbProvider.addTaskDeposit(depositToAdd);
+      await vbProvider.addTaskDepositTask(depositToAdd);
 
       msgProvider.showSuccessSnackbar('Deposit Added');
 

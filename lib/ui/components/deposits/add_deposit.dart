@@ -97,11 +97,11 @@ class AddDepositFormState extends State<AddDepositForm> {
         vbUserId: widget.action.vbUserId,
         depositQuantity: num.parse(depositController.text),
         conversionRate: widget.action.conversionRate,
-        actionName: widget.action.name,
+        action: widget.action,
         conversionUnit: widget.action.conversionUnit,
       );
 
-      await vbProvider.addDeposit(depositToAdd);
+      await vbProvider.addDepositTask(depositToAdd);
 
       msgProvider.showSuccessSnackbar('Deposit Added');
 

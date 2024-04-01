@@ -25,6 +25,11 @@ final commonFilledButtonStyle = ButtonStyle(
 // const bodyMediumSize = 16.0;
 // const bodySmallSize = 12.0;
 
+final lightCardTheme = CardTheme(
+  color: lightColorScheme.onInverseSurface,
+  surfaceTintColor: Colors.white,
+);
+
 const themeFontWeight = FontWeight.w500;
 
 final lightTextTheme = ThemeData.light().textTheme.copyWith(
@@ -74,6 +79,7 @@ final lightTheme = ThemeData.light().copyWith(
     style: commonFilledButtonStyle,
   ),
   textTheme: lightTextTheme,
+  // cardTheme: lightCardTheme,
 );
 
 final darkTheme = ThemeData.dark().copyWith(

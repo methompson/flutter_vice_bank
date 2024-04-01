@@ -32,13 +32,16 @@ class LoggingProvider extends ChangeNotifier {
           final log = Log.fromJson(el);
           logs.add(log);
         } catch (e) {
-          print(e);
+          // print(e);
           // Do nothing for now
         }
       }
 
       _logs = logs;
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing for now
+      // print(e);
+    }
 
     return this;
   }

@@ -115,6 +115,9 @@ class SettingsContent extends StatelessWidget {
         ],
       )),
       ThemeColors(),
+      Card.filled(
+        child: ThemeColors(),
+      ),
     ];
   }
 

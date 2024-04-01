@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/api/action_api.dart';
 import 'package:flutter_vice_bank/data_models/log.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:flutter_vice_bank/api/deposit_api.dart';
 import 'package:flutter_vice_bank/api/purchase_api.dart';
-import 'package:flutter_vice_bank/api/purchase_price_api.dart';
 import 'package:flutter_vice_bank/api/task_api.dart';
 import 'package:flutter_vice_bank/api/vice_bank_user_api.dart';
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -157,250 +156,314 @@ class _AllAPIsTest extends StatelessWidget {
       buttonText: 'All APIs Tests',
       onPressed: () async {
         final msgProvider = context.read<MessagingProvider>();
+        final lp = context.read<LoggingProvider>();
         try {
           final vbp = context.read<ViceBankProvider>();
 
-          final userToAdd = ViceBankUser.newUser(
-            name: 'Mat Thompson',
-            currentTokens: 0,
+          final user = await testUserAPI(vbp);
+          final action = await testActionAPI(vbp, user);
+          final deposit = await testDepositAPI(vbp, action);
+          final price = await purchasePriceAPI(vbp, user);
+          final purchase = await purchaseAPI(vbp, price);
+          final task = await testTaskAPI(vbp, user);
+          final taskDeposit = await testTaskDepositAPI(vbp, task);
+
+          await cleanup(
+            vbp: vbp,
+            action: action,
+            deposit: deposit,
+            price: price,
+            purchase: purchase,
+            task: task,
+            taskDeposit: taskDeposit,
+            user: user,
           );
-
-          final vbApi = ViceBankUserAPI();
-
-          final addedUser = await vbApi.addViceBankUser(userToAdd);
-
-          assert(addedUser.id != userToAdd.id);
-
-          await vbp.getViceBankUsers();
-
-          await vbp.selectUser(addedUser.id);
-
-          final users = vbp.users;
-          users.retainWhere((el) => el.id == addedUser.id);
-
-          assert(users.length == 1);
-
-          final userToUpdate = ViceBankUser.fromJson({
-            ...addedUser.toJson(),
-            'name': 'Mickey Mouse',
-          });
-
-          final updatedUser = await vbApi.updateViceBankUser(userToUpdate);
-
-          assert(updatedUser.id == addedUser.id);
-          assert(updatedUser.name == addedUser.name);
-
-          final actionToAdd = VBAction.newAction(
-            vbUserId: addedUser.id,
-            name: 'name',
-            conversionUnit: 'conversionUnit',
-            depositsPer: 1.0,
-            tokensPer: 2.0,
-            minDeposit: 3.0,
-          );
-
-          // final dcApi = ActionAPI();
-
-          final action = await vbp.createAction(actionToAdd);
-
-          assert(action.id != actionToAdd.id);
-
-          final dcs = await vbp.getActions();
-
-          dcs.retainWhere((el) => el.id == action.id);
-
-          assert(dcs.length == 1);
-
-          final actionToUpdate = VBAction.fromJson({
-            ...action.toJson(),
-            'depositsPer': 2.0,
-          });
-
-          final updatedAction = await vbp.updateAction(actionToUpdate);
-
-          assert(updatedAction.depositsPer != actionToUpdate.depositsPer);
-
-          final deletedAction = await vbp.deleteAction(action);
-
-          assert(deletedAction.depositsPer == actionToUpdate.depositsPer);
-
-          final depositToAdd = Deposit.newDeposit(
-            vbUserId: addedUser.id,
-            depositQuantity: 1.0,
-            conversionRate: 1.0,
-            actionName: 'actionName',
-            conversionUnit: 'minutes',
-          );
-
-          final dApi = DepositAPI();
-
-          final addedDeposit = (await dApi.addDeposit(depositToAdd)).deposit;
-
-          assert(addedDeposit.id != depositToAdd.id);
-
-          final deposits = await dApi.getDeposits(addedUser.id);
-
-          deposits.retainWhere((el) => el.id == addedDeposit.id);
-
-          assert(deposits.length == 1);
-
-          final depositToUpdate = Deposit.fromJson({
-            ...addedDeposit.toJson(),
-            'depositQuantity': 2.0,
-          });
-
-          final updatedDeposit = await dApi.updateDeposit(depositToUpdate);
-
-          assert(updatedDeposit.id == addedDeposit.id);
-          assert(
-            updatedDeposit.depositQuantity != depositToUpdate.depositQuantity,
-          );
-
-          final deletedDeposit = await dApi.deleteDeposit(addedDeposit.id);
-
-          assert(deletedDeposit.id == addedDeposit.id);
-          assert(
-            deletedDeposit.depositQuantity == depositToUpdate.depositQuantity,
-          );
-
-          final price = PurchasePrice.newPrice(
-            vbUserId: addedUser.id,
-            name: 'name',
-            price: 1.0,
-          );
-
-          final ppApi = PurchasePriceAPI();
-
-          final addedPrice = await ppApi.addPurchasePrice(price);
-
-          assert(addedPrice.id != price.id);
-
-          final prices = await ppApi.getPurchasePrices(addedUser.id);
-          prices.retainWhere((el) => el.id == addedPrice.id);
-
-          assert(prices.length == 1);
-
-          final updatedPrice = PurchasePrice.fromJson({
-            ...addedPrice.toJson(),
-            'price': 2.0,
-          });
-
-          final updated = await vbp.updatePurchasePrice(updatedPrice);
-
-          assert(updated.id == addedPrice.id);
-          assert(updated.price != updatedPrice.price);
-
-          final deleted = await vbp.deletePurchasePrice(addedPrice);
-
-          assert(deleted.id == addedPrice.id);
-          assert(deleted.price == updatedPrice.price);
-
-          final purchase = Purchase.newPurchase(
-            vbUserId: addedUser.id,
-            purchasePriceId: addedPrice.id,
-            purchasedQuantity: 1,
-            purchasedName: addedPrice.name,
-          );
-
-          final pApi = PurchaseAPI();
-
-          final addedPurchase = (await pApi.addPurchase(purchase)).purchase;
-
-          assert(purchase.id != addedPurchase.id);
-
-          final purchases = await pApi.getPurchases(addedUser.id);
-          purchases.retainWhere((el) => el.id == addedPurchase.id);
-
-          assert(purchases.length == 1);
-
-          final purchaseToUpdate = Purchase.fromJson({
-            ...addedPurchase.toJson(),
-            'purchasedQuantity': 2,
-          });
-
-          final updatedPurchase = await pApi.updatePurchase(purchaseToUpdate);
-
-          assert(purchaseToUpdate.id == updatedPurchase.id);
-          assert(purchaseToUpdate.purchasedQuantity !=
-              updatedPurchase.purchasedQuantity);
-
-          final deletedPurchase = await pApi.deletePurchase(addedPurchase.id);
-
-          assert(deletedPurchase.id == addedPurchase.id);
-          assert(deletedPurchase.purchasedQuantity ==
-              purchaseToUpdate.purchasedQuantity);
-
-          final taskApi = TaskAPI();
-
-          final taskToAdd = Task(
-            id: 'id',
-            vbUserId: updatedUser.id,
-            name: 'Test Task',
-            frequency: Frequency.daily,
-            tokensPer: 1.0,
-          );
-
-          final task = await vbp.createTask(taskToAdd);
-
-          final tasks = await vbp.getTasks();
-
-          assert(tasks.length == 1);
-
-          final taskToUpdate = Task.fromJson({
-            ...task.toJson(),
-            'name': 'Updated Task',
-            'tokensPer': 1,
-          });
-
-          await vbp.updateTask(taskToUpdate);
-
-          final taskDepositToAdd = TaskDeposit(
-            id: 'id',
-            vbUserId: updatedUser.id,
-            date: DateTime.now(),
-            taskName: taskToUpdate.name,
-            taskId: taskToUpdate.id,
-            conversionRate: taskToUpdate.tokensPer,
-            frequency: taskToUpdate.frequency,
-            tokensEarned: taskToUpdate.tokensPer,
-          );
-
-          final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);
-
-          final taskDeposits = await taskApi.getTaskDeposits(updatedUser.id);
-
-          assert(taskDeposits.length == 1);
-
-          final updatedTaskDeposit = TaskDeposit.fromJson({
-            ...taskDeposit.taskDeposit.toJson(),
-            'taskName': 'Updated Task',
-            'tokensEarned': 1,
-          });
-
-          assert(taskDeposit.taskDeposit.id == updatedTaskDeposit.id);
-
-          final deletedTaskDeposit = await taskApi.deleteTaskDeposit(
-            taskDeposit.taskDeposit.id,
-          );
-
-          assert(
-              deletedTaskDeposit.taskDeposit.id == taskDeposit.taskDeposit.id);
-
-          final deletedTask = await vbp.deleteTask(task);
-
-          assert(deletedTask.id == task.id);
-
-          final deletedUser = await vbApi.deleteViceBankUser(addedUser.id);
-
-          assert(deletedUser.id == addedUser.id);
-          assert(deletedUser.name == userToUpdate.name);
 
           msgProvider.showSuccessSnackbar('All API Tests Passed');
-        } catch (e) {
+        } catch (e, st) {
           msgProvider.showErrorSnackbar(e.toString());
+          lp.logError(st.toString());
         }
       },
     );
+  }
+
+  Future<ViceBankUser> testUserAPI(ViceBankProvider vbp) async {
+    final userToAdd = ViceBankUser.newUser(
+      name: 'Mat Thompson',
+      currentTokens: 0,
+    );
+
+    final vbApi = ViceBankUserAPI();
+
+    final addedUser = await vbApi.addViceBankUser(userToAdd);
+
+    assert(addedUser.id != userToAdd.id);
+
+    await vbp.getViceBankUsers();
+
+    await vbp.selectUser(addedUser.id);
+
+    final users = vbp.users;
+    users.retainWhere((el) => el.id == addedUser.id);
+
+    assert(users.length == 1);
+
+    final userToUpdate = ViceBankUser.fromJson({
+      ...addedUser.toJson(),
+      'name': 'Mickey Mouse',
+    });
+
+    final updatedUser = await vbApi.updateViceBankUser(userToUpdate);
+
+    assert(updatedUser.id == addedUser.id);
+    assert(updatedUser.name == addedUser.name);
+
+    return userToUpdate;
+  }
+
+  Future<VBAction> testActionAPI(
+    ViceBankProvider vbp,
+    ViceBankUser user,
+  ) async {
+    final actionToAdd = VBAction.newAction(
+      vbUserId: user.id,
+      name: 'name',
+      conversionUnit: 'conversionUnit',
+      depositsPer: 1.0,
+      tokensPer: 2.0,
+      minDeposit: 3.0,
+    );
+
+    final action = await vbp.createAction(actionToAdd);
+
+    assert(action.id != actionToAdd.id);
+
+    final dcs = await vbp.getActions();
+
+    dcs.retainWhere((el) => el.id == action.id);
+
+    assert(dcs.length == 1);
+
+    final actionToUpdate = VBAction.fromJson({
+      ...action.toJson(),
+      'depositsPer': 2.0,
+    });
+
+    final updatedAction = await vbp.updateAction(actionToUpdate);
+
+    assert(updatedAction.depositsPer != actionToUpdate.depositsPer);
+
+    return actionToUpdate;
+  }
+
+  Future<Deposit> testDepositAPI(ViceBankProvider vbp, VBAction action) async {
+    final depositToAdd = Deposit.newDeposit(
+      vbUserId: action.vbUserId,
+      depositQuantity: 1.0,
+      conversionRate: 1.0,
+      action: action,
+      conversionUnit: 'minutes',
+    );
+
+    final aapi = ActionAPI();
+
+    final addedDeposit = (await aapi.addDeposit(depositToAdd)).deposit;
+
+    assert(addedDeposit.id != depositToAdd.id);
+
+    final deposits = await aapi.getDeposits(action.vbUserId);
+
+    deposits.retainWhere((el) => el.id == addedDeposit.id);
+
+    assert(deposits.length == 1);
+
+    final depositToUpdate = Deposit.fromJson({
+      ...addedDeposit.toJson(),
+      'depositQuantity': 2.0,
+    });
+
+    final updatedDeposit = await aapi.updateDeposit(depositToUpdate);
+
+    assert(updatedDeposit.oldDeposit.id == addedDeposit.id);
+    assert(
+      updatedDeposit.oldDeposit.depositQuantity !=
+          depositToUpdate.depositQuantity,
+    );
+
+    return depositToUpdate;
+  }
+
+  Future<PurchasePrice> purchasePriceAPI(
+    ViceBankProvider vbp,
+    ViceBankUser user,
+  ) async {
+    final price = PurchasePrice.newPrice(
+      vbUserId: user.id,
+      name: 'name',
+      price: 1.0,
+    );
+
+    final pApi = PurchaseAPI();
+
+    final addedPrice = await pApi.addPurchasePrice(price);
+
+    assert(addedPrice.id != price.id);
+
+    final prices = await pApi.getPurchasePrices(user.id);
+    prices.retainWhere((el) => el.id == addedPrice.id);
+
+    assert(prices.length == 1);
+
+    final updatedPrice = PurchasePrice.fromJson({
+      ...addedPrice.toJson(),
+      'price': 2.0,
+    });
+
+    final updated = await vbp.updatePurchasePrice(updatedPrice);
+
+    assert(updated.id == addedPrice.id);
+    assert(updated.price != updatedPrice.price);
+
+    return updatedPrice;
+  }
+
+  Future<Purchase> purchaseAPI(
+      ViceBankProvider vbp, PurchasePrice price) async {
+    final purchase = Purchase.newPurchase(
+      purchasePrice: price,
+      purchasedQuantity: 1,
+    );
+
+    final pApi = PurchaseAPI();
+
+    final addedPurchase = (await pApi.addPurchase(purchase)).purchase;
+
+    assert(purchase.id != addedPurchase.id);
+
+    final purchases = await pApi.getPurchases(price.vbUserId);
+    purchases.retainWhere((el) => el.id == addedPurchase.id);
+
+    assert(purchases.length == 1);
+
+    final purchaseToUpdate = Purchase.fromJson({
+      ...addedPurchase.toJson(),
+      'purchasedQuantity': 2,
+    });
+
+    final updatedPurchase = await pApi.updatePurchase(purchaseToUpdate);
+
+    assert(purchaseToUpdate.id == updatedPurchase.purchase.id);
+    assert(
+      purchaseToUpdate.purchasedQuantity !=
+          updatedPurchase.oldPurchase.purchasedQuantity,
+    );
+
+    return purchaseToUpdate;
+  }
+
+  Future<Task> testTaskAPI(
+    ViceBankProvider vbp,
+    ViceBankUser user,
+  ) async {
+    final taskToAdd = Task(
+      id: 'id',
+      vbUserId: user.id,
+      name: 'Test Task',
+      frequency: Frequency.daily,
+      tokensPer: 1.0,
+    );
+
+    final task = await vbp.createTask(taskToAdd);
+
+    final tasks = await vbp.getTasks();
+
+    assert(tasks.length == 1);
+
+    final taskToUpdate = Task.fromJson({
+      ...task.toJson(),
+      'name': 'Updated Task',
+      'tokensPer': 1,
+    });
+
+    await vbp.updateTask(taskToUpdate);
+
+    return taskToUpdate;
+  }
+
+  Future<TaskDeposit> testTaskDepositAPI(
+    ViceBankProvider vbp,
+    Task task,
+  ) async {
+    final taskApi = TaskAPI();
+
+    final taskDepositToAdd = TaskDeposit.newTaskDeposit(
+      task: task,
+    );
+
+    final taskDeposit = await taskApi.addTaskDeposit(taskDepositToAdd);
+
+    final taskDeposits = await taskApi.getTaskDeposits(task.vbUserId);
+
+    assert(taskDeposits.length == 1);
+
+    final updatedTaskDeposit = TaskDeposit.fromJson({
+      ...taskDeposit.taskDeposit.toJson(),
+      'taskName': 'Updated Task',
+      'tokensEarned': 1,
+    });
+
+    assert(taskDeposit.taskDeposit.id == updatedTaskDeposit.id);
+
+    return updatedTaskDeposit;
+  }
+
+  Future<void> cleanup({
+    required ViceBankProvider vbp,
+    required VBAction action,
+    required Deposit deposit,
+    required PurchasePrice price,
+    required Purchase purchase,
+    required Task task,
+    required TaskDeposit taskDeposit,
+    required ViceBankUser user,
+  }) async {
+    final deletedDeposit = await ActionAPI().deleteDeposit(deposit.id);
+
+    assert(deletedDeposit.deposit.id == deposit.id);
+    assert(
+      deletedDeposit.deposit.depositQuantity == deposit.depositQuantity,
+    );
+
+    final deletedTaskDeposit = await TaskAPI().deleteTaskDeposit(
+      taskDeposit.id,
+    );
+
+    assert(deletedTaskDeposit.taskDeposit.id == taskDeposit.id);
+
+    final deletedPurchase = await PurchaseAPI().deletePurchase(purchase.id);
+
+    assert(deletedPurchase.purchase.id == purchase.id);
+    assert(deletedPurchase.purchase.purchasedQuantity ==
+        purchase.purchasedQuantity);
+
+    final deleted = await vbp.deletePurchasePrice(price);
+
+    assert(deleted.id == price.id);
+    assert(deleted.price == price.price);
+
+    final deletedAction = await vbp.deleteAction(action);
+
+    assert(deletedAction.depositsPer == action.depositsPer);
+
+    final deletedTask = await vbp.deleteTask(task);
+
+    assert(deletedTask.id == task.id);
+
+    final deletedUser = await ViceBankUserAPI().deleteViceBankUser(user.id);
+
+    assert(deletedUser.id == user.id);
+    assert(deletedUser.name == user.name);
   }
 }
 
@@ -420,7 +483,7 @@ class _AppInitialization extends StatelessWidget {
           await vbProvider.selectUser(user.id);
 
           // add some actions
-          final conversion = await vbProvider.createAction(
+          final action = await vbProvider.createAction(
             VBAction.newAction(
               vbUserId: user.id,
               name: 'Read a Book',
@@ -432,22 +495,22 @@ class _AppInitialization extends StatelessWidget {
           );
 
           // add some deposits
-          await vbProvider.addDeposit(
+          await vbProvider.addDepositTask(
             Deposit.newDeposit(
               vbUserId: user.id,
               depositQuantity: 60,
-              conversionRate: conversion.conversionRate,
-              actionName: conversion.name,
-              conversionUnit: conversion.conversionUnit,
+              conversionRate: action.conversionRate,
+              action: action,
+              conversionUnit: action.conversionUnit,
             ),
           );
-          await vbProvider.addDeposit(
+          await vbProvider.addDepositTask(
             Deposit.newDeposit(
               vbUserId: user.id,
               depositQuantity: 60,
-              conversionRate: conversion.conversionRate,
-              actionName: conversion.name,
-              conversionUnit: conversion.conversionUnit,
+              conversionRate: action.conversionRate,
+              action: action,
+              conversionUnit: action.conversionUnit,
             ),
           );
 
@@ -461,12 +524,10 @@ class _AppInitialization extends StatelessWidget {
           );
           // add some purchases
 
-          await vbProvider.addPurchase(
+          await vbProvider.addPurchaseTask(
             Purchase.newPurchase(
-              vbUserId: user.id,
-              purchasePriceId: price.id,
+              purchasePrice: price,
               purchasedQuantity: 1,
-              purchasedName: price.name,
             ),
           );
 
@@ -477,8 +538,8 @@ class _AppInitialization extends StatelessWidget {
             tokensPer: 1,
           ));
 
-          await vbProvider.addTaskDeposit(
-            TaskDeposit.newTaskDeposit(vbUserId: user.id, task: task),
+          await vbProvider.addTaskDepositTask(
+            TaskDeposit.newTaskDeposit(task: task),
           );
 
           msgProvider.showSuccessSnackbar('App Initialization Complete');

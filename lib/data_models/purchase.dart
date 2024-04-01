@@ -1,4 +1,6 @@
+import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
+import 'package:uuid/uuid.dart';
 
 class Purchase {
   final String id;
@@ -29,16 +31,14 @@ class Purchase {
   }
 
   factory Purchase.newPurchase({
-    required String vbUserId,
-    required String purchasePriceId,
     required int purchasedQuantity,
-    required String purchasedName,
+    required PurchasePrice purchasePrice,
   }) =>
       Purchase(
-        id: '',
-        vbUserId: vbUserId,
-        purchasePriceId: purchasePriceId,
-        purchasedName: purchasedName,
+        id: Uuid().v4(),
+        vbUserId: purchasePrice.vbUserId,
+        purchasePriceId: purchasePrice.id,
+        purchasedName: purchasePrice.name,
         date: DateTime.now(),
         purchasedQuantity: purchasedQuantity,
       );
