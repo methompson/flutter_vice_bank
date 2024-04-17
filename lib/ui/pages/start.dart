@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 
 class StartPage extends StatelessWidget {
   @override
