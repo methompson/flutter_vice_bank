@@ -76,6 +76,7 @@ class UsersList extends StatelessWidget {
   Widget build(BuildContext context) {
     final vbProvider = context.read<ViceBankProvider>();
     final users = vbProvider.users;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

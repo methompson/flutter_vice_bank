@@ -266,34 +266,6 @@ class DepositsDataContent extends StatelessWidget {
   }
 }
 
-// abstract class AbstractAddActionTaskButton extends StatelessWidget {
-//   void openAddActionDialog(
-//     BuildContext context, {
-//     VBAction? action,
-//     Task? task,
-//   }) {
-//     showModalBottomSheet(
-//       context: context,
-//       isScrollControlled: true,
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(
-//           top: Radius.circular(20),
-//         ),
-//       ),
-//       builder: (context) {
-//         return Scaffold(
-//           body: FullSizeContainer(
-//             child: AddActionTaskForm(
-//               action: action,
-//               task: task,
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
 class AddActionIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
