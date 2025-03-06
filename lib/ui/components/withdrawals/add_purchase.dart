@@ -70,7 +70,7 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
                 hasEdited = true;
                 setState(() {});
               },
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               controller: purchaseController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
