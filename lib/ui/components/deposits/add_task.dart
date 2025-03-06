@@ -79,6 +79,7 @@ class AddTaskFormState extends State<AddTaskForm> {
             child: TextField(
               controller: tokensPerController,
               onChanged: (_) => setState(() {}),
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,

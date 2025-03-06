@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
-import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 

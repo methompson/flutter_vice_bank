@@ -20,6 +20,23 @@ class AddActionForm extends StatefulWidget {
   State<AddActionForm> createState() => AddActionFormState();
 }
 
+class _CommonMarginContainer extends StatelessWidget {
+  final Widget child;
+
+  _CommonMarginContainer(this.child);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
+      child: child,
+    );
+  }
+}
+
 class AddActionFormState extends State<AddActionForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController unitController = TextEditingController();
@@ -46,12 +63,34 @@ class AddActionFormState extends State<AddActionForm> {
     return parsedValue != null && parsedValue > 0;
   }
 
-  bool get canAddAction =>
+  bool get canSaveAction =>
       nameIsValid &&
       rateIsValid &&
       depositsPerIsValid &&
       tokensPerIsValid &&
       minDepositIsValid;
+
+  Widget get addActionButton {
+    return BasicBigTextButton(
+      text: 'Add New Action',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canSaveAction,
+      onPressed: addNewAction,
+    );
+  }
+
+  Widget get editActionButton {
+    return BasicBigTextButton(
+      text: 'Update Action',
+      allMargin: 10,
+      topPadding: 10,
+      bottomPadding: 10,
+      disabled: !canSaveAction,
+      onPressed: editAction,
+    );
+  }
 
   @override
   void initState() {
@@ -70,19 +109,12 @@ class AddActionFormState extends State<AddActionForm> {
 
   @override
   Widget build(BuildContext context) {
-    const double horizontalMargin = 20;
-    const double verticalMargin = 10;
-
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: horizontalMargin,
-              vertical: verticalMargin,
-            ),
-            child: TextField(
+          _CommonMarginContainer(
+            TextField(
               onChanged: (_) => setState(() {}),
               controller: nameController,
               decoration: InputDecoration(
@@ -92,12 +124,8 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: horizontalMargin,
-              vertical: verticalMargin,
-            ),
-            child: TextField(
+          _CommonMarginContainer(
+            TextField(
               controller: unitController,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
@@ -107,12 +135,8 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: horizontalMargin,
-              vertical: verticalMargin,
-            ),
-            child: TextField(
+          _CommonMarginContainer(
+            TextField(
               controller: depositsPerController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
@@ -123,12 +147,8 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: horizontalMargin,
-              vertical: verticalMargin,
-            ),
-            child: TextField(
+          _CommonMarginContainer(
+            TextField(
               controller: tokensPerController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
@@ -139,12 +159,8 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: horizontalMargin,
-              vertical: verticalMargin,
-            ),
-            child: TextField(
+          _CommonMarginContainer(
+            TextField(
               controller: minDepositController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
@@ -155,7 +171,7 @@ class AddActionFormState extends State<AddActionForm> {
               ),
             ),
           ),
-          widget.action == null ? addActionButton() : editActionButton(),
+          widget.action == null ? addActionButton : editActionButton,
           BasicBigTextButton(
             text: 'Cancel',
             allMargin: 10,
@@ -167,28 +183,6 @@ class AddActionFormState extends State<AddActionForm> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget addActionButton() {
-    return BasicBigTextButton(
-      text: 'Add New Action',
-      allMargin: 10,
-      topPadding: 10,
-      bottomPadding: 10,
-      disabled: !canAddAction,
-      onPressed: addNewAction,
-    );
-  }
-
-  Widget editActionButton() {
-    return BasicBigTextButton(
-      text: 'Update Action',
-      allMargin: 10,
-      topPadding: 10,
-      bottomPadding: 10,
-      disabled: !canAddAction,
-      onPressed: editAction,
     );
   }
 

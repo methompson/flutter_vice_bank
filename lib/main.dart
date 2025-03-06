@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:flutter_vice_bank/global_state/authentication_provider.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/data_provider.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
-import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/ui/components/bootstrapper.dart';
 import 'package:flutter_vice_bank/ui/router.dart';

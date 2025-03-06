@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:provider/provider.dart';
+
+import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 
 class UserHeader extends StatelessWidget {
   @override

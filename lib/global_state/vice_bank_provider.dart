@@ -303,8 +303,11 @@ class ViceBankProvider extends ChangeNotifier {
 
     await Future.wait([
       saveCurrentUserToSharedPrefs(),
-      getAllUserData(),
     ]);
+
+    if (_currentUser != null) {
+      await getAllUserData();
+    }
 
     await persistData();
 
