@@ -70,7 +70,7 @@ class AddPurchasePriceFormState extends State<AddPurchasePriceForm> {
             ),
             child: TextField(
               onChanged: (_) => setState(() {}),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               controller: priceController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),

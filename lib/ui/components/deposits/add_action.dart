@@ -138,7 +138,7 @@ class AddActionFormState extends State<AddActionForm> {
           _CommonMarginContainer(
             TextField(
               controller: depositsPerController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -150,7 +150,7 @@ class AddActionFormState extends State<AddActionForm> {
           _CommonMarginContainer(
             TextField(
               controller: tokensPerController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -162,7 +162,7 @@ class AddActionFormState extends State<AddActionForm> {
           _CommonMarginContainer(
             TextField(
               controller: minDepositController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),

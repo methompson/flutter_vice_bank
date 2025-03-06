@@ -63,7 +63,7 @@ class AddTaskFormState extends State<AddTaskForm> {
             child: TextField(
               onChanged: (_) => setState(() {}),
               controller: nameController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
@@ -79,7 +79,7 @@ class AddTaskFormState extends State<AddTaskForm> {
             child: TextField(
               controller: tokensPerController,
               onChanged: (_) => setState(() {}),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelStyle: Theme.of(context).textTheme.bodyMedium,
