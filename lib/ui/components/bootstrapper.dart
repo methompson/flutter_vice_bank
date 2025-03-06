@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/ui/theme.dart';
 
 class BootStrapper extends StatefulWidget {
   final Widget app;
@@ -49,11 +51,10 @@ class BootStrapperState extends State<BootStrapper> {
   @override
   Widget build(BuildContext context) {
     if (finished) {
+      if (exception != null) {
+        return BasicErrorPage(exception.toString());
+      }
       return widget.app;
-    }
-
-    if (exception != null) {
-      BasicErrorPage(exception.toString());
     }
 
     return widget.loadingPage ?? BasicLoadingPage();
@@ -63,8 +64,14 @@ class BootStrapperState extends State<BootStrapper> {
 class BasicLoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CupertinoActivityIndicator(),
+    return MaterialApp(
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: Scaffold(
+        body: Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      ),
     );
   }
 }
@@ -76,8 +83,16 @@ class BasicErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(message),
+    return MaterialApp(
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Text(message),
+          ),
+        ),
+      ),
     );
   }
 }

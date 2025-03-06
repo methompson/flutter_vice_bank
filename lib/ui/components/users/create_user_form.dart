@@ -26,13 +26,6 @@ class CreateUserFormState extends State<CreateUserForm> {
         children: [
           Container(
             margin: EdgeInsets.all(20),
-            // child: CupertinoTextField(
-            //   controller: _nameController,
-            //   onChanged: (_) {
-            //     setState(() {});
-            //   },
-            //   placeholder: 'User Name',
-            // ),
             child: TextField(
               onChanged: (_) => setState(() {}),
               controller: _nameController,
@@ -64,7 +57,7 @@ class CreateUserFormState extends State<CreateUserForm> {
 
               msgProvider.clearLoadingScreen();
             },
-          )
+          ),
         ],
       ),
     );
