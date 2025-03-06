@@ -195,10 +195,10 @@ class DepositsDataContent extends StatelessWidget {
     ];
 
     list.sort((a, b) {
-      final adate = a is VBAction || a is Task ? a.date : DateTime(0);
-      final bdate = b is VBAction || b is Task ? b.date : DateTime(0);
+      final adate = a is Deposit || a is TaskDeposit ? a.date : DateTime(0);
+      final bdate = b is Deposit || b is TaskDeposit ? b.date : DateTime(0);
 
-      return adate.compareTo(bdate);
+      return bdate.compareTo(adate);
     });
 
     final List<Widget> depositWidgets = list.map((val) {
