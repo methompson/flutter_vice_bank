@@ -18,8 +18,10 @@ class PurchaseCard extends StatelessWidget {
     final date = DateFormat("MM/dd/yyyy").format(purchase.date);
     final name = purchase.purchasedName;
 
-    final unit = purchase.purchasedQuantity == 1 ? 'token' : 'tokens';
-    final quantity = 'Spent ${purchase.purchasedQuantity} $unit';
+    // final purchasePrice = purchase.
+
+    final unit = purchase.tokensSpent == 1 ? 'token' : 'tokens';
+    final quantity = 'Spent ${purchase.tokensSpent} $unit';
 
     return Card(
       child: ListTile(

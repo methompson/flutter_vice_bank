@@ -9,6 +9,7 @@ void main() {
   const purchasePriceId = 'purchasePriceId';
   const purchasedQuantity = 1;
   const purchasedName = 'purchasedName';
+  const tokensSpent = 0.5;
 
   const dateStr = '2021-01-01T00:00:00.000Z';
   final date = DateTime.parse(dateStr);
@@ -20,6 +21,7 @@ void main() {
     'purchasedName': purchasedName,
     'date': dateStr,
     'purchasedQuantity': purchasedQuantity,
+    'tokensSpent': tokensSpent,
   };
 
   group('Purchase', () {
@@ -32,6 +34,7 @@ void main() {
           purchasedName: purchasedName,
           date: date,
           purchasedQuantity: purchasedQuantity,
+          tokensSpent: tokensSpent,
         );
 
         expect(purchase.toJson(), validInput);
@@ -47,6 +50,7 @@ void main() {
             purchasedName: purchasedName,
             date: date,
             purchasedQuantity: purchasedQuantity,
+            tokensSpent: tokensSpent,
           );
 
           final purchase2 = Purchase.fromJson(purchase1.toJson());

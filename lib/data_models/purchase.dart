@@ -12,6 +12,7 @@ class Purchase {
   final String purchasedName;
   final DateTime date;
   final int purchasedQuantity;
+  final num tokensSpent;
 
   Purchase({
     required this.id,
@@ -20,6 +21,7 @@ class Purchase {
     required this.purchasedName,
     required this.date,
     required this.purchasedQuantity,
+    required this.tokensSpent,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +32,7 @@ class Purchase {
       'purchasedName': purchasedName,
       'date': date.toIso8601String(),
       'purchasedQuantity': purchasedQuantity,
+      'tokensSpent': tokensSpent,
     };
   }
 
@@ -44,6 +47,7 @@ class Purchase {
         purchasedName: purchasePrice.name,
         date: DateTime.now(),
         purchasedQuantity: purchasedQuantity,
+        tokensSpent: purchasedQuantity * purchasePrice.price,
       );
 
   factory Purchase.fromJson(dynamic json) {
@@ -75,6 +79,10 @@ class Purchase {
       jsonMap['purchasedQuantity'],
       message: '$errMsg purchasedQuantity',
     );
+    final tokensSpent = isTypeError<num>(
+      jsonMap['tokensSpent'],
+      message: '$errMsg tokensSpent',
+    );
 
     final date = DateTime.parse(dateString);
 
@@ -85,6 +93,7 @@ class Purchase {
       purchasedName: purchasedName,
       date: date,
       purchasedQuantity: purchasedQuantity,
+      tokensSpent: tokensSpent,
     );
   }
 

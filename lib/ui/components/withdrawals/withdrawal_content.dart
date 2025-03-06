@@ -121,7 +121,10 @@ class WithrawalDataContent extends StatelessWidget {
     BuildContext context,
     List<Purchase> purchases,
   ) {
-    final List<Widget> purchaseWidgets = purchases.map((purchase) {
+    final sorted = [...purchases];
+    sorted.sort((a, b) => b.date.compareTo(a.date));
+
+    final List<Widget> purchaseWidgets = sorted.map((purchase) {
       return PurchaseCard(
         purchase: purchase,
       );

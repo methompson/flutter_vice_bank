@@ -27,12 +27,12 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
     final numParse = num.tryParse(purchaseController.text);
     if (numParse == null) return 'Not a valid number';
 
-    final number = price;
-    if (number == null) return 'Must be a whole number';
+    final intParse = int.tryParse(purchaseController.text);
+    if (intParse == null) return 'Must be a whole number';
 
-    if (number <= 0) return 'Number must be greater than 0';
+    if (intParse.isNegative) return 'Number must be greater than 0';
 
-    if (number > widget.currentUser.currentTokens) return 'Not enough tokens';
+    if (price > widget.currentUser.currentTokens) return 'Not enough tokens';
 
     return '';
   }
@@ -41,8 +41,8 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
     return errorMessage.isEmpty;
   }
 
-  int? get price {
-    return int.tryParse(purchaseController.text);
+  num get price {
+    return widget.purchasePrice.price;
   }
 
   @override
@@ -70,7 +70,7 @@ class AddPurchaseFormState extends State<AddPurchaseForm> {
                 hasEdited = true;
                 setState(() {});
               },
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.number,
               controller: purchaseController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
