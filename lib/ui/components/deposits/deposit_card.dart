@@ -15,7 +15,7 @@ class DepositCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat("MM/dd/yyyy").format(deposit.date);
+    final date = DateFormat("MM/dd/yyyy h:mm a").format(deposit.date.toLocal());
     final actionName = deposit.actionName;
     final depositQuantity =
         '${deposit.depositQuantity} ${deposit.conversionUnit}';
