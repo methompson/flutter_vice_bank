@@ -13,7 +13,6 @@ import 'package:flutter_vice_bank/data_models/action.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 
 import 'package:flutter_vice_bank/utils/list_to_map.dart';

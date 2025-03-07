@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_vice_bank/api/auth_utils.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/utils/type_checker.dart';
 import 'package:http/http.dart' as http;

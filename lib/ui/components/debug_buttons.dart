@@ -17,7 +17,6 @@ import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/data_models/purchase_price.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 import 'package:flutter_vice_bank/global_state/config_provider.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';

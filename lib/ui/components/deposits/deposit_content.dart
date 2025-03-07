@@ -1,12 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/add_task.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/add_task_deposit.dart';
-import 'package:flutter_vice_bank/ui/components/deposits/task_card.dart';
 import 'package:flutter_vice_bank/ui/components/deposits/task_deposit_card.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
@@ -56,14 +56,21 @@ class DepositsContent extends StatelessWidget {
       children: [
         UserHeader(),
         Expanded(
-          child: DepositsDataContent(),
+          child: _DepositsDataContent(),
         ),
       ],
     );
   }
 }
 
-class DepositsDataContent extends StatelessWidget {
+class _DepositsDataContent extends StatefulWidget {
+  @override
+  _DepositsDataContentState createState() => _DepositsDataContentState();
+}
+
+class _DepositsDataContentState extends State<_DepositsDataContent> {
+  List<bool> _isOpen = [];
+
   @override
   Widget build(BuildContext context) {
     return Selector<
@@ -189,35 +196,82 @@ class DepositsDataContent extends StatelessWidget {
     List<Deposit> deposits,
     List<TaskDeposit> taskDeposits,
   ) {
-    List<dynamic> list = [
-      ...deposits,
-      ...taskDeposits,
-    ];
+    Map<String, List<TD>> dMap = {};
 
-    list.sort((a, b) {
-      final adate = a is Deposit || a is TaskDeposit ? a.date : DateTime(0);
-      final bdate = b is Deposit || b is TaskDeposit ? b.date : DateTime(0);
+    for (final d in deposits) {
+      final date = DateFormat("MM/dd/yyyy").format(d.date.toLocal());
+      final td = dMap[date] ?? [];
+      td.add(d);
+      dMap[date] = td;
+    }
+    for (final d in taskDeposits) {
+      final date = DateFormat("MM/dd/yyyy").format(d.date.toLocal());
+      final td = dMap[date] ?? [];
+      td.add(d);
+      dMap[date] = td;
+    }
 
-      return bdate.compareTo(adate);
+    final totalEntries = dMap.entries.length;
+
+    if (_isOpen.isEmpty || _isOpen.length != totalEntries) {
+      _isOpen = List.filled(totalEntries, false);
+    }
+
+    final List<ExpansionPanel> expansionList = [];
+
+    dMap.entries.toList().reversed.forEachIndexed((i, val) {
+      final dList = val.value;
+      dList.sort((a, b) {
+        DateTime aDate = DateTime(0);
+        DateTime bDate = DateTime(0);
+
+        if (a is Deposit) {
+          aDate = a.date;
+        } else if (a is TaskDeposit) {
+          aDate = a.date;
+        }
+        if (b is Deposit) {
+          bDate = b.date;
+        } else if (b is TaskDeposit) {
+          bDate = b.date;
+        }
+
+        return bDate.compareTo(aDate);
+      });
+
+      String name = val.key;
+
+      List<Widget> cardList = dList.map((el) {
+        Widget card = Container();
+        if (el is Deposit) {
+          card = DepositCard(deposit: el);
+        } else if (el is TaskDeposit) {
+          card = TaskDepositCard(taskDeposit: el);
+        }
+        return card;
+      }).toList();
+
+      expansionList.add(ExpansionPanel(
+        isExpanded: _isOpen[i],
+        headerBuilder: (context, isOpen) {
+          return ListTile(title: Text(name));
+        },
+        body: Column(children: cardList),
+      ));
     });
 
-    final List<Widget> depositWidgets = list.map((val) {
-      if (val is Deposit) {
-        return DepositCard(deposit: val);
-      } else if (val is TaskDeposit) {
-        return TaskDepositCard(taskDeposit: val);
-      } else {
-        return Container();
-      }
-    }).toList();
-
-    // final List<Widget> depositWidgets = deposits.map((deposit) {
-    //   return DepositCard(deposit: deposit);
-    // }).toList();
+    final expansion = ExpansionPanelList(
+      children: expansionList,
+      expansionCallback: (panelIndex, isExpanded) {
+        setState(() {
+          _isOpen[panelIndex] = isExpanded;
+        });
+      },
+    );
 
     return [
       TitleWidget(title: 'Deposit History'),
-      ...depositWidgets,
+      expansion,
     ];
   }
 

@@ -1,8 +1,9 @@
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
 
 import 'package:flutter_vice_bank/data_models/vice_bank_user.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
@@ -146,60 +147,76 @@ class WithdrawSection extends StatelessWidget {
 class DepositSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Selector<ViceBankProvider, List<Deposit>>(
-      selector: (_, vb) => vb.deposits,
-      builder: (context, deposits, _) {
-        final daysAgo = DateTime.now().subtract(Duration(days: 7));
-        final recentDeposits =
-            deposits.where((p) => p.date.isAfter(daysAgo)).toList();
+    return Selector<ViceBankProvider, List<TaskDeposit>>(
+      selector: (_, vb) => vb.taskDeposits,
+      builder: (context, taskDeposits, _) {
+        return Selector<ViceBankProvider, List<Deposit>>(
+          selector: (_, vb) => vb.deposits,
+          builder: (context, actionDeposits, _) {
+            final daysAgo = DateTime.now().subtract(Duration(days: 7));
+            final recentActionDeposits =
+                actionDeposits.where((p) => p.date.isAfter(daysAgo)).toList();
+            final recentTaskDeposits =
+                taskDeposits.where((p) => p.date.isAfter(daysAgo)).toList();
 
-        final totalTokensEarned = deposits.fold<num>(
-          0,
-          (previousValue, deposit) => previousValue + deposit.tokensEarned,
-        );
+            final recentTaskDepositTokens = recentTaskDeposits.fold<num>(
+              0,
+              (previousValue, deposit) => previousValue + deposit.tokensEarned,
+            );
 
-        final totalDeposits = recentDeposits.length;
+            final recentActionDepositTokens = actionDeposits.fold<num>(
+              0,
+              (previousValue, deposit) => previousValue + deposit.tokensEarned,
+            );
 
-        return Card(
-          margin: EdgeInsets.all(20),
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    'Deposits',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
+            final totalTokensEarned =
+                recentTaskDepositTokens + recentActionDepositTokens;
+
+            final totalDeposits =
+                recentActionDeposits.length + recentTaskDeposits.length;
+
+            return Card(
+              margin: EdgeInsets.all(20),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        'Deposits',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                    Text(
+                      'Past Week Deposits:',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        '$totalDeposits',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    Text(
+                      'Total Tokens Earned:',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        totalTokensEarned.toStringAsFixed(2),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Past Week Deposits:',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    '$totalDeposits',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-                Text(
-                  'Total Tokens Earned:',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    totalTokensEarned.toStringAsFixed(2),
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

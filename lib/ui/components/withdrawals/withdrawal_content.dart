@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/ui/components/user_header.dart';
 import 'package:flutter_vice_bank/ui/components/withdrawals/purchase_card.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/purchase.dart';
@@ -47,14 +49,21 @@ class WithDrawalContent extends StatelessWidget {
       children: [
         UserHeader(),
         Expanded(
-          child: WithrawalDataContent(),
+          child: _WithdrawalDataContent(),
         ),
       ],
     );
   }
 }
 
-class WithrawalDataContent extends StatelessWidget {
+class _WithdrawalDataContent extends StatefulWidget {
+  @override
+  _WithdrawalDataContentState createState() => _WithdrawalDataContentState();
+}
+
+class _WithdrawalDataContentState extends State<_WithdrawalDataContent> {
+  List<bool> _isOpen = [];
+
   @override
   Widget build(BuildContext context) {
     return Selector<ViceBankProvider, List<PurchasePrice>>(
@@ -121,18 +130,63 @@ class WithrawalDataContent extends StatelessWidget {
     BuildContext context,
     List<Purchase> purchases,
   ) {
-    final sorted = [...purchases];
-    sorted.sort((a, b) => b.date.compareTo(a.date));
+    // final sorted = [...purchases];
+    // sorted.sort((a, b) => b.date.compareTo(a.date));
 
-    final List<Widget> purchaseWidgets = sorted.map((purchase) {
-      return PurchaseCard(
-        purchase: purchase,
+    Map<String, List<Purchase>> pMap = {};
+
+    for (final p in purchases) {
+      final date = DateFormat("MM/dd/yyyy").format(p.date.toLocal());
+      final pd = pMap[date] ?? [];
+      pd.add(p);
+      pMap[date] = pd;
+    }
+
+    final totalEntries = pMap.entries.length;
+
+    if (_isOpen.isEmpty || _isOpen.length != totalEntries) {
+      _isOpen = List.filled(totalEntries, false);
+    }
+
+    final List<ExpansionPanel> expansionList = [];
+
+    pMap.entries.toList().reversed.forEachIndexed((i, val) {
+      final pList = val.value;
+
+      pList.sort((a, b) => b.date.compareTo(a.date));
+
+      final name = val.key;
+
+      final cardList = pList.map((el) => PurchaseCard(purchase: el)).toList();
+
+      expansionList.add(
+        ExpansionPanel(
+          isExpanded: _isOpen[i],
+          headerBuilder: (context, isOpen) => ListTile(title: Text(name)),
+          body: Column(children: cardList),
+        ),
       );
-    }).toList();
+    });
+
+    final expansion = ExpansionPanelList(
+      children: expansionList,
+      expansionCallback: (panelIndex, isExpanded) {
+        setState(() {
+          final isOpen = _isOpen;
+          _isOpen[panelIndex] = isExpanded;
+        });
+      },
+    );
+
+    // final List<Widget> purchaseWidgets = sorted.map((purchase) {
+    //   return PurchaseCard(
+    //     purchase: purchase,
+    //   );
+    // }).toList();
 
     return [
       TitleWidget(title: 'Purchase History'),
-      ...purchaseWidgets,
+      expansion,
     ];
   }
 

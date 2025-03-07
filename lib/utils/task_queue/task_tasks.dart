@@ -1,5 +1,5 @@
 import 'package:flutter_vice_bank/api/task_api.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
+import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/utils/task_queue/api_task.dart';
 

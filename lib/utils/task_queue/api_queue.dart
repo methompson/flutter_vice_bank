@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter_vice_bank/data_models/deposit.dart';
 import 'package:flutter_vice_bank/data_models/purchase.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/global_state/data_provider.dart';
 import 'package:flutter_vice_bank/global_state/logging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';

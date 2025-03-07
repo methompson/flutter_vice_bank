@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_vice_bank/data_models/deposit.dart';
+import 'package:flutter_vice_bank/ui/components/deposits/task_deposit_card.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_vice_bank/data_models/messaging_data.dart';
 import 'package:flutter_vice_bank/data_models/task.dart';
-import 'package:flutter_vice_bank/data_models/task_deposit.dart';
 import 'package:flutter_vice_bank/global_state/messaging_provider.dart';
 import 'package:flutter_vice_bank/global_state/vice_bank_provider.dart';
 import 'package:flutter_vice_bank/ui/components/buttons.dart';
-import 'package:flutter_vice_bank/ui/components/deposits/task_card.dart';
 
 class AddTaskDepositForm extends StatefulWidget {
   final Task task;
